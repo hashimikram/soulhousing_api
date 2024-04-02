@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Http\Controllers\Api\BaseController;
+use App\Models\userDetail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,6 +43,9 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+        $detail=new userDetail();
+        $detail->user_id=$user->id;
+        $detail->save();
 
         event(new Registered($user));
 
@@ -61,13 +65,13 @@ class RegisteredUserController extends Controller
         if (Auth::attempt($credentials)) {
             $user = User::where('email', $request->email)->first();
             $token = $user->createToken(config('app.name'))->plainTextToken;
-            $success['token'] =  $token;
-            $success['user'] =  $user;
+            $success['token'] = $token;
+            $success['user'] = $user;
             return $baseController->sendResponse($success, 'User login successfully.');
         } else {
-            return  $baseController->sendError('Credentials Wrong');
+            return $baseController->sendError('Credentials Wrong');
         }
-        return $baseController->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+        return $baseController->sendError('Unauthorised.', ['error' => 'Unauthorised']);
     }
 
     public function forgot_password(Request $request)
@@ -76,10 +80,9 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $user=User::where('email',$request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if($user != NULL)
-        {
+        if ($user != NULL) {
             $status = Password::sendResetLink(
                 $request->only('email')
             );
@@ -87,7 +90,7 @@ class RegisteredUserController extends Controller
             return $status === Password::RESET_LINK_SENT
                 ? response()->json(['message' => 'Password reset link sent to your email'])
                 : response()->json(['message' => 'Unable to send reset link'], 422);
-        }else{
+        } else {
             return response()->json(['message' => 'We cant find a user with that email address.'], 404);
 
         }
@@ -122,6 +125,23 @@ class RegisteredUserController extends Controller
         Auth::user()->tokens()->delete();
         $baseController = new BaseController();
         $result = [];
-        return $baseController->sendResponse($result,'Logout Successfully');
+        return $baseController->sendResponse($result, 'Logout Successfully');
+    }
+
+    public function change_password(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+        $user = Auth::user();
+        $base = new BaseController();
+        if (!Hash::check($request->old_password, $user->password)) {
+            return $base->sendError('The provided password does not match your current password.');
+        }
+        $user->password = Hash::make($request->password);
+        $user->save();
+        Auth::user()->tokens()->delete();
+        return $base->sendResponse($user, 'Password Changed Successfully');
     }
 }

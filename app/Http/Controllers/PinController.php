@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\pin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class PinController extends Controller
+class PinController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +31,21 @@ class PinController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'password' => 'required',
+            'pin' => 'required|digits:6',
+            'confirm_pin' => 'required|same:pin',
+        ]);
+        $user = Auth::user();
+        $base = new BaseController();
+        if (!Hash::check($request->password, $user->password)) {
+            return $base->sendError('The provided password does not match your current password.');
+        }
+        $pin = pin::firstOrNew(['provider_id' => $user->id]);
+        $pin->pin = $request->pin;
+        $pin->save();
+        return $base->sendResponse(null, 'Pin Set Successfully');
+
     }
 
     /**

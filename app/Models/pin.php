@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class pin extends Model
 {
     use HasFactory;
+    protected $fillable=[
+        'provider_id',
+        'pin'
+    ];
 }

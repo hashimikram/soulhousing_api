@@ -102,10 +102,16 @@ class PatientController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(patient $patient)
+    public function show($patientId)
     {
-        //
+        $patient = Patient::find($patientId);
+        if (!$patient) {
+            return response()->json(['message' => 'Patient not found'], 404);
+        }
+        $base = new BaseController();
+        return $base->sendResponse($patient, 'Patient Detail of ID ' . $patient->id);
     }
+
 
     /**
      * Show the form for editing the specified resource.

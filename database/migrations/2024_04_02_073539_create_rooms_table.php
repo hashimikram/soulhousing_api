@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('floor_id');
+            $table->foreign('floor_id')->references('id')->on('floors')->onDelete('Cascade');
+            $table->string('room_name');
             $table->timestamps();
         });
     }

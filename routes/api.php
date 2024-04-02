@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ProblemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Api\PinController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
@@ -14,10 +16,12 @@ Route::post('/reset-password', [RegisteredUserController::class, 'reset_password
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [RegisteredUserController::class, 'destroy']);
+    Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
 
     // Patient CRUD
     Route::post('/add-patient', [PatientController::class, 'store']);
     Route::get('/get-patients', [PatientController::class, 'index']);
+    Route::get('/patient-detail/{patientId}', [PatientController::class, 'show']);
     Route::post('/update-patient', [PatientController::class, 'update']);
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
 
@@ -38,4 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-problem/{patient_id}', [ProblemController::class, 'index']);
     Route::post('/update-problem', [ProblemController::class, 'update']);
     Route::get('/delete-problem/{problem}', [ProblemController::class, 'destroy']);
+
+    // Floor and Room CRUD
+    Route::post('/add-floor-rooms', [FloorController::class, 'store']);
+    Route::get('/floors', [FloorController::class, 'index']);
+    Route::get('/rooms-beds/{floor_id}', [FloorController::class, 'bedsAndrooms']);
+
+    // PIN CRUD
+    Route::post('/set-pin', [PinController::class, 'store']);
 });

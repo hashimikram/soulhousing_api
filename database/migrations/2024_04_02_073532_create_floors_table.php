@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('floors', function (Blueprint $table) {
             $table->id();
+            $table->string('facility_id');
+            $table->unsignedBigInteger('provider_id');
+            $table->foreign('provider_id')->references('id')->on('users')->onDelete('Cascade');
+            $table->string('floor_name');
             $table->timestamps();
         });
     }

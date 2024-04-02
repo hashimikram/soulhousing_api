@@ -8,4 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class floor extends Model
 {
     use HasFactory;
+    protected $fillable=[
+        'facility_id',
+        'provider_id',
+        'floor_name'
+    ];
+
+    public function rooms()
+    {
+        return $this->hasMany(room::class);
+    }
+
+    public function beds()
+    {
+        return $this->hasManyThrough(bed::class, room::class);
+    }
 }
