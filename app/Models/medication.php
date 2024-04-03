@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class medication extends Model
 {
     use HasFactory;
+
+    public function patients()
+    {
+        return $this->belongsTo(patient::class,'patient_id');
+    }
 }

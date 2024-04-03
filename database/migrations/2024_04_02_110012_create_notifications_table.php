@@ -25,8 +25,8 @@ return new class extends Migration
             $table->json('data')->nullable();
             $table->enum('status', ['0', '1'])->default('0');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('sender_id')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('recipient_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('recipient_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

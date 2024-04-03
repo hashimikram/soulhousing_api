@@ -3,10 +3,11 @@
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\InsuranceController;
+use App\Http\Controllers\Api\MedicationController;
 use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\PinController;
 use App\Http\Controllers\Api\ProblemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Api\PinController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
@@ -50,4 +51,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
+
+    // Medication CRUD
+    Route::post('/add-medication', [MedicationController::class, 'store']);
+    Route::post('/update-medication', [MedicationController::class, 'update']);
+    Route::get('/get-medication', [MedicationController::class, 'index']);
+    Route::get('/delete-medication/{medication}', [MedicationController::class, 'destroy']);
 });

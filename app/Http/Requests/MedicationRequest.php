@@ -11,18 +11,22 @@ class MedicationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+
     public function rules(): array
     {
         return [
-            //
+            'patient_id' => 'required|exists:patients,id',
+            'prescribe_date'=>'required|date',
+            'days_supply'=>'required',
+            'refills'=>'required',
+            'dispense'=>'required',
+            'dispense_unit'=>'required',
+            'primary_diagnosis'=>'required',
+            'secondary_diagnosis'=>'required',
+            'patient_directions'=>'required',
         ];
     }
 }
