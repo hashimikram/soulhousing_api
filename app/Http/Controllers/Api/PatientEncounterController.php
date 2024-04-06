@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controller\Api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\EncounterNoteSection;
 use App\Models\PatientEncounter;
-use Faker\Provider\Base;
 use Illuminate\Http\Request;
 
 class PatientEncounterController extends BaseController
@@ -64,14 +63,12 @@ class PatientEncounterController extends BaseController
                 $notes->section_slug = $section['slug'];
                 $notes->section_text = $request->section_text;
                 $notes->sorting_order = $request->sorting_order;
-                $notes->attachedd_entities = json_decode($request->attached_entities);
+                $notes->attached_entities = json_decode($request->attached_entities);
                 $notes->save();
             }
-            $base =  new BaseController();
+            $base = new BaseController();
             return $base->sendResponse(null, 'Data Added');
         } catch (\Exception $e) {
-            // Log the error or handle it appropriately
-            // You can return a custom error response or rethrow the exception
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
@@ -80,32 +77,55 @@ class PatientEncounterController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(PatientEncounter $patientEncounter)
+    public function show($patient_id)
     {
-        //
+        $data = PatientEncounter::where('patient_id', $patient_id)->get();
+        $base = new BaseController();
+        return $base->sendResponse($data, 'Patient Encounter Fetched');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PatientEncounter $patientEncounter)
+    public function encounter_notes($encounter_id)
     {
-        //
+        $data = EncounterNoteSection::where('encounter_id', $encounter_id)->get();
+        $base = new BaseController();
+        return $base->sendResponse($data, 'Patient Encounter Fetched');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PatientEncounter $patientEncounter)
+    public function update(Request $request)
     {
-        //
+        try {
+            // Validate the incoming request
+            $validatedData = $request->validate([
+                'signed_at' => 'required',
+                'encounter_type' => 'required',
+                'encounter_template' => 'required',
+                'reason' => 'required'
+            ]);
+
+            $encounter = PatientEncounter::findOrFail($request->id);
+            $encounter->fill($validatedData);
+            $encounter->save();
+            $base = new BaseController();
+            return $base->sendResponse(null, 'Data Updated');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PatientEncounter $patientEncounter)
+    public function destroy($id)
     {
-        //
+        PatientEncounter::destroy($id);
+        $base = new BaseController();
+        return $base->sendResponse(NULL, 'Patient Encounter Deleted');
     }
 }

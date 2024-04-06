@@ -5,8 +5,10 @@ use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\Api\MedicationController;
 use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\PinController;
 use App\Http\Controllers\Api\ProblemController;
+use App\Http\Controllers\Api\ReviewOfSystemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,4 +59,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-medication', [MedicationController::class, 'update']);
     Route::get('/get-medication', [MedicationController::class, 'index']);
     Route::get('/delete-medication/{medication}', [MedicationController::class, 'destroy']);
+
+    // Encounter CRUD
+    Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);
+    Route::get('patient-encounter/{patient_id}', [PatientEncounterController::class, 'show']);
+    Route::get('patient-encounter-notes/{encounter_id}', [PatientEncounterController::class, 'encounter_notes']);
+    Route::get('delete-patient-encounter/{id}', [PatientEncounterController::class, 'destroy']);
+    Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
+    // ReviewOfSystem CRUD
+    Route::post('/add-review-of-system', [ReviewOfSystemController::class, 'store']);
+    Route::get('/delete-review-of-system/{id}', [ReviewOfSystemController::class, 'destroy']);
+    Route::get('review-of-system/{patient_id}', [ReviewOfSystemController::class, 'show']);
+    Route::post('/update-review-of-system', [ReviewOfSystemController::class, 'update']);
+
 });
