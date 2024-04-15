@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
 
     // Patient CRUD
+    Route::post('/check-patient-record', [PatientController::class, 'check_availablity']);
     Route::post('/add-patient', [PatientController::class, 'store']);
     Route::get('/get-patients', [PatientController::class, 'index']);
     Route::get('/patient-detail/{patientId}', [PatientController::class, 'show']);

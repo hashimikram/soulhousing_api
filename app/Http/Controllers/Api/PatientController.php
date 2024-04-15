@@ -23,9 +23,26 @@ class PatientController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function check_availablity(Request $request)
     {
-        //
+        $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'gender' => 'required',
+            'date_of_birth' => 'required',
+        ]);
+        $checkUniuqe = patient::where('first_name', $request->first_name)
+        ->where('last_name', $request->last_name)
+        ->where('gender', $request->gender)
+        ->where('date_of_birth', $request->date_of_birth)
+        ->get();
+        $base = new BaseController();
+        if (count($checkUniuqe) == 0) {
+            return $base->sendResponse(NULL, 'No Patient Found');
+        } else {
+            return $base->sendError('Patient Already Exists');
+        }
+
     }
 
     /**

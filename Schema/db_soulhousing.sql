@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2024 at 10:52 AM
+-- Generation Time: Apr 15, 2024 at 03:45 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,21 +37,6 @@ CREATE TABLE `beds` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `beds`
---
-
-INSERT INTO `beds` (`id`, `room_id`, `patient_id`, `occupied_at`, `booked_till`, `status`, `created_at`, `updated_at`) VALUES
-(11, 7, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(12, 7, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(13, 7, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(14, 7, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(15, 8, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(16, 8, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(17, 9, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(18, 9, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(19, 9, 2, '03-1-2003', '934323', '1', '2024-04-02 05:21:48', '2024-04-02 05:21:48');
 
 -- --------------------------------------------------------
 
@@ -123,12 +108,37 @@ CREATE TABLE `contacts` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `contacts`
+-- Table structure for table `encounter_note_sections`
 --
 
-INSERT INTO `contacts` (`id`, `provider_id`, `patient_id`, `type`, `title`, `first_name`, `middle_name`, `date_of_birth`, `relationship`, `email`, `address`, `city`, `state`, `zip_code`, `country`, `home_phone`, `work_phone`, `mobile_number`, `fax`, `method_of_contact`, `support_contact`, `from_date`, `to_date`, `status`, `indefinitely`, `power_of_attorney`, `from_date2`, `to_date2`, `status2`, `indefinitely2`, `power_of_attorney2`, `from_date3`, `to_date3`, `status3`, `indefinitely3`, `created_at`, `updated_at`) VALUES
-(2, 1, 2, 'Custom Edit', 'Added', 'Usama', 'Akhtar', '03-1-2203', 'Self', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, '0', '0', NULL, NULL, NULL, '0', '0', NULL, NULL, NULL, '0', '2024-04-01 06:07:53', '2024-04-01 06:15:56');
+CREATE TABLE `encounter_note_sections` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `encounter_id` bigint(20) UNSIGNED NOT NULL,
+  `section_title` varchar(255) DEFAULT NULL,
+  `section_slug` varchar(255) DEFAULT NULL,
+  `section_text` longtext DEFAULT NULL,
+  `sorting_order` varchar(255) DEFAULT NULL,
+  `attached_entities` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`attached_entities`)),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `encounter_note_sections`
+--
+
+INSERT INTO `encounter_note_sections` (`id`, `encounter_id`, `section_title`, `section_slug`, `section_text`, `sorting_order`, `attached_entities`, `created_at`, `updated_at`) VALUES
+(9, 3, 'chief_complained', 'chief-complained', 'Text Added', NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 10:34:19'),
+(10, 3, 'history', 'history', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(11, 3, 'medical_history', 'medical-history', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(12, 3, 'surgical_history', 'surgical-history', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(13, 3, 'family_history', 'family-history', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(14, 3, 'social_history', 'social-history', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(15, 3, 'allergies', 'allergies', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31'),
+(16, 3, 'medications', 'medications', NULL, NULL, NULL, '2024-04-06 05:01:31', '2024-04-06 05:01:31');
 
 -- --------------------------------------------------------
 
@@ -160,14 +170,6 @@ CREATE TABLE `floors` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `floors`
---
-
-INSERT INTO `floors` (`id`, `facility_id`, `provider_id`, `floor_name`, `created_at`, `updated_at`) VALUES
-(7, '40074', 1, 'Floor One', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(8, '40074', 1, 'Floor Two', '2024-04-02 05:21:48', '2024-04-02 05:21:48');
 
 -- --------------------------------------------------------
 
@@ -210,13 +212,6 @@ CREATE TABLE `insurances` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `insurances`
---
-
-INSERT INTO `insurances` (`id`, `provider_id`, `patient_id`, `plan_name`, `effective_date`, `effective_date_end`, `policy_number`, `group_number`, `subscriber_employee`, `se_address`, `se_address_2`, `se_city`, `se_state`, `se_zip_code`, `se_country`, `relationship`, `subscriber`, `date_of_birth`, `gender`, `s_s`, `subscriber_address`, `subscriber_address2`, `city`, `state`, `zip_code`, `country`, `subscriber_phone`, `co_pay`, `accept_assignment`, `secondary_medicare_type`, `status`, `created_at`, `updated_at`) VALUES
-(3, 1, 2, 'Premium', '23-1-2023', '23-1-2023', '7738', '912', 'Sam', 'Hello World', 'Street 1', 'SDK', 'BWP', '7712', 'London', 'self', 'no', '03-1-2003', 'Male', '_true', 'GrowWork', 'Shadewall Chouk', 'Lahore', 'Punjab', '0012', 'Pakistan', '030000123412', 'No', 'Yes', 'Leaved', '1', '2024-04-01 05:30:17', '2024-04-01 05:30:17');
 
 -- --------------------------------------------------------
 
@@ -289,13 +284,6 @@ CREATE TABLE `medications` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `medications`
---
-
-INSERT INTO `medications` (`id`, `favourite_medication`, `provider_id`, `patient_id`, `user_free_text`, `prescribe_date`, `action`, `quantity`, `dosage_unit`, `route`, `frequency`, `days_supply`, `refills`, `dispense`, `dispense_unit`, `primary_diagnosis`, `secondary_diagnosis`, `substitutions`, `one_time`, `prn`, `administered`, `prn_options`, `patient_directions`, `additional_sig`, `status`, `created_at`, `updated_at`) VALUES
-(2, 'Hafeez Rehman Edit', 1, 2, '0', '03-01-2003', NULL, '10', 'Km', 'Safari', NULL, '5', '2', '30', 'tablet', 'Nine Leaved', 'Apple Airpods', '0', '1', '0', '0', NULL, 'Take 3 tablet by mouth twice a day as needed (PRN) for vomitingEdit', 'Take 1 strip by mouth every three to four hours while awake', 'active', '2024-04-03 02:28:34', '2024-04-03 02:45:14');
-
 -- --------------------------------------------------------
 
 --
@@ -313,21 +301,24 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '0001_01_01_000000_create_users_table', 1),
 (2, '0001_01_01_000001_create_cache_table', 1),
 (3, '0001_01_01_000002_create_jobs_table', 1),
-(4, '2024_04_01_063455_create_personal_access_tokens_table', 2),
-(5, '0001_01_01_000000_create_users_table', 3),
-(6, '2024_04_01_071837_create_patients_table', 4),
-(7, '2024_04_01_080823_create_insurances_table', 5),
-(8, '2024_04_01_103901_create_contacts_table', 6),
-(9, '2024_04_01_111829_create_problems_table', 7),
-(19, '2024_04_02_073532_create_floors_table', 13),
-(20, '2024_04_02_073539_create_rooms_table', 14),
-(21, '2024_04_02_073544_create_beds_table', 15),
-(22, '2024_04_02_104409_create_pins_table', 16),
-(23, '2024_04_02_110012_create_notifications_table', 17),
-(24, '2024_04_02_110353_create_user_details_table', 17),
-(26, '2024_04_03_064855_create_medications_table', 18);
+(4, '2024_04_01_063455_create_personal_access_tokens_table', 1),
+(5, '2024_04_01_071837_create_patients_table', 1),
+(6, '2024_04_01_080823_create_insurances_table', 1),
+(7, '2024_04_01_103901_create_contacts_table', 1),
+(8, '2024_04_01_111829_create_problems_table', 1),
+(9, '2024_04_02_073532_create_floors_table', 1),
+(10, '2024_04_02_073539_create_rooms_table', 1),
+(11, '2024_04_02_073544_create_beds_table', 1),
+(12, '2024_04_02_104409_create_pins_table', 1),
+(13, '2024_04_02_110012_create_notifications_table', 1),
+(14, '2024_04_02_110353_create_user_details_table', 1),
+(15, '2024_04_03_064855_create_medications_table', 1),
+(16, '2024_04_04_093210_create_patient_encounters_table', 1),
+(17, '2024_04_04_093638_create_encounter_note_sections_table', 1),
+(18, '2024_04_06_090058_create_review_of_systems_table', 2);
 
 -- --------------------------------------------------------
 
@@ -404,7 +395,34 @@ CREATE TABLE `patients` (
 --
 
 INSERT INTO `patients` (`id`, `provider_id`, `patient_id`, `first_name`, `middle_name`, `last_name`, `nick_name`, `suffix`, `ssn`, `gender`, `date_of_birth`, `general_identity`, `other`, `location`, `pharmacy`, `address_1`, `address_2`, `city`, `state`, `suffix_1`, `ssn_1`, `zip_code`, `country`, `status`, `created_at`, `updated_at`) VALUES
-(2, 1, '24041', 'John', NULL, 'Nick', 'sam_nic', '771', 'abc', 'Make', '03-01-2003', 'volt', NULL, 'Abc Address', 'No', 'Street # 1', NULL, 'James', 'Lesture', '881', 'hjm#1', '8831', 'London', '1', '2024-04-01 05:29:05', '2024-04-01 05:29:05');
+(1, 21, '24041', 'John', NULL, 'Nick', 'sam_nic', '771', 'abc', 'Make', '03-01-2003', 'volt', NULL, 'Abc Address', 'No', 'Street # 1', NULL, 'James', 'Lesture', '881', 'hjm#1', '8831', 'London', '1', '2024-04-06 03:24:36', '2024-04-06 03:24:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_encounters`
+--
+
+CREATE TABLE `patient_encounters` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `provider_id` bigint(20) UNSIGNED NOT NULL,
+  `patient_id` bigint(20) UNSIGNED NOT NULL,
+  `signed_by` bigint(20) UNSIGNED NOT NULL,
+  `signed_at` varchar(255) NOT NULL,
+  `encounter_type` varchar(255) NOT NULL,
+  `encounter_template` varchar(255) NOT NULL,
+  `reason` longtext NOT NULL,
+  `status` enum('1','0') NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `patient_encounters`
+--
+
+INSERT INTO `patient_encounters` (`id`, `provider_id`, `patient_id`, `signed_by`, `signed_at`, `encounter_type`, `encounter_template`, `reason`, `status`, `created_at`, `updated_at`) VALUES
+(3, 21, 1, 21, '03-01-2003', 'singal Edit', 'Second Thing', 'A Lot of reaons available', '1', '2024-04-06 05:01:31', '2024-04-06 05:05:54');
 
 -- --------------------------------------------------------
 
@@ -430,8 +448,8 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
-(16, 'App\\Models\\User', 1, 'Laravel', '844848e7252736d76dc47c83e4267544cb8b0177316f0cecd46f1d2944bfaacb', '[\"*\"]', NULL, NULL, '2024-04-02 01:57:19', '2024-04-02 01:57:19'),
-(17, 'App\\Models\\User', 1, 'Laravel', 'e21d95783ebe6bf449cce3fc609f92b5faec8ea4bde16d0be8976769fac8b510', '[\"*\"]', '2024-04-03 02:45:14', NULL, '2024-04-02 02:12:20', '2024-04-03 02:45:14');
+(1, 'App\\Models\\User', 21, 'Laravel', '42f37dcb17e7b00dde384b673a4bbf05a4d4637deb35ee647f5e4455bf3ea5fa', '[\"*\"]', '2024-04-15 08:44:37', NULL, '2024-04-06 03:23:54', '2024-04-15 08:44:37'),
+(2, 'App\\Models\\User', 21, 'Laravel', '6f19c0e4fdad9efc30080eb28f3e9ca586415f6dc9b0d8e94f4924db655719b9', '[\"*\"]', '2024-04-15 00:29:32', NULL, '2024-04-15 00:29:21', '2024-04-15 00:29:32');
 
 -- --------------------------------------------------------
 
@@ -446,13 +464,6 @@ CREATE TABLE `pins` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `pins`
---
-
-INSERT INTO `pins` (`id`, `provider_id`, `pin`, `created_at`, `updated_at`) VALUES
-(2, 1, '654321', '2024-04-02 05:57:12', '2024-04-02 05:57:30');
 
 -- --------------------------------------------------------
 
@@ -479,12 +490,49 @@ CREATE TABLE `problems` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `problems`
+-- Table structure for table `review_of_systems`
 --
 
-INSERT INTO `problems` (`id`, `provider_id`, `patient_id`, `diagnosis`, `cd_description`, `select_1`, `select_2`, `select_3`, `select_4`, `select_5`, `comments`, `icd10`, `snowed`, `status`, `created_at`, `updated_at`) VALUES
-(2, 1, 2, 'Hello World', 'Description Full Of Hello World', NULL, NULL, NULL, NULL, NULL, 'Nine Leaves', NULL, NULL, '1', '2024-04-01 06:33:56', '2024-04-01 06:33:56');
+CREATE TABLE `review_of_systems` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `provider_id` bigint(20) UNSIGNED NOT NULL,
+  `patient_id` bigint(20) UNSIGNED NOT NULL,
+  `constitutional` varchar(255) NOT NULL DEFAULT 'All Good',
+  `heent` varchar(255) NOT NULL DEFAULT 'All Good',
+  `cv` varchar(255) NOT NULL DEFAULT 'All Good',
+  `gi` varchar(255) NOT NULL DEFAULT 'All Good',
+  `gu` varchar(255) NOT NULL DEFAULT 'All Good',
+  `musculoskeletal` varchar(255) NOT NULL DEFAULT 'All Good',
+  `skin` varchar(255) NOT NULL DEFAULT 'All Good',
+  `psychiatric` varchar(255) NOT NULL DEFAULT 'All Good',
+  `endocrine` varchar(255) NOT NULL DEFAULT 'All Good',
+  `physical_exam` varchar(255) NOT NULL DEFAULT 'All Good',
+  `general_appearance` varchar(255) NOT NULL DEFAULT 'All Good',
+  `head_and_neck` varchar(255) NOT NULL DEFAULT 'All Good',
+  `eyes` varchar(255) NOT NULL DEFAULT 'All Good',
+  `ears` varchar(255) NOT NULL DEFAULT 'All Good',
+  `nose` varchar(255) NOT NULL DEFAULT 'All Good',
+  `mouth_and_throat` varchar(255) NOT NULL DEFAULT 'All Good',
+  `cardiovascular` varchar(255) NOT NULL DEFAULT 'All Good',
+  `respiratory_system` varchar(255) NOT NULL DEFAULT 'All Good',
+  `abdomen` varchar(255) NOT NULL DEFAULT 'All Good',
+  `musculoskeletal_system` varchar(255) NOT NULL DEFAULT 'All Good',
+  `neurological_system` varchar(255) NOT NULL DEFAULT 'All Good',
+  `genitourinary_system` varchar(255) NOT NULL DEFAULT 'All Good',
+  `psychosocial_assessment` varchar(255) NOT NULL DEFAULT 'All Good',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `review_of_systems`
+--
+
+INSERT INTO `review_of_systems` (`id`, `provider_id`, `patient_id`, `constitutional`, `heent`, `cv`, `gi`, `gu`, `musculoskeletal`, `skin`, `psychiatric`, `endocrine`, `physical_exam`, `general_appearance`, `head_and_neck`, `eyes`, `ears`, `nose`, `mouth_and_throat`, `cardiovascular`, `respiratory_system`, `abdomen`, `musculoskeletal_system`, `neurological_system`, `genitourinary_system`, `psychosocial_assessment`, `created_at`, `updated_at`) VALUES
+(2, 21, 1, 'All not God Edit', 'All Good', 'CV Edit', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', 'All Good', '2024-04-06 04:29:05', '2024-04-06 04:44:52');
 
 -- --------------------------------------------------------
 
@@ -499,15 +547,6 @@ CREATE TABLE `rooms` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `rooms`
---
-
-INSERT INTO `rooms` (`id`, `floor_id`, `room_name`, `created_at`, `updated_at`) VALUES
-(7, 7, 'Room One', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(8, 8, 'Room Two', '2024-04-02 05:21:48', '2024-04-02 05:21:48'),
-(9, 8, 'Room THree', '2024-04-02 05:21:48', '2024-04-02 05:21:48');
 
 -- --------------------------------------------------------
 
@@ -529,8 +568,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('aCF3WdQNOEAW1TdDUX9hTQ1qu4wRmnw06Hp2q0Wx', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZlJQaDlZRTMyUWVXSUtHNFFXU2dwd05ERmlOS1RWOGwwekNZNGNkZyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC90ZXN0aW5nLWZvcm0iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1712051140),
-('bsTM0gzuvrQcY5QVQnhRKcpwjPnJonFWZEgP61Mu', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNVJSV3piakVEVEZCeUdWTmlLM0E2bU9BTGNrMm52dEVCSmV6Y2FCNyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1712126240);
+('47ll9p2biSQ8nI7gRWTCVeubC7J42WCVVQerlI1B', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMENGbmJrejAzbHh0SW9Na3BPMDZtM2J0blVjY05MN2ZraFNFZ2Z4NSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1712420060),
+('AhMjgKjmFBtbzZykAN7L7SMu8oUYjNiJOYYAVd76', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibTNxYjlPZWx2a0dnSjBHY0Q2S01EMjJuQm1wM3cxVXBFZ0RWOVI1ciI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1713188377),
+('imY6GblQlbKrbQJGMyksHJfeCR9AFwhmCAnEOBK7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidm5DenpBVmpsSXNENTBYaUJyNWw3Uk0ydDJyZTJmSDVVelNOT09uZCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6NDUwMC9yZWdpc3RlciI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713159846),
+('pvxKyAdOuqG9dPAHbjvSuBiDPDgkHFBEBN1DbS18', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTXJQQWhieUlOQm9XYWVLWThZWDdSOXRSUlV0WDBOOFdIOHZIY1UwWCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1712562044);
 
 -- --------------------------------------------------------
 
@@ -555,7 +596,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `user_type`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Provider 1', 'provider@gmail.com', NULL, '$2y$12$4CVJb0sn.rXV75.sywQVc.FMjCBhE9M6uSRgZnWPh0btqxWVM7Lsi', 'provider', NULL, '2024-03-31 19:00:00', '2024-04-02 01:56:59');
+(21, 'Doctor', 'provider@gmail.com', NULL, '$2y$12$2dT2vzAcs8IwHKJND6o6bOGg2mwmw26n4wsNUqnVm6lZySlfPWJZi', 'provider', NULL, '2024-04-06 08:23:25', '2024-04-06 03:23:54'),
+(22, 'abc', 'abc@gmail.com', NULL, '$2y$12$0ZQP.h4WkN1xL4FQknk4D.SGwaqdsbnT1Qg.rSrjtlgKWKVxFCzBy', 'provider', NULL, '2024-04-06 11:14:08', '2024-04-06 11:14:08');
 
 -- --------------------------------------------------------
 
@@ -570,6 +612,13 @@ CREATE TABLE `user_details` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `user_details`
+--
+
+INSERT INTO `user_details` (`id`, `user_id`, `image`, `created_at`, `updated_at`) VALUES
+(2, 22, NULL, '2024-04-06 11:14:09', '2024-04-06 11:14:09');
 
 --
 -- Indexes for dumped tables
@@ -602,6 +651,13 @@ ALTER TABLE `contacts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `contacts_provider_id_foreign` (`provider_id`),
   ADD KEY `contacts_patient_id_foreign` (`patient_id`);
+
+--
+-- Indexes for table `encounter_note_sections`
+--
+ALTER TABLE `encounter_note_sections`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `encounter_note_sections_encounter_id_foreign` (`encounter_id`);
 
 --
 -- Indexes for table `failed_jobs`
@@ -675,6 +731,15 @@ ALTER TABLE `patients`
   ADD KEY `patients_provider_id_foreign` (`provider_id`);
 
 --
+-- Indexes for table `patient_encounters`
+--
+ALTER TABLE `patient_encounters`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `patient_encounters_provider_id_foreign` (`provider_id`),
+  ADD KEY `patient_encounters_patient_id_foreign` (`patient_id`),
+  ADD KEY `patient_encounters_signed_by_foreign` (`signed_by`);
+
+--
 -- Indexes for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
@@ -696,6 +761,14 @@ ALTER TABLE `problems`
   ADD PRIMARY KEY (`id`),
   ADD KEY `problems_provider_id_foreign` (`provider_id`),
   ADD KEY `problems_patient_id_foreign` (`patient_id`);
+
+--
+-- Indexes for table `review_of_systems`
+--
+ALTER TABLE `review_of_systems`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `review_of_systems_provider_id_foreign` (`provider_id`),
+  ADD KEY `review_of_systems_patient_id_foreign` (`patient_id`);
 
 --
 -- Indexes for table `rooms`
@@ -734,13 +807,19 @@ ALTER TABLE `user_details`
 -- AUTO_INCREMENT for table `beds`
 --
 ALTER TABLE `beds`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `encounter_note_sections`
+--
+ALTER TABLE `encounter_note_sections`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -752,13 +831,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `floors`
 --
 ALTER TABLE `floors`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `insurances`
 --
 ALTER TABLE `insurances`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -770,13 +849,13 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `medications`
 --
 ALTER TABLE `medications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -788,43 +867,55 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `patient_encounters`
+--
+ALTER TABLE `patient_encounters`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pins`
 --
 ALTER TABLE `pins`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `problems`
 --
 ALTER TABLE `problems`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `review_of_systems`
+--
+ALTER TABLE `review_of_systems`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `user_details`
 --
 ALTER TABLE `user_details`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -843,6 +934,12 @@ ALTER TABLE `beds`
 ALTER TABLE `contacts`
   ADD CONSTRAINT `contacts_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `contacts_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `encounter_note_sections`
+--
+ALTER TABLE `encounter_note_sections`
+  ADD CONSTRAINT `encounter_note_sections_encounter_id_foreign` FOREIGN KEY (`encounter_id`) REFERENCES `patient_encounters` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `floors`
@@ -868,8 +965,8 @@ ALTER TABLE `medications`
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_recipient_id_foreign` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `notifications_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `notifications_recipient_id_foreign` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `notifications_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
@@ -877,6 +974,14 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `patients`
   ADD CONSTRAINT `patients_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `patient_encounters`
+--
+ALTER TABLE `patient_encounters`
+  ADD CONSTRAINT `patient_encounters_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `patient_encounters_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `patient_encounters_signed_by_foreign` FOREIGN KEY (`signed_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pins`
@@ -890,6 +995,13 @@ ALTER TABLE `pins`
 ALTER TABLE `problems`
   ADD CONSTRAINT `problems_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `problems_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `review_of_systems`
+--
+ALTER TABLE `review_of_systems`
+  ADD CONSTRAINT `review_of_systems_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `review_of_systems_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `rooms`

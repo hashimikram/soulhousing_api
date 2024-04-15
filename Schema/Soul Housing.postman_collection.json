@@ -18,7 +18,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
 									"type": "string"
 								}
 							]
@@ -143,6 +143,64 @@
 							],
 							"path": [
 								"add-patient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Patient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "John",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "Nick",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "Make",
+									"type": "text"
+								},
+								{
+									"key": "date_of_birth",
+									"value": "03-01-2003",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/check-patient-record",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"check-patient-record"
 							]
 						}
 					},
@@ -299,7 +357,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "2|SAhqvAYM7h13llLIzSrEUivmP3kA0NPKteEzuJKPde8c15f8",
 									"type": "string"
 								}
 							]
@@ -405,7 +463,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
 									"type": "string"
 								}
 							]
@@ -1741,6 +1799,1044 @@
 			]
 		},
 		{
+			"name": "Medication",
+			"item": [
+				{
+					"name": "Get Medications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/get-medication",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"get-medication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Medication",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "favourite_medication",
+									"value": "Hafeez Rehman",
+									"type": "text"
+								},
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "user_free_text",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "prescribe_date",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "action",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "dosage_unit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "route",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "frequency",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "days_supply",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "refills",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "dispense",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "dispense_unit",
+									"value": "tablet",
+									"type": "text"
+								},
+								{
+									"key": "primary_diagnosis",
+									"value": "Nine Leaved",
+									"type": "text"
+								},
+								{
+									"key": "secondary_diagnosis",
+									"value": "Apple Airpods",
+									"type": "text"
+								},
+								{
+									"key": "substitutions",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "one_time",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "prn",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "administered",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "prn_options",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "patient_directions",
+									"value": "Take 3 tablet by mouth twice a day as needed (PRN) for vomiting",
+									"type": "text"
+								},
+								{
+									"key": "additional_sig",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/add-medication",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"add-medication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Medication",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "favourite_medication",
+									"value": "Hafeez Rehman Edit",
+									"type": "text"
+								},
+								{
+									"key": "user_free_text",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "prescribe_date",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "action",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "dosage_unit",
+									"value": "Km",
+									"type": "text"
+								},
+								{
+									"key": "route",
+									"value": "Safari",
+									"type": "text"
+								},
+								{
+									"key": "frequency",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "days_supply",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "refills",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "dispense",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "dispense_unit",
+									"value": "tablet",
+									"type": "text"
+								},
+								{
+									"key": "primary_diagnosis",
+									"value": "Nine Leaved",
+									"type": "text"
+								},
+								{
+									"key": "secondary_diagnosis",
+									"value": "Apple Airpods",
+									"type": "text"
+								},
+								{
+									"key": "substitutions",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "one_time",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "prn",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "administered",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "prn_options",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "patient_directions",
+									"value": "Take 3 tablet by mouth twice a day as needed (PRN) for vomitingEdit",
+									"type": "text"
+								},
+								{
+									"key": "additional_sig",
+									"value": "Take 1 strip by mouth every three to four hours while awake ",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-medication",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-medication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Medication (2 is the Medication ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete-medication/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete-medication",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patient Encounter",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "signed_at",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "encounter_type",
+									"value": "singal",
+									"type": "text"
+								},
+								{
+									"key": "encounter_template",
+									"value": "Second Thing",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "A Lot of reaons available",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/add-patient-encounter",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"add-patient-encounter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "signed_at",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "encounter_type",
+									"value": "singal Edit",
+									"type": "text"
+								},
+								{
+									"key": "encounter_template",
+									"value": "Second Thing",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "A Lot of reaons available",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-patient-encounter",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-patient-encounter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patient Encounter (1 is the Patient ID in the Paramete)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/patient-encounter/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"patient-encounter",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encounter Notes (3 is the Encounter ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/patient-encounter-notes/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"patient-encounter-notes",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete (3 is the Encounter ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete-patient-encounter/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete-patient-encounter",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Patient Encounter Notes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "section_text",
+									"value": "Text Added",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-patient-encounter-notes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-patient-encounter-notes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review Of System",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "constitutional",
+									"value": "All not God",
+									"type": "text"
+								},
+								{
+									"key": "heent",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "cv",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gi",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gu",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "musculoskeletal",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "skin",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "psychiatric",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "endocrine",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "physical_exam",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "general_appearance",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "head_and_neck",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "eyes",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ears",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "nose",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "mouth_and_throat",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "cardiovascular",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "respiratory_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "abdomen",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "musculoskeletal_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "neurological_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "genitourinary_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "psychosocial_assessment",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/add-review-of-system",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"add-review-of-system"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "constitutional",
+									"value": "All not God Edit",
+									"type": "text"
+								},
+								{
+									"key": "heent",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "cv",
+									"value": "CV Edit",
+									"type": "text"
+								},
+								{
+									"key": "gi",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "gu",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "musculoskeletal",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "skin",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "psychiatric",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "endocrine",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "physical_exam",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "general_appearance",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "head_and_neck",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "eyes",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "ears",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "nose",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "mouth_and_throat",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "cardiovascular",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "respiratory_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "abdomen",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "musculoskeletal_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "neurological_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "genitourinary_system",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "psychosocial_assessment",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-review-of-system",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-review-of-system"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete (2 is the ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete-review-of-system/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete-review-of-system",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Data (1 is the Patient ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/review-of-system/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"review-of-system",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Login",
 			"request": {
 				"method": "POST",
@@ -1761,7 +2857,7 @@
 						},
 						{
 							"key": "password",
-							"value": "111222333444",
+							"value": "12345678",
 							"type": "text"
 						}
 					]
