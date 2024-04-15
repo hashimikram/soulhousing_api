@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\EncounterNoteSectionController;
 use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\Api\MedicationController;
@@ -66,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('patient-encounter-notes/{encounter_id}', [PatientEncounterController::class, 'encounter_notes']);
     Route::get('delete-patient-encounter/{id}', [PatientEncounterController::class, 'destroy']);
     Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
+    Route::post('/update-patient-encounter-notes', [EncounterNoteSectionController::class, 'update']);
+
     // ReviewOfSystem CRUD
     Route::post('/add-review-of-system', [ReviewOfSystemController::class, 'store']);
     Route::get('/delete-review-of-system/{id}', [ReviewOfSystemController::class, 'destroy']);
