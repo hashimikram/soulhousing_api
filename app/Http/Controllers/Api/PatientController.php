@@ -66,6 +66,7 @@ class PatientController extends BaseController
             $patient = new patient();
             $patient->provider_id = auth()->user()->id;
             $patient->patient_id = $countPatient;
+            $patient->title = $request->title;
             $patient->first_name = $request->first_name;
             $patient->middle_name = $request->middle_name;
             $patient->last_name = $request->last_name;
