@@ -37,19 +37,62 @@ class ContactController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ContactRequest $request)
+    public function store(Request $request)
     {
-        $validatedData = $request->validated();
+
+        $request->validate([
+            'type' => 'required',
+            'first_name' => 'required',
+            'middle_name' => 'required',
+            'relationship' => 'required',
+
+
+        ]);
+
         $base = new BaseController();
         try {
-            $validatedData['provider_id'] = auth()->user()->id;
-            $validatedData['patient_id'] = $request->patient_id;
-            $insurance = Contact::create($validatedData);
-            return $base->sendResponse($insurance, 'Contact created successfully');
+
+            $contact = new Contact();
+            $contact->patient_id = $request->patient_id;
+            $contact->provider_id = auth()->user()->id;
+            $contact->type = $request->type;
+            $contact->title = $request->title;
+            $contact->first_name = $request->first_name;
+            $contact->middle_name = $request->middle_name;
+            $contact->date_of_birth = $request->date_of_birth;
+            $contact->relationship = $request->relationship;
+            $contact->email = $request->email;
+            $contact->address = $request->address;
+            $contact->city = $request->city;
+            $contact->state = $request->state;
+            $contact->zip_code = $request->zip_code;
+            $contact->country = $request->country;
+            $contact->home_phone = $request->home_phone;
+            $contact->work_phone = $request->work_phone;
+            $contact->mobile_number = $request->mobile_number;
+            $contact->fax = $request->fax;
+            $contact->method_of_contact = $request->method_of_contact;
+            $contact->support_contact = $request->support_contact;
+            $contact->from_date = $request->from_date;
+            $contact->to_date = $request->to_date;
+            $contact->status = $request->status;
+            $contact->indefinitely = $request->indefinitely;
+            $contact->power_of_attorney = $request->power_of_attorney;
+            $contact->from_date2 = $request->from_date2;
+            $contact->to_date2 = $request->to_date2;
+            $contact->status2 = $request->status2;
+            $contact->indefinitely2 = $request->indefinitely2;
+            $contact->power_of_attorney2 = $request->power_of_attorney2;
+            $contact->from_date3 = $request->from_date3;
+            $contact->to_date3 = $request->to_date3;
+            $contact->status3 = $request->status3;
+            $contact->indefinitely3 = $request->indefinitely3;
+            $contact->save();
+            return $base->sendResponse($contact, 'Contact created successfully');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             $contact = [];
-            return $base->sendError($contact, 'Internal Server Error');
+            return $base->sendError($contact, $e->getMessage());
         }
     }
 

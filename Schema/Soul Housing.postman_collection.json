@@ -115,16 +115,6 @@
 									"type": "text"
 								},
 								{
-									"key": "suffix_1",
-									"value": "881",
-									"type": "text"
-								},
-								{
-									"key": "ssn_1",
-									"value": "hjm#1",
-									"type": "text"
-								},
-								{
 									"key": "zip_code",
 									"value": "8831",
 									"type": "text"
@@ -132,6 +122,21 @@
 								{
 									"key": "country",
 									"value": "London",
+									"type": "text"
+								},
+								{
+									"key": "phone_no",
+									"value": "43",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "cdf@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Mr",
 									"type": "text"
 								}
 							]
@@ -892,7 +897,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "8|yP0OW8snj1baU7TKFmcHCdjETSIpFfiFg69wWn2S8fe16cb3",
 									"type": "string"
 								}
 							]
@@ -910,7 +915,7 @@
 							"formdata": [
 								{
 									"key": "patient_id",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								},
 								{
@@ -920,7 +925,7 @@
 								},
 								{
 									"key": "title",
-									"value": "",
+									"value": "helo",
 									"type": "text"
 								},
 								{
@@ -1000,7 +1005,7 @@
 								},
 								{
 									"key": "support_contact",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
@@ -1020,12 +1025,12 @@
 								},
 								{
 									"key": "indefinitely",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
 									"key": "power_of_attorney",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
@@ -1045,12 +1050,12 @@
 								},
 								{
 									"key": "indefinitely2",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
 									"key": "power_of_attorney2",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
@@ -1070,7 +1075,7 @@
 								},
 								{
 									"key": "indefinitely3",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								}
 							]
@@ -1751,7 +1756,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
 									"type": "string"
 								}
 							]
@@ -3067,7 +3072,7 @@
 	"variable": [
 		{
 			"key": "url",
-			"value": "http://127.0.0.1:8000/api",
+			"value": "https://soulhousing-api.anchorstech.net/api",
 			"type": "string"
 		}
 	]
