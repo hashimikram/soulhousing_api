@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseController as BaseController;
-use App\Models\patient;
 use Carbon\Carbon;
+use App\Models\Contact;
+use App\Models\patient;
+use App\Models\Problem;
+use App\Models\medication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Api\BaseController as BaseController;
 
 class PatientController extends BaseController
 {
@@ -180,5 +183,22 @@ class PatientController extends BaseController
         $base = new BaseController();
         $patient->delete();
         return $base->sendResponse([], 'Patient deleted successfully');
+    }
+
+    public function summary_patient($id)
+    {
+        $patient = Patient::find($id);
+        if (!$patient) {
+            return response()->json(['message' => 'Patient not found'], 404);
+        }
+
+        $data = [
+            'patient' => $patient,
+            'problems' => Problem::where('patient_id', $id)->orderBy('created_at', 'DESC')->get(),
+            'contacts' => Contact::where('patient_id', $id)->orderBy('created_at', 'DESC')->get(),
+            'medications' => Medication::where('patient_id', $id)->get()
+        ];
+
+        return response()->json($data, 200);
     }
 }

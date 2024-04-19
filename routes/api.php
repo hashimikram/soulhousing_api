@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Medication CRUD
     Route::post('/add-medication', [MedicationController::class, 'store']);
     Route::post('/update-medication', [MedicationController::class, 'update']);
-    Route::get('/get-medication', [MedicationController::class, 'index']);
+    Route::get('/get-medication/{id}', [MedicationController::class, 'index']);
     Route::get('/delete-medication/{medication}', [MedicationController::class, 'destroy']);
 
     // Encounter CRUD
@@ -75,5 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delete-review-of-system/{id}', [ReviewOfSystemController::class, 'destroy']);
     Route::get('review-of-system/{patient_id}', [ReviewOfSystemController::class, 'show']);
     Route::post('/update-review-of-system', [ReviewOfSystemController::class, 'update']);
+
+    Route::get('/patient-summary/{id}', [PatientController::class, 'summary_patient']);
 
 });

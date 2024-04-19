@@ -13,9 +13,9 @@ class MedicationController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id)
     {
-        $medication = medication::with('patients')->where('provider_id', auth()->user()->id)->get();
+        $medication = medication::with('patients')->where('patient_id', $id)->get();
         $base = new BaseController();
         return $base->sendResponse($medication, 'Medication Data');
     }
@@ -65,7 +65,6 @@ class MedicationController extends BaseController
             Log::error($e->getMessage());
             return $base->sendError('Internal Server Error');
         }
-
     }
 
 
@@ -130,7 +129,6 @@ class MedicationController extends BaseController
             } else {
                 return $base->sendError('Medication Not Found');
             }
-
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $base->sendError('Internal Server Error');
