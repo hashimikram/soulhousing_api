@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/patient-summary/{id}', [PatientController::class, 'summary_patient']);
 
     Route::get('/notes/{patient_id}', [NoteController::class, 'index']);
+    Route::post('/notes-search/{patient_id}', [NoteController::class, 'search']);
     Route::get('/single-note/{id}', [NoteController::class, 'show']);
     Route::post('/store-note', [NoteController::class, 'store']);
     Route::put('/notes/{id}', [NoteController::class, 'update']);

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Validator;
 use App\Http\Controllers\Api\BaseController as BaseController;
 
 class NoteController extends BaseController
@@ -32,9 +33,41 @@ class NoteController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request, $patient_id)
     {
-        //
+        // Check if the user is authenticated
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        // Validate search parameters
+            $validator =   $request->validate([
+                'search' => 'nullable|string',
+            ]);
+
+
+
+        // Retrieve notes with patient name by patient_id
+        $query = Note::with('patient:id,first_name,last_name')->where('patient_id', $patient_id);
+
+        // Apply search filter if search parameter is provided
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', "%$searchTerm%");
+            });
+        }
+
+        // Get the notes
+        $notes = $query->get();
+
+        // Check if notes are found
+        if ($notes->isEmpty()) {
+            return response()->json(['data' => []], 404);
+        }
+
+        // Return notes with patient name
+        return response()->json($notes);
     }
 
     /**
