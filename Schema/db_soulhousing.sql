@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2024 at 12:22 PM
+-- Generation Time: Apr 24, 2024 at 01:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -119,6 +119,33 @@ CREATE TABLE `contacts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `documents`
+--
+
+CREATE TABLE `documents` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `provider_id` bigint(20) UNSIGNED NOT NULL,
+  `patient_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `description` longtext DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `file_size` varchar(255) DEFAULT NULL,
+  `file` longtext DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `documents`
+--
+
+INSERT INTO `documents` (`id`, `provider_id`, `patient_id`, `title`, `type`, `description`, `date`, `file_size`, `file`, `created_at`, `updated_at`) VALUES
+(8, 21, 2, 'Hey Update This', 'New Update X-Ray', 'Description is Good', '2323-01-23 00:00:00', '42.15 KB', '202404241149_6628f1e69d40f.pdf', '2024-04-24 06:48:27', '2024-04-24 06:49:58');
 
 -- --------------------------------------------------------
 
@@ -345,7 +372,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (24, '2024_04_22_081822_create_pysical_exams_table', 6),
 (26, '2024_04_06_090058_create_review_of_systems_table', 8),
 (27, '2024_04_22_082408_create_physical_exams_table', 9),
-(29, '2024_04_24_072004_create_notes_table', 10);
+(29, '2024_04_24_072004_create_notes_table', 10),
+(30, '2024_04_24_104358_create_documents_table', 11);
 
 -- --------------------------------------------------------
 
@@ -369,7 +397,8 @@ CREATE TABLE `notes` (
 --
 
 INSERT INTO `notes` (`id`, `provider_id`, `patient_id`, `title`, `date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 21, 2, 'Hey This is New Note 2 Edit', '2023-03-02 00:00:00', '0', '2024-04-24 04:57:35', '2024-04-24 05:16:55');
+(1, 21, 2, 'Hey This is New Note 2 Edit', '2023-03-02 00:00:00', '0', '2024-04-24 04:57:35', '2024-04-24 05:16:55'),
+(3, 21, 2, 'Hey New Document', '2023-01-03 00:00:00', '1', '2024-04-24 06:00:19', '2024-04-24 06:00:19');
 
 -- --------------------------------------------------------
 
@@ -510,7 +539,7 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (2, 'App\\Models\\User', 21, 'Laravel', '6f19c0e4fdad9efc30080eb28f3e9ca586415f6dc9b0d8e94f4924db655719b9', '[\"*\"]', '2024-04-17 07:19:45', NULL, '2024-04-15 00:29:21', '2024-04-17 07:19:45'),
 (3, 'App\\Models\\User', 21, 'Laravel', '11c7a0310d94575347c78331b605b285770cd58130ee70c2e62079e658ecafb0', '[\"*\"]', '2024-04-16 03:40:24', NULL, '2024-04-16 03:15:06', '2024-04-16 03:40:24'),
 (4, 'App\\Models\\User', 21, 'Laravel', '4a591a54e2471205853fbbac42607c7ae3008156fce1bb6f4107c1b0c8a4b6f7', '[\"*\"]', '2024-04-22 01:51:52', NULL, '2024-04-22 01:45:35', '2024-04-22 01:51:52'),
-(5, 'App\\Models\\User', 21, 'Laravel', 'b1e64a810bff6d34a7591d407a515d628b8a8f3291a6e3f35f59c9f3b1358697', '[\"*\"]', '2024-04-24 05:20:35', NULL, '2024-04-24 02:32:24', '2024-04-24 05:20:35');
+(5, 'App\\Models\\User', 21, 'Laravel', 'b1e64a810bff6d34a7591d407a515d628b8a8f3291a6e3f35f59c9f3b1358697', '[\"*\"]', '2024-04-24 06:52:43', NULL, '2024-04-24 02:32:24', '2024-04-24 06:52:43');
 
 -- --------------------------------------------------------
 
@@ -715,6 +744,14 @@ ALTER TABLE `contacts`
   ADD KEY `contacts_patient_id_foreign` (`patient_id`);
 
 --
+-- Indexes for table `documents`
+--
+ALTER TABLE `documents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `documents_provider_id_foreign` (`provider_id`),
+  ADD KEY `documents_patient_id_foreign` (`patient_id`);
+
+--
 -- Indexes for table `encounter_note_sections`
 --
 ALTER TABLE `encounter_note_sections`
@@ -898,6 +935,12 @@ ALTER TABLE `contacts`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `documents`
+--
+ALTER TABLE `documents`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `encounter_note_sections`
 --
 ALTER TABLE `encounter_note_sections`
@@ -937,13 +980,13 @@ ALTER TABLE `medications`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -1028,6 +1071,13 @@ ALTER TABLE `beds`
 ALTER TABLE `contacts`
   ADD CONSTRAINT `contacts_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `contacts_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `documents`
+--
+ALTER TABLE `documents`
+  ADD CONSTRAINT `documents_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `documents_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `encounter_note_sections`

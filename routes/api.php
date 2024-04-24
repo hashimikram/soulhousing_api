@@ -1,18 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\PinController;
+use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ProblemController;
+use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\Api\MedicationController;
 use App\Http\Controllers\Api\ReviewOfSystemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\EncounterNoteSectionController;
+use App\Http\Controllers\FileController;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
 // Forgot Password
@@ -79,10 +81,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/patient-summary/{id}', [PatientController::class, 'summary_patient']);
 
+    // Note CRUD
     Route::get('/notes/{patient_id}', [NoteController::class, 'index']);
     Route::post('/notes-search/{patient_id}', [NoteController::class, 'search']);
     Route::get('/single-note/{id}', [NoteController::class, 'show']);
     Route::post('/store-note', [NoteController::class, 'store']);
     Route::put('/notes/{id}', [NoteController::class, 'update']);
     Route::delete('/notes/{id}', [NoteController::class, 'destroy']);
+
+    // Document CRUD
+    Route::get('/documents/{patient_id}', [DocumentController::class, 'index']);
+    Route::post('/store-document', [DocumentController::class, 'store']);
+    Route::delete('/document/{id}', [DocumentController::class, 'destroy']);
+    Route::post('/update-document', [DocumentController::class, 'update']);
+
+    Route::get('/file/{name}', [FileController::class, 'show']);
+
 });

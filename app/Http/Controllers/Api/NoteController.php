@@ -63,7 +63,7 @@ class NoteController extends BaseController
 
         // Check if notes are found
         if ($notes->isEmpty()) {
-            return response()->json(['data' => []], 404);
+            return response()->json(['message' => []], 404);
         }
 
         // Return notes with patient name

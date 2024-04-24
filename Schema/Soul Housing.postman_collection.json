@@ -3001,6 +3001,258 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Note Search (2 is the Patient ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"search\":\"New\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/notes-search/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"notes-search",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Documents",
+			"item": [
+				{
+					"name": "Store Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Hey New Document",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "X-Ray",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "03-01-2023",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/conta/Downloads/screencapture-127-0-0-1-8000-video-call-2024-04-24-13_48_23.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/store-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store-document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patients Document (2 is the Patient ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/documents/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"documents",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document (5 is the Document ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/document/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"document",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "document_id",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Hey Update This",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "New Update X-Ray",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Description is Good",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "23-01-2323",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/conta/Downloads/DOC-20230921-WA0021.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-document"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3238,6 +3490,40 @@
 					"path": [
 						"patient-summary",
 						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Uploaded File (File may be Image or PDF or word file etc, 202404241149_6628f1e69d40f.pdf is the FIle Name which is Come from Api Response)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/file/202404241149_6628f1e69d40f.pdf",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"file",
+						"202404241149_6628f1e69d40f.pdf"
 					]
 				}
 			},
