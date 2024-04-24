@@ -32,7 +32,6 @@ class PatientController extends BaseController
             'first_name' => 'required',
             'last_name' => 'required',
             'gender' => 'required',
-            'date_of_birth' => 'required',
         ]);
         $checkUniuqe = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
@@ -142,6 +141,7 @@ class PatientController extends BaseController
             $countPatient = date('ym') . $totalPatient + $countone;
             $patient = patient::find($request->id);
             if ($patient != NULL) {
+                $patient->title = $request->title;
                 $patient->first_name = $request->first_name;
                 $patient->middle_name = $request->middle_name;
                 $patient->last_name = $request->last_name;
@@ -160,8 +160,6 @@ class PatientController extends BaseController
                 $patient->address_2 = $request->address_2;
                 $patient->city = $request->city;
                 $patient->state = $request->state;
-                $patient->suffix_1 = $request->suffix_1;
-                $patient->ssn_1 = $request->ssn_1;
                 $patient->zip_code = $request->zip_code;
                 $patient->country = $request->country;
                 $patient->save();

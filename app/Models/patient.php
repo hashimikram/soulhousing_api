@@ -12,4 +12,9 @@ class patient extends Model
     {
         return $this->hasMany(medication::class,'patient_id');
     }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

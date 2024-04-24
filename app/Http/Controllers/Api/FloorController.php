@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\bed;
 use App\Models\floor;
 use App\Models\room;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -39,7 +40,7 @@ class FloorController extends BaseController
             $beds = $floor->beds()->count();
             // Return the response
             $response = [
-                'floor'=>$floor,
+                'floor' => $floor,
                 'floor_id' => $floor->id,
                 'rooms_count' => $rooms,
                 'beds_count' => $beds,
@@ -64,48 +65,47 @@ class FloorController extends BaseController
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'no_of_floors' => 'required|integer',
-            'floors' => 'required|array',
-            'floors.*.no_of_rooms' => 'required|integer',
-            'floors.*.Rooms' => 'required|array',
-            'floors.*.Rooms.*.no_of_beds' => 'required|integer',
-            'floors.*.Rooms.*.beds' => 'required|array',
-        ]);
+        // $request->validate([
+        //     'no_of_floors' => 'required|integer',
+        //     'floors' => 'required|array',
+        //     'floors.*.no_of_rooms' => 'required|integer',
+        //     'floors.*.Rooms' => 'required|array',
+        //     'floors.*.Rooms.*.no_of_beds' => 'required|integer',
+        //     'floors.*.Rooms.*.beds' => 'required|array',
+        // ]);
 
         $base = new BaseController();
         try {
             $facilityId = rand(12345, 67890);
             $data = $request->all();
-            foreach ($data['floors'] as $floorData) {
-                $floor = floor::create([
+            foreach ($data as $floorData) {
+                $floor = Floor::create([
                     'provider_id' => auth()->user()->id,
                     'facility_id' => $facilityId,
                     'floor_name' => $floorData['floor_title'] ?? '',
                 ]);
 
-                foreach ($floorData['Rooms'] as $roomData) {
-                    $room = room::create([
+                foreach ($floorData['rooms'] as $roomData) {
+                    $room = Room::create([
                         'floor_id' => $floor->id,
-                        'room_name' => $roomData['room-title'] ?? '',
+                        'room_name' => $roomData['room_title'] ?? '',
                     ]);
 
                     foreach ($roomData['beds'] as $bedData) {
-                        bed::create([
+                        Bed::create([
                             'room_id' => $room->id,
                             'patient_id' => $bedData['patient_id'],
-                            'occupied_at' => $bedData['occupied_at'],
-                            'booked_till' => $bedData['booked_at'],
+                            'occupied_at' => $bedData['occupied_at'] ?? Carbon::now(),
+                            'booked_till' => $bedData['booked_at'] ?? Carbon::now(),
                         ]);
                     }
                 }
             }
+
             return response()->json(['message' => 'Data saved successfully'], 200);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return $base->sendError('Something Went Wrong');
+            return $base->sendError($e->getMessage());
         }
-
     }
 
     /**

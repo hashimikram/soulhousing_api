@@ -51,7 +51,6 @@ class ContactController extends BaseController
 
         $base = new BaseController();
         try {
-
             $contact = new Contact();
             $contact->patient_id = $request->patient_id;
             $contact->provider_id = auth()->user()->id;

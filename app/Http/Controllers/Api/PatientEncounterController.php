@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseController as BaseController;
-use App\Models\EncounterNoteSection;
-use App\Models\PatientEncounter;
+use Illuminate\Support\Str;
+use App\Models\PhysicalExam;
 use Illuminate\Http\Request;
+use App\Models\ReviewOfSystem;
+use App\Models\PatientEncounter;
+use Illuminate\Support\Facades\Log;
+use App\Models\EncounterNoteSection;
+use App\Http\Controllers\Api\BaseController as BaseController;
 
 class PatientEncounterController extends BaseController
 {
@@ -31,47 +35,64 @@ class PatientEncounterController extends BaseController
     public function store(Request $request)
     {
         try {
-            // Validate the incoming request
-            $validatedData = $request->validate([
-                'patient_id' => 'required|exists:patients,id',
-                'signed_at' => 'required',
-                'encounter_type' => 'required',
-                'encounter_template' => 'required',
-                'reason' => 'required'
-            ]);
-
-            $encounter = new PatientEncounter($validatedData);
+            $encounter = new PatientEncounter();
+            $encounter->patient_id = $request->patient_id;
             $encounter->provider_id = auth()->user()->id;
-            $encounter->signed_by = auth()->user()->id;
+            $encounter->signed_at = $request->signed_at;
+            $encounter->signed_by =  auth()->user()->id;
+            $encounter->encounter_type = $request->encounter_type;
+            $encounter->encounter_template = $request->encounter_template;
+            $encounter->reason = $request->reason;
             $encounter->save();
 
-            $sections = [
-                ['title' => 'chief_complained', 'slug' => 'chief-complained'],
-                ['title' => 'history', 'slug' => 'history'],
-                ['title' => 'medical_history', 'slug' => 'medical-history'],
-                ['title' => 'surgical_history', 'slug' => 'surgical-history'],
-                ['title' => 'family_history', 'slug' => 'family-history'],
-                ['title' => 'social_history', 'slug' => 'social-history'],
-                ['title' => 'allergies', 'slug' => 'allergies'],
-                ['title' => 'medications', 'slug' => 'medications'],
-            ];
+            $data = $request->json()->all();
 
-            foreach ($sections as $section) {
-                $notes = new EncounterNoteSection();
-                $notes->encounter_id = $encounter->id;
-                $notes->section_title = $section['title'];
-                $notes->section_slug = $section['slug'];
-                $notes->section_text = $request->section_text;
-                $notes->sorting_order = $request->sorting_order;
-                $notes->attached_entities = json_decode($request->attached_entities);
-                $notes->save();
+            $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
+
+            foreach ($includeFields as $sectionTitle) {
+                $sectionData = $data[$sectionTitle] ?? null;
+
+                if ($sectionData === null) {
+                    continue;
+                }
+
+                if (is_array($sectionData)) {
+                    if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
+                        EncounterNoteSection::create([
+                            'provider_id' => auth()->user()->id,
+                            'patient_id' => $request->patient_id,
+                            'encounter_id' => $encounter->id,
+                            'section_title' => ucwords(str_replace('_', ' ', $sectionTitle)),
+                            'section_slug' => $sectionTitle,
+                            'section_text' => json_encode($sectionData),
+                            'sorting_order' => 1,
+                        ]);
+                    } else {
+                        foreach ($sectionData as $subsectionTitle => $subsectionData) {
+                            $sectionSlug = $sectionTitle;
+                            $sortingOrder = array_search($subsectionTitle, array_keys($data['sorting_order'])) + 1;
+
+                            EncounterNoteSection::create([
+                                'provider_id' => auth()->user()->id,
+                                'patient_id' => $request->patient_id,
+                                'encounter_id' => $encounter->id,
+                                'section_title' => ucwords(str_replace('_', ' ', $subsectionTitle)),
+                                'section_slug' => $subsectionTitle,
+                                'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
+                                'sorting_order' => $sortingOrder,
+                            ]);
+                        }
+                    }
+                } else {
+                    return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
+                }
             }
-            $base = new BaseController();
-            return $base->sendResponse(null, 'Data Added');
+
+
+            return response()->json(['message' => 'Data stored successfully'], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-
     }
 
     /**
@@ -89,34 +110,97 @@ class PatientEncounterController extends BaseController
      */
     public function encounter_notes($encounter_id)
     {
-        $data = EncounterNoteSection::where('encounter_id', $encounter_id)->get();
-        $base = new BaseController();
-        return $base->sendResponse($data, 'Patient Encounter Fetched');
+        // Get encounter note sections
+        $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->get();
+        if ($sections->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'No encounter note sections found for the given encounter ID'], 404);
+        }
+        $formattedData = [];
+        foreach ($sections as $section) {
+            $sectionText = null;
+            if ($section->section_text !== null) {
+                $decodedText = json_decode($section->section_text, true);
+                if ($decodedText !== null) {
+                    $sectionText = $decodedText;
+                } else {
+                    $sectionText = $section->section_text;
+                }
+            }
+            $formattedData[] = [
+                'section_title' => $section->section_title,
+                'section_slug' => $section->section_slug,
+                'section_text' => $sectionText
+            ];
+        }
+        $response = [
+            'success' => true,
+            'data' => $formattedData,
+            'message' => 'Encounter note sections fetched successfully'
+        ];
+
+        return response()->json($response, 200);
     }
+
+
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request)
     {
+
         try {
-            // Validate the incoming request
-            $validatedData = $request->validate([
-                'signed_at' => 'required',
-                'encounter_type' => 'required',
-                'encounter_template' => 'required',
-                'reason' => 'required'
+            // Extract JSON data from the request
+            $data = $request->json()->all();
+            $encounter = PatientEncounter::findOrFail($request->encounter_id);
+            $encounter->update([
+                'patient_id' => $data['patient_id'],
+                'signed_at' => $data['signed_at'],
+                'encounter_type' => $data['encounter_type'],
+                'encounter_template' => $data['encounter_template'],
+                'reason' => $data['reason'],
             ]);
+            $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
+            foreach ($includeFields as $sectionTitle) {
+                $sectionData = $data[$sectionTitle] ?? null;
 
-            $encounter = PatientEncounter::findOrFail($request->id);
-            $encounter->fill($validatedData);
-            $encounter->save();
-            $base = new BaseController();
-            return $base->sendResponse(null, 'Data Updated');
+                if ($sectionData === null) {
+                    continue;
+                }
+
+                if (is_array($sectionData)) {
+                    if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
+                        $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
+                            ->where('section_title', $sectionTitle)
+                            ->first();
+
+                        if ($subsection) {
+                            $subsection->update([
+                                'section_text' => json_encode($sectionData),
+                            ]);
+                        }
+                    } else {
+                        foreach ($sectionData as $subsectionTitle => $subsectionData) {
+                            $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
+                                ->where('section_title', $subsectionTitle)
+                                ->first();
+
+                            if ($subsection) {
+                                $subsection->update([
+                                    'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
+                }
+            }
+            return response()->json(['message' => 'Data updated successfully'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' =>  $e->getMessage()], 500);
         }
-
     }
 
     /**

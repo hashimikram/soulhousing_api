@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ReviewOfSystem extends Model
+class PhysicalExam extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'patient_id',
-        'provider_id',
-    ];
 }
