@@ -3528,6 +3528,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Login User Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "6|tFn5oVjOpAXDWyyGQ3zSYsRkZnp5Fo2aYPBkFDDj33435867",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/login-user-details",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login-user-details"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [

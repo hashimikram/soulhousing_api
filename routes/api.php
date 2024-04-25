@@ -24,6 +24,8 @@ Route::post('/reset-password', [RegisteredUserController::class, 'reset_password
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [RegisteredUserController::class, 'destroy']);
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
+    Route::get('/login-user-details', [RegisteredUserController::class, 'login_user_details']);
+
 
     // Patient CRUD
     Route::post('/check-patient-record', [PatientController::class, 'check_availablity']);

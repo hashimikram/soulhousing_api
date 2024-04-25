@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2024 at 01:55 PM
+-- Generation Time: Apr 25, 2024 at 12:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -364,7 +364,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (11, '2024_04_02_073544_create_beds_table', 1),
 (12, '2024_04_02_104409_create_pins_table', 1),
 (13, '2024_04_02_110012_create_notifications_table', 1),
-(14, '2024_04_02_110353_create_user_details_table', 1),
 (15, '2024_04_03_064855_create_medications_table', 1),
 (16, '2024_04_04_093210_create_patient_encounters_table', 1),
 (21, '2024_04_01_071837_create_patients_table', 3),
@@ -373,7 +372,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (26, '2024_04_06_090058_create_review_of_systems_table', 8),
 (27, '2024_04_22_082408_create_physical_exams_table', 9),
 (29, '2024_04_24_072004_create_notes_table', 10),
-(30, '2024_04_24_104358_create_documents_table', 11);
+(30, '2024_04_24_104358_create_documents_table', 11),
+(31, '2024_04_02_110353_create_user_details_table', 12);
 
 -- --------------------------------------------------------
 
@@ -539,7 +539,8 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (2, 'App\\Models\\User', 21, 'Laravel', '6f19c0e4fdad9efc30080eb28f3e9ca586415f6dc9b0d8e94f4924db655719b9', '[\"*\"]', '2024-04-17 07:19:45', NULL, '2024-04-15 00:29:21', '2024-04-17 07:19:45'),
 (3, 'App\\Models\\User', 21, 'Laravel', '11c7a0310d94575347c78331b605b285770cd58130ee70c2e62079e658ecafb0', '[\"*\"]', '2024-04-16 03:40:24', NULL, '2024-04-16 03:15:06', '2024-04-16 03:40:24'),
 (4, 'App\\Models\\User', 21, 'Laravel', '4a591a54e2471205853fbbac42607c7ae3008156fce1bb6f4107c1b0c8a4b6f7', '[\"*\"]', '2024-04-22 01:51:52', NULL, '2024-04-22 01:45:35', '2024-04-22 01:51:52'),
-(5, 'App\\Models\\User', 21, 'Laravel', 'b1e64a810bff6d34a7591d407a515d628b8a8f3291a6e3f35f59c9f3b1358697', '[\"*\"]', '2024-04-24 06:52:43', NULL, '2024-04-24 02:32:24', '2024-04-24 06:52:43');
+(5, 'App\\Models\\User', 21, 'Laravel', 'b1e64a810bff6d34a7591d407a515d628b8a8f3291a6e3f35f59c9f3b1358697', '[\"*\"]', '2024-04-24 06:52:43', NULL, '2024-04-24 02:32:24', '2024-04-24 06:52:43'),
+(6, 'App\\Models\\User', 21, 'Laravel', '38f12692b1045eacba98298509bf4cf699aa8d3b09638ecd182a16e5eab2cd42', '[\"*\"]', '2024-04-25 05:01:51', NULL, '2024-04-25 04:51:46', '2024-04-25 05:01:51');
 
 -- --------------------------------------------------------
 
@@ -659,10 +660,12 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('0z4hFPXupXzpZLGK8op0kVigWjsAryzZ6GyW8KYa', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieU5QWTYxeEhTSlJ4c3lWakxEM2tkdXc4anE1eXE2a2Z5Q1VSbERxdCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZWdpc3RlciI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713963089),
 ('2kCoIUYEIp4iIzFcTpm2iKs5UfPbzl9sLJQKSNjm', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRU9QdjRWYmhaM3h6aFduTDBuOWdvRVJPV1Ztb2Z6ZWVOVHkzUGI5aCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713943933),
 ('jjF2PoP85srTTqiQhViMiI3dD884swTYJaXLhMNi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSkd1Wk9EMnlyN1ZNdTZUdjRqcGc1Q0pnNTdMeG5NdVNtMG0xN2FCTCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1713943923),
 ('M0MbyyWx4CB2Hqweda5i1uluc4d0JIHmQUNgweCb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiSDBhNnZBa2lJak1lVllwTGpSZTNLV3V6ZzJLbmlFc1A0dWRqM21YaiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1713949074),
-('RYuuHKd5oLeblInkK5CFjMiPHDkXUEGz2lSLYk0f', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmtUc2NSQm9wcWF0U21PbGsybkNkUkdyekVad25weGVjdklxTzdzOSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713953349);
+('RYuuHKd5oLeblInkK5CFjMiPHDkXUEGz2lSLYk0f', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmtUc2NSQm9wcWF0U21PbGsybkNkUkdyekVad25weGVjdklxTzdzOSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713953349),
+('WbUWpLohrl2dwtOs3aCiiZvOis2Py6qorS11Z6ZK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieEpwTjJCd1BmR0RNeEV4YWJYYWVuelRnTG9YYzJwU0NvbXJIY3pMVyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714038657);
 
 -- --------------------------------------------------------
 
@@ -699,6 +702,20 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `us
 CREATE TABLE `user_details` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
+  `suffix` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `date_of_birth` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `zip_code` varchar(255) DEFAULT NULL,
+  `home_phone` varchar(255) DEFAULT NULL,
+  `npi` varchar(255) DEFAULT NULL,
+  `tax_type` varchar(255) DEFAULT NULL,
+  `snn` varchar(255) DEFAULT NULL,
+  `ein` varchar(255) DEFAULT NULL,
+  `epcs_status` varchar(255) DEFAULT NULL,
+  `dea_number` varchar(255) DEFAULT NULL,
+  `nadean` varchar(255) DEFAULT NULL,
   `image` longtext DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -708,8 +725,8 @@ CREATE TABLE `user_details` (
 -- Dumping data for table `user_details`
 --
 
-INSERT INTO `user_details` (`id`, `user_id`, `image`, `created_at`, `updated_at`) VALUES
-(2, 22, NULL, '2024-04-06 11:14:09', '2024-04-06 11:14:09');
+INSERT INTO `user_details` (`id`, `user_id`, `suffix`, `gender`, `date_of_birth`, `country`, `city`, `zip_code`, `home_phone`, `npi`, `tax_type`, `snn`, `ein`, `epcs_status`, `dea_number`, `nadean`, `image`, `created_at`, `updated_at`) VALUES
+(1, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-25 09:58:30', '2024-04-25 09:58:30');
 
 --
 -- Indexes for dumped tables
@@ -980,7 +997,7 @@ ALTER TABLE `medications`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `notes`
@@ -1010,7 +1027,7 @@ ALTER TABLE `patient_encounters`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `physical_exams`
@@ -1052,7 +1069,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_details`
 --
 ALTER TABLE `user_details`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

@@ -43,8 +43,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $detail=new userDetail();
-        $detail->user_id=$user->id;
+        $detail = new userDetail();
+        $detail->user_id = $user->id;
         $detail->save();
 
         event(new Registered($user));
@@ -92,10 +92,7 @@ class RegisteredUserController extends Controller
                 : response()->json(['message' => 'Unable to send reset link'], 422);
         } else {
             return response()->json(['message' => 'We cant find a user with that email address.'], 404);
-
         }
-
-
     }
 
     public function reset_password(Request $request): \Illuminate\Http\JsonResponse
@@ -143,5 +140,18 @@ class RegisteredUserController extends Controller
         $user->save();
         Auth::user()->tokens()->delete();
         return $base->sendResponse($user, 'Password Changed Successfully');
+    }
+
+    public function login_user_details()
+    {
+        $user = User::with('details')->where('id',auth()->user()->id)->first();
+        if ($user != NULL) {
+            return response()->json($user);
+        } else {
+            return response()->json([
+                'code' => false,
+                'message' => 'No User Found',
+            ], 404);
+        }
     }
 }
