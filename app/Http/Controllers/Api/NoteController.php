@@ -41,9 +41,9 @@ class NoteController extends BaseController
         }
 
         // Validate search parameters
-            $validator =   $request->validate([
-                'search' => 'nullable|string',
-            ]);
+        $validator =   $request->validate([
+            'search' => 'nullable|string',
+        ]);
 
 
 

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Problem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Api\BaseController as BaseController;
 
 class ProblemController extends BaseController
 {
@@ -37,22 +38,42 @@ class ProblemController extends BaseController
      */
     public function store(Request $request)
     {
-        $request->validate([
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $validatedData = $request->validate([
+            'patient_id' => 'required|exists:patients,id',
             'diagnosis' => 'required',
-            'cd_description' => 'required',
-            'comments' => 'required',
+            'name' => 'required',
+            'type_id' => 'required|exists:list_options,id',
+            'chronicity_id' => 'exists:list_options,id',
+            'severity_id' => 'exists:list_options,id',
+            'status_id' => 'exists:list_options,id',
+            'onset' => 'nullable|date',
+            'comments' => 'required|nullable',
+            'snowed' => 'nullable',
         ]);
-        $validatedData = $request->all();
         $base = new BaseController();
         try {
-            $validatedData['provider_id'] = auth()->user()->id;
-            $validatedData['patient_id'] = $request->patient_id;
-            $insurance = Problem::create($validatedData);
-            return $base->sendResponse($insurance, 'Problem created successfully');
+            DB::beginTransaction();
+            $problem = new Problem();
+            $problem->provider_id = auth()->user()->id;
+            $problem->patient_id = $validatedData['patient_id'];
+            $problem->diagnosis = $validatedData['diagnosis'];
+            $problem->name = $validatedData['name'];
+            $problem->type_id = $validatedData['type_id'];
+            $problem->chronicity_id = $validatedData['chronicity_id'];
+            $problem->severity_id = $validatedData['severity_id'];
+            $problem->status_id = $validatedData['status_id'];
+            $problem->comments = $validatedData['comments'];
+            $problem->onset = $validatedData['onset'];
+            $problem->snowed = $validatedData['snowed'];
+            $problem->save();
+            DB::commit();
+            return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $contact = [];
-            return $base->sendError($contact, 'Internal Server Error');
+            DB::rollBack();
+            return $base->sendError($problem, $e->getMessage());
         }
     }
 
@@ -77,26 +98,53 @@ class ProblemController extends BaseController
      */
     public function update(Request $request)
     {
-        $request->validate([
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+
+
+        $validatedData = $request->validate([
+            'problem_id' => 'required|exists:problems,id',
             'diagnosis' => 'required',
-            'cd_description' => 'required',
-            'comments' => 'required',
+            'name' => 'required',
+            'type_id' => 'required|exists:list_options,id',
+            'chronicity_id' => 'exists:list_options,id',
+            'severity_id' => 'exists:list_options,id',
+            'status_id' => 'exists:list_options,id',
+            'onset' => 'nullable|date',
+            'comments' => 'required|nullable',
+            'snowed' => 'nullable',
         ]);
-        $validatedData = $request->all();
         $base = new BaseController();
+
         try {
-            $problem = Problem::find($request->problem_id);
-            if ($problem != NULL) {
-                $problem->update($validatedData);
-                return $base->sendResponse($problem, 'Problem updated successfully');
-            } else {
-                $problem = [];
-                return $base->sendError($problem, 'No Record Found');
+            $problem = Problem::FindOrFail($request->problem_id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 'Problem not found'], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+            if ($problem->provider_id !== auth()->user()->id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
             }
+            $problem->diagnosis = $validatedData['diagnosis'];
+            $problem->name = $validatedData['name'];
+            $problem->type_id = $validatedData['type_id'];
+            $problem->chronicity_id = $validatedData['chronicity_id'];
+            $problem->severity_id = $validatedData['severity_id'];
+            $problem->status_id = $validatedData['status_id'];
+            $problem->comments = $validatedData['comments'];
+            $problem->onset = $validatedData['onset'];
+            $problem->snowed = $validatedData['snowed'];
+            $problem->save();
+            DB::commit();
+            return $base->sendResponse($problem, 'Problem updated successfully');
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            DB::rollBack();
             $problem = [];
-            return $base->sendError($problem, 'Internal Server Error');
+            return $base->sendError($problem, $e->getMessage());
         }
     }
 

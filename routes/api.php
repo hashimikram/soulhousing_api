@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\EncounterNoteSectionController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ListOptionController;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
 // Forgot Password
@@ -98,5 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-document', [DocumentController::class, 'update']);
 
     Route::get('/file/{name}', [FileController::class, 'show']);
+    Route::get('/list-options', [ListOptionController::class, 'index']);
+
 
 });
