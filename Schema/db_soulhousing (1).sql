@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2024 at 12:04 PM
+-- Generation Time: Apr 29, 2024 at 10:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_soulhousing`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `allergies`
+--
+
+CREATE TABLE `allergies` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `provider_id` bigint(20) UNSIGNED NOT NULL,
+  `patient_id` bigint(20) UNSIGNED NOT NULL,
+  `allergy_type` bigint(20) UNSIGNED NOT NULL,
+  `reaction` bigint(20) UNSIGNED DEFAULT NULL,
+  `severity` bigint(20) UNSIGNED DEFAULT NULL,
+  `allergy` varchar(255) NOT NULL,
+  `onset_date` varchar(255) DEFAULT NULL,
+  `comments` longtext DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `allergies`
+--
+
+INSERT INTO `allergies` (`id`, `provider_id`, `patient_id`, `allergy_type`, `reaction`, `severity`, `allergy`, `onset_date`, `comments`, `created_at`, `updated_at`) VALUES
+(1, 21, 2, 32, NULL, NULL, 'Hey New Allergy', NULL, NULL, '2024-04-29 03:19:19', '2024-04-29 03:19:19'),
+(2, 21, 2, 2, NULL, 39, 'Hey Updated Field Here', NULL, 'Hey Hey', '2024-04-29 03:36:56', '2024-04-29 03:42:39');
 
 -- --------------------------------------------------------
 
@@ -302,6 +330,88 @@ CREATE TABLE `job_batches` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `list_options`
+--
+
+CREATE TABLE `list_options` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `list_id` varchar(255) NOT NULL,
+  `option_id` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `sequence` varchar(255) NOT NULL DEFAULT '0',
+  `is_default` varchar(255) NOT NULL DEFAULT '0',
+  `option_value` varchar(255) NOT NULL DEFAULT '0',
+  `mapping` varchar(255) DEFAULT NULL,
+  `notes` longtext DEFAULT NULL,
+  `codes` varchar(255) DEFAULT NULL,
+  `toggle_setting_1` varchar(255) DEFAULT NULL,
+  `toggle_setting_2` varchar(255) DEFAULT NULL,
+  `activity` varchar(255) DEFAULT NULL,
+  `subtype` varchar(255) DEFAULT NULL,
+  `edit_options` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `list_options`
+--
+
+INSERT INTO `list_options` (`id`, `list_id`, `option_id`, `title`, `sequence`, `is_default`, `option_value`, `mapping`, `notes`, `codes`, `toggle_setting_1`, `toggle_setting_2`, `activity`, `subtype`, `edit_options`, `created_at`, `updated_at`) VALUES
+(1, 'Type', 'situation', 'Situation', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:49:52', '2024-04-26 07:49:52'),
+(2, 'Type', 'problem', 'Problem', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:50:28', '2024-04-26 07:50:28'),
+(3, 'Type', 'finding_of_functional_performance_and_activity', 'Finding of functional performance and activity', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:51:22', '2024-04-26 07:51:22'),
+(4, 'Type', 'diagnosis_interpretation', 'Diagnosis interpretation', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:51:46', '2024-04-26 07:51:46'),
+(5, 'Type', 'cognitive_function_finding', 'Cognitive function finding', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:52:07', '2024-04-26 07:52:07'),
+(6, 'Type', 'clinical_finding', 'Clinical finding', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:52:27', '2024-04-26 07:52:27'),
+(7, 'Type', 'complaint', 'Complaint', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:52:46', '2024-04-26 07:52:46'),
+(8, 'Type', 'finding_reported_by_subject_or_history_provider', 'Finding reported by subject or history provider', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:53:06', '2024-04-26 07:53:06'),
+(9, 'Type', 'disease', 'Disease', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:53:25', '2024-04-26 07:53:25'),
+(10, 'Chronicity', 'chronic', 'Chronic', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:54:05', '2024-04-26 07:54:05'),
+(11, 'Chronicity', 'acute', 'Acute', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:54:33', '2024-04-26 07:54:33'),
+(12, 'Chronicity', 'self_limiting', 'Self Limiting', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:55:00', '2024-04-26 07:55:00'),
+(13, 'Chronicity', 'intermittent', 'Intermittent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:55:19', '2024-04-26 07:55:19'),
+(14, 'Chronicity', 'recurrent', 'Recurrent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:55:40', '2024-04-26 07:55:40'),
+(15, 'Chronicity', 'distressful', 'Distressful', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:56:01', '2024-04-26 07:56:01'),
+(16, 'Severity', 'unspecified_Severity', 'Unspecified Severity', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:56:35', '2024-04-26 07:56:35'),
+(17, 'Severity', 'severe_persistent', 'Severe Persistent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:57:01', '2024-04-26 07:57:01'),
+(18, 'Severity', 'moderate_persistent', 'Moderate Persistent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:57:26', '2024-04-26 07:57:26'),
+(19, 'Severity', 'mild_persistent', 'Mild Persistent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:57:48', '2024-04-26 07:57:48'),
+(20, 'Severity', 'mild_intermittent', 'Mild Intermittent', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:58:14', '2024-04-26 07:58:14'),
+(21, 'Severity', 'unknown', 'Unknown', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:58:36', '2024-04-26 07:58:36'),
+(22, 'Status', 'unassigned', 'Unassigned', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:59:06', '2024-04-26 07:59:06'),
+(23, 'Status', 'resolved', 'Resolved', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:59:24', '2024-04-26 07:59:24'),
+(24, 'Status', 'improved', 'Improved', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 07:59:43', '2024-04-26 07:59:43'),
+(25, 'Status', 'status_quo', 'Status Quo', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 08:00:06', '2024-04-26 08:00:06'),
+(26, 'Status', 'worse', 'Worse', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 08:00:25', '2024-04-26 08:00:25'),
+(27, 'Status', 'pending_follow_up', 'Pending follow Up', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 08:00:55', '2024-04-26 08:00:55'),
+(28, 'Status', 'erroneous', 'Erroneous', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 08:01:14', '2024-04-26 08:01:14'),
+(29, 'Status', 'duplicate', 'Duplicate', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-26 08:01:33', '2024-04-26 08:01:33'),
+(30, 'Allergy Type', 'general', 'General', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(31, '', '', '', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:37:46', '2024-04-29 07:37:46'),
+(32, 'Allergy Type', 'drug-allergy', 'Drup Allery', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:38:10', '2024-04-29 07:38:10'),
+(33, 'Allergy Type', 'substance', 'Substance/DrugClass', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:38:45', '2024-04-29 07:38:45'),
+(34, 'Reaction', 'arthralgia', 'Arthralgia', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:40:25', '2024-04-29 07:40:25'),
+(35, 'Reaction', 'chills', 'Chills', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:46:48', '2024-04-29 07:47:42'),
+(36, 'Reaction', 'cough', 'Cough', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:46:50', '2024-04-29 07:47:44'),
+(37, 'Reaction', 'fever', 'Fever', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:46:53', '2024-04-29 07:47:46'),
+(38, 'Reaction', 'headache', 'Headache', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:46:56', '2024-04-29 07:47:50'),
+(39, 'Reaction', 'hives', 'Hives', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:46:59', '2024-04-29 07:47:52'),
+(40, 'Reaction', 'malaise', 'Malaisa/fatigue', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:02', '2024-04-29 07:47:54'),
+(41, 'Reaction', 'myalgia', 'Myalgia', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:05', '2024-04-29 07:47:57'),
+(42, 'Raection', 'nasal-congestion', 'Nasal Congestion', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:07', '2024-04-29 07:48:00'),
+(43, 'Reaction', 'nausea', 'Nausea', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:09', '2024-04-29 07:48:02'),
+(44, 'Reaction', 'pain-soreness', 'Pain/Soreness at injection site', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:13', '2024-04-29 07:48:05'),
+(45, 'Reaction', 'rash', 'Rash', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:16', '2024-04-29 07:48:08'),
+(46, 'Reaction', 'rhinorrhea', 'Rhinorrhea', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:18', '2024-04-29 07:48:10'),
+(47, 'Reaction', 'shortness-breath', 'Shortness of breath/difficulty breathing', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:21', '2024-04-29 07:48:14'),
+(48, 'Reaction', 'sore-throat', 'Sore Throat', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:23', '2024-04-29 07:48:16'),
+(49, 'Reaction', 'swelling', 'Swelling', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:26', '2024-04-29 07:48:19'),
+(50, 'Reaction', 'other', 'Other', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:38', '2024-04-29 07:48:21');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `medications`
 --
 
@@ -358,7 +468,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (4, '2024_04_01_063455_create_personal_access_tokens_table', 1),
 (6, '2024_04_01_080823_create_insurances_table', 1),
 (7, '2024_04_01_103901_create_contacts_table', 1),
-(8, '2024_04_01_111829_create_problems_table', 1),
 (9, '2024_04_02_073532_create_floors_table', 1),
 (10, '2024_04_02_073539_create_rooms_table', 1),
 (11, '2024_04_02_073544_create_beds_table', 1),
@@ -373,7 +482,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (27, '2024_04_22_082408_create_physical_exams_table', 9),
 (29, '2024_04_24_072004_create_notes_table', 10),
 (30, '2024_04_24_104358_create_documents_table', 11),
-(31, '2024_04_02_110353_create_user_details_table', 12);
+(31, '2024_04_02_110353_create_user_details_table', 12),
+(32, '2024_04_26_074527_create_list_options_table', 13),
+(33, '2024_04_01_111829_create_problems_table', 14),
+(36, '2024_04_29_074933_create_allergies_table', 15);
 
 -- --------------------------------------------------------
 
@@ -540,7 +652,12 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (3, 'App\\Models\\User', 21, 'Laravel', '11c7a0310d94575347c78331b605b285770cd58130ee70c2e62079e658ecafb0', '[\"*\"]', '2024-04-16 03:40:24', NULL, '2024-04-16 03:15:06', '2024-04-16 03:40:24'),
 (4, 'App\\Models\\User', 21, 'Laravel', '4a591a54e2471205853fbbac42607c7ae3008156fce1bb6f4107c1b0c8a4b6f7', '[\"*\"]', '2024-04-22 01:51:52', NULL, '2024-04-22 01:45:35', '2024-04-22 01:51:52'),
 (5, 'App\\Models\\User', 21, 'Laravel', 'b1e64a810bff6d34a7591d407a515d628b8a8f3291a6e3f35f59c9f3b1358697', '[\"*\"]', '2024-04-24 06:52:43', NULL, '2024-04-24 02:32:24', '2024-04-24 06:52:43'),
-(6, 'App\\Models\\User', 21, 'Laravel', '38f12692b1045eacba98298509bf4cf699aa8d3b09638ecd182a16e5eab2cd42', '[\"*\"]', '2024-04-25 05:01:51', NULL, '2024-04-25 04:51:46', '2024-04-25 05:01:51');
+(6, 'App\\Models\\User', 21, 'Laravel', '38f12692b1045eacba98298509bf4cf699aa8d3b09638ecd182a16e5eab2cd42', '[\"*\"]', '2024-04-25 05:01:51', NULL, '2024-04-25 04:51:46', '2024-04-25 05:01:51'),
+(7, 'App\\Models\\User', 21, 'Laravel', 'eb26f83e1d588c259fd89a094de980ce235c46157d18363a98603c2d8c0826ae', '[\"*\"]', '2024-04-26 05:21:35', NULL, '2024-04-26 03:10:26', '2024-04-26 05:21:35'),
+(8, 'App\\Models\\User', 21, 'Laravel', '98414c125a927b80a1f62aed037a261f1e59d5be09b17f5b381f4ea3d723f3b8', '[\"*\"]', NULL, NULL, '2024-04-29 01:51:03', '2024-04-29 01:51:03'),
+(9, 'App\\Models\\User', 21, 'Laravel', '4aec56065f4223d34c42020db3b7bad400e69af84ed1dae406ebe450b9382a35', '[\"*\"]', '2024-04-29 02:14:05', NULL, '2024-04-29 01:58:52', '2024-04-29 02:14:05'),
+(10, 'App\\Models\\User', 21, 'Laravel', '77b073dc4b15094b1131b76af0e37791bf5efc8cc95e195ef690eaea1deb4c9f', '[\"*\"]', NULL, NULL, '2024-04-29 03:16:31', '2024-04-29 03:16:31'),
+(11, 'App\\Models\\User', 21, 'Laravel', '1dd51c284c0bd82e1532d574f26a5523006d757b37489fc1f56e73499186cfaf', '[\"*\"]', '2024-04-29 03:42:39', NULL, '2024-04-29 03:16:34', '2024-04-29 03:42:39');
 
 -- --------------------------------------------------------
 
@@ -585,19 +702,27 @@ CREATE TABLE `problems` (
   `provider_id` bigint(20) UNSIGNED NOT NULL,
   `patient_id` bigint(20) UNSIGNED NOT NULL,
   `diagnosis` longtext NOT NULL,
-  `cd_description` longtext NOT NULL,
-  `select_1` varchar(255) DEFAULT NULL,
-  `select_2` varchar(255) DEFAULT NULL,
-  `select_3` varchar(255) DEFAULT NULL,
-  `select_4` varchar(255) DEFAULT NULL,
-  `select_5` varchar(255) DEFAULT NULL,
+  `name` longtext NOT NULL,
+  `type_id` bigint(20) UNSIGNED NOT NULL,
+  `chronicity_id` bigint(20) UNSIGNED NOT NULL,
+  `severity_id` bigint(20) UNSIGNED NOT NULL,
+  `status_id` bigint(20) UNSIGNED NOT NULL,
   `comments` longtext NOT NULL,
-  `icd10` varchar(255) DEFAULT NULL,
+  `onset` varchar(255) DEFAULT NULL,
   `snowed` varchar(255) DEFAULT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `problems`
+--
+
+INSERT INTO `problems` (`id`, `provider_id`, `patient_id`, `diagnosis`, `name`, `type_id`, `chronicity_id`, `severity_id`, `status_id`, `comments`, `onset`, `snowed`, `status`, `created_at`, `updated_at`) VALUES
+(1, 21, 2, 'New Disease Found', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', '30-12-2003', NULL, '1', '2024-04-26 05:13:55', '2024-04-26 05:13:55'),
+(2, 21, 2, 'New Disease Found Edit', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', '30-12-2003', '5435', '1', '2024-04-26 05:14:14', '2024-04-26 05:20:34'),
+(3, 21, 2, 'New Disease Found', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', NULL, '5435', '1', '2024-04-26 05:21:36', '2024-04-26 05:21:36');
 
 -- --------------------------------------------------------
 
@@ -660,12 +785,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('0z4hFPXupXzpZLGK8op0kVigWjsAryzZ6GyW8KYa', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieU5QWTYxeEhTSlJ4c3lWakxEM2tkdXc4anE1eXE2a2Z5Q1VSbERxdCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZWdpc3RlciI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713963089),
-('2kCoIUYEIp4iIzFcTpm2iKs5UfPbzl9sLJQKSNjm', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRU9QdjRWYmhaM3h6aFduTDBuOWdvRVJPV1Ztb2Z6ZWVOVHkzUGI5aCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713943933),
-('jjF2PoP85srTTqiQhViMiI3dD884swTYJaXLhMNi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSkd1Wk9EMnlyN1ZNdTZUdjRqcGc1Q0pnNTdMeG5NdVNtMG0xN2FCTCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1713943923),
-('M0MbyyWx4CB2Hqweda5i1uluc4d0JIHmQUNgweCb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiSDBhNnZBa2lJak1lVllwTGpSZTNLV3V6ZzJLbmlFc1A0dWRqM21YaiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1713949074),
-('RYuuHKd5oLeblInkK5CFjMiPHDkXUEGz2lSLYk0f', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidmtUc2NSQm9wcWF0U21PbGsybkNkUkdyekVad25weGVjdklxTzdzOSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1713953349),
-('WbUWpLohrl2dwtOs3aCiiZvOis2Py6qorS11Z6ZK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieEpwTjJCd1BmR0RNeEV4YWJYYWVuelRnTG9YYzJwU0NvbXJIY3pMVyI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714038657);
+('02p0CPpUiaYy9b0PMfEv4k4bd408WHG9pxBZmJX8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUUNnNncxazBraTI3bDNYM3k4SUN2OFE0anN0enE4WXpjNjVDMDJ0aSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714125154),
+('DlFvODhu7bhW0ejCcXyNOERJEnDlZFRGDjZDuakF', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUGcwWm1BSHNCdWZpanNLRGtsWmEzQWVnRFJKRjBOSTlWUjdPbnNwSCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714380019),
+('luGuGZkCSOVzsFZGzq88iNfbbDBzoBKtTd35M3V2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYUtvc2NIejNKeGFGbmdPbW94SFZlcWlhTFhQenk1ZkNvWVFtTW5XNSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6NDUwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714373920);
 
 -- --------------------------------------------------------
 
@@ -690,7 +812,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `user_type`, `remember_token`, `created_at`, `updated_at`) VALUES
-(21, 'Doctor', 'provider@gmail.com', NULL, '$2y$12$2dT2vzAcs8IwHKJND6o6bOGg2mwmw26n4wsNUqnVm6lZySlfPWJZi', 'provider', NULL, '2024-04-06 08:23:25', '2024-04-06 03:23:54'),
+(21, 'new Name', 'provider@gmail.com', NULL, '$2y$12$2dT2vzAcs8IwHKJND6o6bOGg2mwmw26n4wsNUqnVm6lZySlfPWJZi', 'provider', NULL, '2024-04-06 08:23:25', '2024-04-29 01:59:01'),
 (22, 'abc', 'abc@gmail.com', NULL, '$2y$12$0ZQP.h4WkN1xL4FQknk4D.SGwaqdsbnT1Qg.rSrjtlgKWKVxFCzBy', 'provider', NULL, '2024-04-06 11:14:08', '2024-04-06 11:14:08');
 
 -- --------------------------------------------------------
@@ -702,6 +824,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `us
 CREATE TABLE `user_details` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `middle_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
   `suffix` varchar(255) DEFAULT NULL,
   `gender` varchar(255) DEFAULT NULL,
   `date_of_birth` varchar(255) DEFAULT NULL,
@@ -725,12 +850,23 @@ CREATE TABLE `user_details` (
 -- Dumping data for table `user_details`
 --
 
-INSERT INTO `user_details` (`id`, `user_id`, `suffix`, `gender`, `date_of_birth`, `country`, `city`, `zip_code`, `home_phone`, `npi`, `tax_type`, `snn`, `ein`, `epcs_status`, `dea_number`, `nadean`, `image`, `created_at`, `updated_at`) VALUES
-(1, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-25 09:58:30', '2024-04-25 09:58:30');
+INSERT INTO `user_details` (`id`, `user_id`, `title`, `middle_name`, `last_name`, `suffix`, `gender`, `date_of_birth`, `country`, `city`, `zip_code`, `home_phone`, `npi`, `tax_type`, `snn`, `ein`, `epcs_status`, `dea_number`, `nadean`, `image`, `created_at`, `updated_at`) VALUES
+(1, 21, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-25 09:58:30', '2024-04-25 09:58:30');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `allergies`
+--
+ALTER TABLE `allergies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `allergies_provider_id_foreign` (`provider_id`),
+  ADD KEY `allergies_patient_id_foreign` (`patient_id`),
+  ADD KEY `allergies_allergy_type_foreign` (`allergy_type`),
+  ADD KEY `allergies_reaction_foreign` (`reaction`),
+  ADD KEY `allergies_severity_foreign` (`severity`);
 
 --
 -- Indexes for table `beds`
@@ -810,6 +946,12 @@ ALTER TABLE `jobs`
 -- Indexes for table `job_batches`
 --
 ALTER TABLE `job_batches`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `list_options`
+--
+ALTER TABLE `list_options`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -895,7 +1037,11 @@ ALTER TABLE `pins`
 ALTER TABLE `problems`
   ADD PRIMARY KEY (`id`),
   ADD KEY `problems_provider_id_foreign` (`provider_id`),
-  ADD KEY `problems_patient_id_foreign` (`patient_id`);
+  ADD KEY `problems_patient_id_foreign` (`patient_id`),
+  ADD KEY `problems_type_id_foreign` (`type_id`),
+  ADD KEY `problems_chronicity_id_foreign` (`chronicity_id`),
+  ADD KEY `problems_severity_id_foreign` (`severity_id`),
+  ADD KEY `problems_status_id_foreign` (`status_id`);
 
 --
 -- Indexes for table `review_of_systems`
@@ -938,6 +1084,12 @@ ALTER TABLE `user_details`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `allergies`
+--
+ALTER TABLE `allergies`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `beds`
@@ -988,6 +1140,12 @@ ALTER TABLE `jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `list_options`
+--
+ALTER TABLE `list_options`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
 -- AUTO_INCREMENT for table `medications`
 --
 ALTER TABLE `medications`
@@ -997,7 +1155,7 @@ ALTER TABLE `medications`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `notes`
@@ -1027,7 +1185,7 @@ ALTER TABLE `patient_encounters`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `physical_exams`
@@ -1045,7 +1203,7 @@ ALTER TABLE `pins`
 -- AUTO_INCREMENT for table `problems`
 --
 ALTER TABLE `problems`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `review_of_systems`
@@ -1074,6 +1232,16 @@ ALTER TABLE `user_details`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `allergies`
+--
+ALTER TABLE `allergies`
+  ADD CONSTRAINT `allergies_allergy_type_foreign` FOREIGN KEY (`allergy_type`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `allergies_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `allergies_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `allergies_reaction_foreign` FOREIGN KEY (`reaction`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `allergies_severity_foreign` FOREIGN KEY (`severity`) REFERENCES `list_options` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `beds`
@@ -1171,8 +1339,12 @@ ALTER TABLE `pins`
 -- Constraints for table `problems`
 --
 ALTER TABLE `problems`
+  ADD CONSTRAINT `problems_chronicity_id_foreign` FOREIGN KEY (`chronicity_id`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `problems_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `problems_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `problems_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `problems_severity_id_foreign` FOREIGN KEY (`severity_id`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `problems_status_id_foreign` FOREIGN KEY (`status_id`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `problems_type_id_foreign` FOREIGN KEY (`type_id`) REFERENCES `list_options` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `review_of_systems`

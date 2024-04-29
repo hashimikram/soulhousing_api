@@ -15,7 +15,10 @@ class ProblemController extends BaseController
      */
     public function index($patient_id)
     {
-        $problem = Problem::where('patient_id', $patient_id)->orderBy('created_at', 'DESC')->get();
+        $problem = Problem::with(['type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title'])
+        ->where('patient_id', $patient_id)
+        ->orderBy('created_at', 'DESC')
+        ->get();
         $base = new BaseController();
         if (count($problem) > 0) {
             return $base->sendResponse($problem, 'Problems Data');

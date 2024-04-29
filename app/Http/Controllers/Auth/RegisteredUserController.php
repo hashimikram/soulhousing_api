@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Termwind\Components\Raw;
 
 class RegisteredUserController extends Controller
 {
@@ -144,7 +145,8 @@ class RegisteredUserController extends Controller
 
     public function login_user_details()
     {
-        $user = User::with('details')->where('id',auth()->user()->id)->first();
+        $user = User::with('details')->where('id', auth()->user()->id)->select('id', 'name as first_name','email', 'email_verified_at', 'user_type', 'created_at', 'updated_at')->first();
+
         if ($user != NULL) {
             return response()->json($user);
         } else {
@@ -153,5 +155,32 @@ class RegisteredUserController extends Controller
                 'message' => 'No User Found',
             ], 404);
         }
+    }
+
+    public function  update_profile(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $user->name = $request->name;
+        $user->save();
+        $userDetail = userDetail::where('user_id', auth()->user()->id)->first();
+        $user->title=$request->title;
+        $userDetail->middle_name=$request->middle_name;
+        $userDetail->last_name=$request->last_name;
+        $userDetail->suffix = $request->suffix;
+        $userDetail->gender = $request->gender;
+        $userDetail->date_of_birth = $request->date_of_birth;
+        $userDetail->country = $request->country;
+        $userDetail->city = $request->city;
+        $userDetail->zip_code = $request->zip_code;
+        $userDetail->home_phone = $request->home_phone;
+        $userDetail->npi = $request->npi;
+        $userDetail->tax_type = $request->tax_type;
+        $userDetail->snn = $request->snn;
+        $userDetail->ein = $request->ein;
+        $userDetail->epcs_status = $request->epcs_status;
+        $userDetail->dea_number = $request->dea_number;
+        $userDetail->nadean = $request->nadean;
+        $userDetail->save();
+        return response()->json('Profile Updated');
     }
 }

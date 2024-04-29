@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AllergyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PinController;
 use App\Http\Controllers\Api\NoteController;
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [RegisteredUserController::class, 'destroy']);
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
     Route::get('/login-user-details', [RegisteredUserController::class, 'login_user_details']);
+    Route::post('/update-profile', [RegisteredUserController::class, 'update_profile']);
 
 
     // Patient CRUD
@@ -97,6 +99,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/store-document', [DocumentController::class, 'store']);
     Route::delete('/document/{id}', [DocumentController::class, 'destroy']);
     Route::post('/update-document', [DocumentController::class, 'update']);
+
+    // Allergy CRUD
+    Route::post('/store-allergy', [AllergyController::class, 'store']);
+    Route::get('/allergies/{patient_id}', [AllergyController::class, 'index']);
+    Route::get('/single-allergy/{id}', [AllergyController::class, 'show']);
+    Route::delete('/delete-allergy/{id}', [AllergyController::class, 'destroy']);
+    Route::post('/update-allergy', [AllergyController::class, 'update']);
+
+
 
     Route::get('/file/{name}', [FileController::class, 'show']);
     Route::get('/list-options', [ListOptionController::class, 'index']);

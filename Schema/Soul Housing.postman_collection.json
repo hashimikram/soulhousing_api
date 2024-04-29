@@ -1381,7 +1381,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "7|1N37skbDtcvXS88FHD30RRx6Kec9db9yaj8Ou9DL2b838d78",
 									"type": "string"
 								}
 							]
@@ -1395,64 +1395,13 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "patient_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "diagnosis",
-									"value": "Hello World",
-									"type": "text"
-								},
-								{
-									"key": "cd_description",
-									"value": "Description Full Of Hello World",
-									"type": "text"
-								},
-								{
-									"key": "select_1",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_2",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_3",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_4",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_5",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "comments",
-									"value": "Nine Leaves",
-									"type": "text"
-								},
-								{
-									"key": "icd10",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "snowed",
-									"value": "",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\":\"2\",\r\n    \"diagnosis\":\"New Disease Found\",\r\n    \"name\":\"Kevin Thomas\",\r\n    \"type_id\":\"6\",\r\n    \"chronicity_id\":\"5\",\r\n    \"severity_id\":\"12\",\r\n    \"status_id\":\"14\",\r\n    \"onset\":\"30-12-2003\",\r\n    \"snowed\":\"5435\",\r\n    \"comments\":\"Hey New Comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/add-problem",
@@ -1474,7 +1423,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "7|1N37skbDtcvXS88FHD30RRx6Kec9db9yaj8Ou9DL2b838d78",
 									"type": "string"
 								}
 							]
@@ -1488,64 +1437,13 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "problem_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "diagnosis",
-									"value": "Hello World Eidt",
-									"type": "text"
-								},
-								{
-									"key": "cd_description",
-									"value": "Description Full Of Hello World Edit",
-									"type": "text"
-								},
-								{
-									"key": "select_1",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_2",
-									"value": "Edit",
-									"type": "text"
-								},
-								{
-									"key": "select_3",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_4",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_5",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "comments",
-									"value": "Nine Leaves",
-									"type": "text"
-								},
-								{
-									"key": "icd10",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "snowed",
-									"value": "",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"problem_id\":\"2\",\r\n    \"diagnosis\":\"New Disease Found Edit\",\r\n    \"name\":\"Kevin Thomas\",\r\n    \"type_id\":\"6\",\r\n    \"chronicity_id\":\"5\",\r\n    \"severity_id\":\"12\",\r\n    \"status_id\":\"14\",\r\n    \"onset\":\"30-12-2003\",\r\n    \"snowed\":\"5435\",\r\n    \"comments\":\"Hey New Comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/update-problem",
@@ -1567,7 +1465,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "122|POLpvlmS0Dg2IU2m70gSGwthwEcgLDqVKZJWTxrC182c1e91",
 									"type": "string"
 								}
 							]
@@ -1581,13 +1479,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/get-problem/2",
+							"raw": "{{url}}/get-problem/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"get-problem",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -2865,7 +2763,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"value": "87|quIaucLmJtIQSLFhxJ9li7538DFbX260tmDSloNM3c1b0c49",
 									"type": "string"
 								}
 							]
@@ -2879,13 +2777,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/notes/2",
+							"raw": "{{url}}/notes/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"notes",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -3257,6 +3155,259 @@
 			]
 		},
 		{
+			"name": "Allery",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy_type",
+									"value": "32",
+									"type": "text"
+								},
+								{
+									"key": "allergy",
+									"value": "Hey New Allergy",
+									"type": "text"
+								},
+								{
+									"key": "reaction_id",
+									"value": "36",
+									"type": "text"
+								},
+								{
+									"key": "severity_id",
+									"value": "39",
+									"type": "text"
+								},
+								{
+									"key": "onset_date",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "comments",
+									"value": "Hey Hey",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/store-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store-allergy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Allergies (2 is the Patient ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/allergies/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"allergies",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single Allergy (2 is the Allergy ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/single-allergy/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"single-allergy",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Allergy (2 is the Allergy ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete-allergy/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete-allergy",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Allergy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy_type",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy",
+									"value": "Hey Updated Field Here",
+									"type": "text"
+								},
+								{
+									"key": "reaction_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "severity_id",
+									"value": "39",
+									"type": "text"
+								},
+								{
+									"key": "onset_date",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "comments",
+									"value": "Hey Hey",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-allergy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Login",
 			"request": {
 				"method": "POST",
@@ -3537,7 +3688,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "6|tFn5oVjOpAXDWyyGQ3zSYsRkZnp5Fo2aYPBkFDDj33435867",
+							"value": "125|i0ZM0Sy3AiOgjcEaXOEZHLswY49oM64Hzq9bIRWxbe39801c",
 							"type": "string"
 						}
 					]
@@ -3557,6 +3708,82 @@
 					],
 					"path": [
 						"login-user-details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Options",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "98|n1Fg8gyo6eLmtSgPezoSJLIFlzEZ8B92d7cOQRcY95dbd27c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/list-options",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"list-options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "9|Lzp7txCnwtLkBcUmC9HvjzUsMBz0aTFwXOKPZKK6cfe91d87",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "new Name",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/update-profile",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"update-profile"
 					]
 				}
 			},
