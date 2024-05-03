@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "5e0715f9-6990-49da-91b4-f96a68a9e106",
+		"_postman_id": "92be3ddb-078e-49f4-ae8e-de8e755ecf23",
 		"name": "Soul Housing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26445050",
-		"_collection_link": "https://solar-spaceship-415824.postman.co/workspace/DaTech~55f7002d-2cb5-4c2e-84f5-292df04e8a96/collection/26445050-5e0715f9-6990-49da-91b4-f96a68a9e106?action=share&source=collection_link&creator=26445050"
+		"_exporter_id": "26445050"
 	},
 	"item": [
 		{
@@ -28,7 +27,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "6633be44-0f53-46f2-a42a-869e7aacc843"
 							}
 						],
 						"body": {
@@ -171,7 +171,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "2df1eb5e-e0d3-406b-aacb-2ab0e178c2bb"
 							}
 						],
 						"body": {
@@ -319,7 +320,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "f7e344a1-3b71-4fa7-817d-8c412fd25a1e"
 							}
 						],
 						"body": {
@@ -377,7 +379,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "e1d2d6a9-23ba-4e02-94fa-20e5123380f3"
 							}
 						],
 						"url": {
@@ -410,7 +413,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "fbc163c7-401f-4632-806c-dc6820477f07"
 							}
 						],
 						"url": {
@@ -444,7 +448,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "8612d4d2-a07d-4516-80a5-1c09854d428c"
 							}
 						],
 						"url": {
@@ -455,6 +460,49 @@
 							"path": [
 								"patient-detail",
 								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Patient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "43eb5d3f-ef62-4cda-9d72-9778de215003"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search_text",
+									"value": "Sadiqabad",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-patient",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-patient"
 							]
 						}
 					},
@@ -483,7 +531,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "cddf7862-97fe-4c78-907f-1ee410f51201"
 							}
 						],
 						"body": {
@@ -661,7 +710,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "4b1f6717-9bb7-4976-a346-2c84507dadd2"
 							}
 						],
 						"body": {
@@ -839,7 +889,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "087df518-f123-482a-a7be-6c3e543ef02a"
 							}
 						],
 						"url": {
@@ -873,7 +924,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "9fd6c48d-abe3-4696-987e-993e48477aca"
 							}
 						],
 						"url": {
@@ -912,7 +964,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "aaaf672d-de55-428d-999d-f0f89472b222"
 							}
 						],
 						"body": {
@@ -1115,7 +1168,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "e4a3fb3c-f4f5-4801-a96b-89bb476fb946"
 							}
 						],
 						"body": {
@@ -1318,7 +1372,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "740ce78e-0c95-4e28-a737-7ab13b4761ad"
 							}
 						],
 						"url": {
@@ -1352,7 +1407,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "2b38ae6b-25e6-4a3f-b43f-97b22d0322aa"
 							}
 						],
 						"url": {
@@ -1391,7 +1447,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "c5f23f09-d8e3-4772-b8df-7d011001a9aa"
 							}
 						],
 						"body": {
@@ -1433,7 +1490,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "8dcdbbce-c135-49c0-850e-167d59fdfff8"
 							}
 						],
 						"body": {
@@ -1475,7 +1533,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "ae3663a0-5c7d-4ea0-bbd7-07fdaa4db7bb"
 							}
 						],
 						"url": {
@@ -1509,7 +1568,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "bf59496d-539c-4e75-9761-83dcddc899de"
 							}
 						],
 						"url": {
@@ -1520,6 +1580,54 @@
 							"path": [
 								"delete-problem",
 								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Problem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "f9807311-1d02-4941-acbc-cafeb7a7d491"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Self Limiting",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-problem",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-problem"
 							]
 						}
 					},
@@ -1538,7 +1646,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"value": "190|LyFy8X9tpVwGFcJG4pBwLj4nMYcuLB3WE1FKUeFd0c1d6745",
 									"type": "string"
 								}
 							]
@@ -1548,12 +1656,12 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"uuid": "e04b3737-0cfa-4c76-9329-700cd0b12596"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"floor_title\": \"Floor 1\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 1\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 10:00:00\",\r\n                        \"booked_at\": \"2024-04-22 11:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 12:00:00\",\r\n                        \"booked_at\": \"2024-04-22 13:00:00\"\r\n                    }\r\n                ]\r\n            },\r\n            {\r\n                \"room_title\": \"Room 2\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 14:00:00\",\r\n                        \"booked_at\": \"2024-04-22 15:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 16:00:00\",\r\n                        \"booked_at\": \"2024-04-22 17:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"floor_title\": \"Floor 2\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 3\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 18:00:00\",\r\n                        \"booked_at\": \"2024-04-22 19:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"occupied_at\": \"2024-04-22 20:00:00\",\r\n                        \"booked_at\": \"2024-04-22 21:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n]\r\n",
+							"raw": "[\r\n    {\r\n        \"floor_title\": \"Floor 1\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 1\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 10:00:00\",\r\n                        \"booked_at\": \"2024-04-22 11:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Hydra, Water\",\r\n                        \"occupied_at\": \"2024-04-22 12:00:00\",\r\n                        \"booked_at\": \"2024-04-22 13:00:00\"\r\n                    }\r\n                ]\r\n            },\r\n            {\r\n                \"room_title\": \"Room 2\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 14:00:00\",\r\n                        \"booked_at\": \"2024-04-22 15:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 16:00:00\",\r\n                        \"booked_at\": \"2024-04-22 17:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"floor_title\": \"Floor 2\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 3\",\r\n                \"beds\": [\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Blood\",\r\n                        \"occupied_at\": \"2024-04-22 18:00:00\",\r\n                        \"booked_at\": \"2024-04-22 19:00:00\"\r\n                    },\r\n                    {\r\n                        \"patient_id\": 1,\r\n                        \"comments\": \"Oxygen\",\r\n                        \"occupied_at\": \"2024-04-22 20:00:00\",\r\n                        \"booked_at\": \"2024-04-22 21:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1580,7 +1688,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "190|LyFy8X9tpVwGFcJG4pBwLj4nMYcuLB3WE1FKUeFd0c1d6745",
 									"type": "string"
 								}
 							]
@@ -1590,7 +1698,7 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"uuid": "b27d961a-7c74-465e-98ee-6e5f6ca3fd48"
 							}
 						],
 						"url": {
@@ -1616,7 +1724,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "190|LyFy8X9tpVwGFcJG4pBwLj4nMYcuLB3WE1FKUeFd0c1d6745",
 									"type": "string"
 								}
 							]
@@ -1626,7 +1734,7 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"uuid": "1e217496-41bb-4d7d-9bc0-e34591c262f2"
 							}
 						],
 						"body": {
@@ -1634,13 +1742,13 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{url}}/rooms-beds/8",
+							"raw": "{{url}}/rooms-beds/29",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"rooms-beds",
-								"8"
+								"29"
 							]
 						}
 					},
@@ -1669,7 +1777,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "84b148d8-e3cf-45a9-96e3-992865f83ab8"
 							}
 						],
 						"body": {
@@ -1727,7 +1836,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "9e97491f-d9b8-4c13-99d3-87d25a0f2b5e"
 							}
 						],
 						"url": {
@@ -1761,7 +1871,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "9572b054-8fdf-4324-860f-8b06456d2629"
 							}
 						],
 						"body": {
@@ -1909,7 +2020,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "7309fdf4-f8b2-4f30-846f-2afdcd242608"
 							}
 						],
 						"body": {
@@ -2057,7 +2169,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "d99b34b2-b518-46e2-9cc7-d8c37244cf1d"
 							}
 						],
 						"url": {
@@ -2096,7 +2209,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "6636896f-09f7-489f-b4f4-572950e61b04"
 							}
 						],
 						"body": {
@@ -2138,7 +2252,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "474ae8ec-e5f7-45f4-9b37-627cdefa700b"
 							}
 						],
 						"body": {
@@ -2180,7 +2295,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "fb28988d-2303-44fd-895c-b0b514654adf"
 							}
 						],
 						"url": {
@@ -2217,7 +2333,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "9b6c4bb1-715a-478a-820a-1f029d5e93b4"
 							}
 						],
 						"body": {
@@ -2255,7 +2372,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "61285102-b051-4d79-b892-5e0d41c7b0ba"
 							}
 						],
 						"url": {
@@ -2289,7 +2407,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "9e870d78-5418-4bc4-87a9-c26d084c3051"
 							}
 						],
 						"body": {
@@ -2342,7 +2461,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "b1297c49-66a2-4017-a448-8bd0d64c2fcf"
 							}
 						],
 						"body": {
@@ -2500,7 +2620,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "a817857f-7119-4e3b-80d3-f22a32319068"
 							}
 						],
 						"body": {
@@ -2658,7 +2779,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "39e3c655-3b20-4438-9473-c84b15ecabb9"
 							}
 						],
 						"url": {
@@ -2692,7 +2814,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "a6851e0a-88e4-4399-812e-8eabae96dde8"
 							}
 						],
 						"url": {
@@ -2731,7 +2854,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "764751a3-288f-422c-907c-d90c07ac0acc"
 							}
 						],
 						"body": {
@@ -2773,7 +2897,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "d7330d1b-173a-4134-9fcf-8e16b15b91d7"
 							}
 						],
 						"url": {
@@ -2807,7 +2932,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "fa8dd8ec-c550-47ce-9231-6875512265a4"
 							}
 						],
 						"url": {
@@ -2841,7 +2967,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "2c780d3e-8fc9-4819-a4c0-4abbffde5e7d"
 							}
 						],
 						"body": {
@@ -2884,7 +3011,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "3252a911-ebc1-4afb-8ed0-6a60dd1e8873"
 							}
 						],
 						"url": {
@@ -2918,7 +3046,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "cd0ac7df-1ec9-4499-a665-4cb77461f94b"
 							}
 						],
 						"body": {
@@ -2956,7 +3085,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"value": "167|XdtkuKeXcMoCYZnb3LsiHG1kd9pt6L2sM1i8R4t507ef47cd",
 									"type": "string"
 								}
 							]
@@ -2966,7 +3095,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "30386471-216f-4471-8a51-8ace1b26e899"
 							}
 						],
 						"body": {
@@ -3034,7 +3164,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "907d90fa-ccf1-4e13-add5-bd032a35440e"
 							}
 						],
 						"url": {
@@ -3068,7 +3199,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "8077727f-7a71-40be-b307-623c253b65a6"
 							}
 						],
 						"url": {
@@ -3102,7 +3234,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "972daa89-f367-4d99-8968-dfe828a2be7f"
 							}
 						],
 						"body": {
@@ -3151,21 +3284,16 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Allery",
-			"item": [
+				},
 				{
-					"name": "Store",
+					"name": "Search Document",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
 									"type": "string"
 								}
 							]
@@ -3175,7 +3303,61 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"uuid": "f66f46be-d63f-44a9-99f0-86025cf01519"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Description",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-document"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Allergy",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "126|x9BEJLMjIo5uJbQMmUzVmkSyuwA6iNWmLf3TmiF427f9c19e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text",
+								"uuid": "0e25cc01-2cc6-4b7b-a6cd-43eacf5b6c1a"
 							}
 						],
 						"body": {
@@ -3238,7 +3420,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"value": "126|x9BEJLMjIo5uJbQMmUzVmkSyuwA6iNWmLf3TmiF427f9c19e",
 									"type": "string"
 								}
 							]
@@ -3248,7 +3430,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "d6ffa161-f675-4a03-bb20-2d531104b29e"
 							}
 						],
 						"url": {
@@ -3282,7 +3465,8 @@
 							{
 								"key": "Accept",
 								"value": "application/vnd.api+json",
-								"type": "text"
+								"type": "text",
+								"uuid": "6478588c-dad8-409c-ac25-ca43a22e713f"
 							}
 						],
 						"url": {
@@ -3316,7 +3500,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "fc7b646e-3fce-4ffa-a08d-4e0b70867ffb"
 							}
 						],
 						"url": {
@@ -3350,7 +3535,8 @@
 							{
 								"key": "Accept",
 								"value": "application/json",
-								"type": "text"
+								"type": "text",
+								"uuid": "62f94f46-c41b-45ba-8ca6-3bc73352d871"
 							}
 						],
 						"body": {
@@ -3404,6 +3590,54 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search Allergy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "86b8302e-b2a9-4f2f-a422-beacf7da7eb7"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Drup Allery das da dsa dsad a",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-allergy"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3415,7 +3649,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "71f2a00d-25d2-4d3e-821f-8c7f2cc88ca9"
 					}
 				],
 				"body": {
@@ -3453,7 +3688,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "cd000fcc-9f47-48b0-937f-88ea76f83e97"
 					}
 				],
 				"body": {
@@ -3486,7 +3722,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "27372414-a724-4ec2-8ff7-d15fde958f4a"
 					}
 				],
 				"body": {
@@ -3544,7 +3781,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "63d03f85-3519-4e01-a125-5bb7ee816ed7"
 					}
 				],
 				"url": {
@@ -3577,7 +3815,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "48e5ea58-8d6b-45f8-8e53-c3bbbd8d1c36"
 					}
 				],
 				"body": {
@@ -3630,7 +3869,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "97e4a051-a1ae-42b0-94de-72d214a1f31e"
 					}
 				],
 				"url": {
@@ -3664,7 +3904,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "d6da806f-fae1-40bc-9a99-c0d22dfc4f07"
 					}
 				],
 				"url": {
@@ -3688,7 +3929,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "125|i0ZM0Sy3AiOgjcEaXOEZHLswY49oM64Hzq9bIRWxbe39801c",
+							"value": "129|5ltfXSCVV3anzAC0mTXiERFtpnBfK3P9D7KrkG3D205ab726",
 							"type": "string"
 						}
 					]
@@ -3698,7 +3939,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "0cf81c48-dbd8-49b9-b9a8-5f1227053c9c"
 					}
 				],
 				"url": {
@@ -3731,7 +3973,8 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "da8ca832-360f-477b-889f-6c7ebc420de0"
 					}
 				],
 				"url": {
@@ -3754,7 +3997,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "9|Lzp7txCnwtLkBcUmC9HvjzUsMBz0aTFwXOKPZKK6cfe91d87",
+							"value": "129|5ltfXSCVV3anzAC0mTXiERFtpnBfK3P9D7KrkG3D205ab726",
 							"type": "string"
 						}
 					]
@@ -3764,15 +4007,106 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"uuid": "f5ba9023-ab03-4a7c-be23-7bacdd81eb2a"
 					}
 				],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "name",
-							"value": "new Name",
+							"key": "first_name",
+							"value": "Usama",
+							"type": "text"
+						},
+						{
+							"key": "middle_name",
+							"value": "Sami",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "Akhtar",
+							"type": "text"
+						},
+						{
+							"key": "suffix",
+							"value": "77623",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "Male",
+							"type": "text"
+						},
+						{
+							"key": "date_of_birth",
+							"value": "03-1-2003",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "Pakistan",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Sadqiabad",
+							"type": "text"
+						},
+						{
+							"key": "zip_code",
+							"value": "4642",
+							"type": "text"
+						},
+						{
+							"key": "home_phone",
+							"value": "030012345678",
+							"type": "text"
+						},
+						{
+							"key": "npi",
+							"value": "op",
+							"type": "text"
+						},
+						{
+							"key": "tax_type",
+							"value": "maincash",
+							"type": "text"
+						},
+						{
+							"key": "snn",
+							"value": "4389",
+							"type": "text"
+						},
+						{
+							"key": "ein",
+							"value": "Winner",
+							"type": "text"
+						},
+						{
+							"key": "epcs_status",
+							"value": "Loser",
+							"type": "text"
+						},
+						{
+							"key": "dea_number",
+							"value": "483247289",
+							"type": "text"
+						},
+						{
+							"key": "nadean",
+							"value": "sseqrwre",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "MR",
 							"type": "text"
 						}
 					]
