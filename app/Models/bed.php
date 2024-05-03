@@ -11,6 +11,8 @@ class bed extends Model
     protected $fillable=[
         'room_id',
         'patient_id',
+        'comments',
+        'bed_no',
         'occupied_at',
         'booked_till'
     ];

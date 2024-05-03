@@ -145,7 +145,9 @@ class RegisteredUserController extends Controller
 
     public function login_user_details()
     {
-        $user = User::with('details')->where('id', auth()->user()->id)->select('id', 'name as first_name','email', 'email_verified_at', 'user_type', 'created_at', 'updated_at')->first();
+        $user = User::join('user_details', 'user_details.user_id', '=', 'users.id')
+            ->select('users.id as userId','users.name as first_name', 'users.email', 'users.email_verified_at', 'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
+            ->where('user_details.user_id', auth()->user()->id)->first();
 
         if ($user != NULL) {
             return response()->json($user);
@@ -159,13 +161,14 @@ class RegisteredUserController extends Controller
 
     public function  update_profile(Request $request)
     {
+
         $user = User::find(auth()->user()->id);
-        $user->name = $request->name;
+        $user->name = $request->first_name;
         $user->save();
         $userDetail = userDetail::where('user_id', auth()->user()->id)->first();
-        $user->title=$request->title;
-        $userDetail->middle_name=$request->middle_name;
-        $userDetail->last_name=$request->last_name;
+        $userDetail->title = $request->title;
+        $userDetail->middle_name = $request->middle_name;
+        $userDetail->last_name = $request->last_name;
         $userDetail->suffix = $request->suffix;
         $userDetail->gender = $request->gender;
         $userDetail->date_of_birth = $request->date_of_birth;
@@ -181,6 +184,8 @@ class RegisteredUserController extends Controller
         $userDetail->dea_number = $request->dea_number;
         $userDetail->nadean = $request->nadean;
         $userDetail->save();
+
+
         return response()->json('Profile Updated');
     }
 }

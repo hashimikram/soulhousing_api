@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('Cascade');
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
+            $table->string('bed_no');
+            $table->string('bed_title')->nullable();
+            $table->longText('comments')->nullable();
             $table->string('occupied_at');
             $table->string('booked_till');
             $table->enum('status',['1','0'])->default('1');

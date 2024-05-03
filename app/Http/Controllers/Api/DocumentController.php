@@ -28,9 +28,27 @@ class DocumentController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request)
     {
-        //
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $searchTerm = $request->search_text;
+        $patient_id = $request->patient_id;
+        $allergy = Document::with('patient:id,first_name,last_name')
+            ->where('patient_id', $patient_id)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('type', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('patient', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                    });
+            })
+            ->get();
+
+        return apiSuccess($allergy);
     }
 
     /**

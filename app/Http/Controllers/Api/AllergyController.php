@@ -25,9 +25,30 @@ class AllergyController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request)
     {
-        //
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $searchTerm = $request->search_text;
+        $patient_id = $request->patient_id;
+        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title', 'reaction:id,list_id,title')
+            ->where('patient_id', $patient_id)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('allergy', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('allergy_type', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('severity', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('reaction', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                    });
+            })
+            ->get();
+
+        return apiSuccess($allergy);
     }
 
     /**

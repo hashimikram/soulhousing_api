@@ -23,6 +23,26 @@ class PatientController extends BaseController
         return $base->sendResponse($patients, 'All Patients Of Login Provider');
     }
 
+    public function search(Request $request)
+    {
+        $searchTerm = $request->search_text;
+
+        $patients = Patient::where('provider_id', auth()->user()->id)
+            ->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('middle_name', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('phone_no', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('location', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('address_1', 'LIKE', '%' . $searchTerm . '%')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        $base = new BaseController();
+        return $base->sendResponse($patients, NULL);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */

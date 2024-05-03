@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/patient-detail/{patientId}', [PatientController::class, 'show']);
     Route::post('/update-patient', [PatientController::class, 'update']);
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
+    Route::post('/search-patient', [PatientController::class, 'search']);
+
 
     // Insurance CRUD
     Route::post('/add-insurance', [InsuranceController::class, 'store']);
@@ -55,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-problem/{patient_id}', [ProblemController::class, 'index']);
     Route::post('/update-problem', [ProblemController::class, 'update']);
     Route::get('/delete-problem/{problem}', [ProblemController::class, 'destroy']);
+    Route::post('/search-problem', [ProblemController::class, 'search']);
 
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
@@ -99,6 +102,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/store-document', [DocumentController::class, 'store']);
     Route::delete('/document/{id}', [DocumentController::class, 'destroy']);
     Route::post('/update-document', [DocumentController::class, 'update']);
+    Route::post('/search-document', [DocumentController::class, 'search']);
+
 
     // Allergy CRUD
     Route::post('/store-allergy', [AllergyController::class, 'store']);
@@ -106,6 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/single-allergy/{id}', [AllergyController::class, 'show']);
     Route::delete('/delete-allergy/{id}', [AllergyController::class, 'destroy']);
     Route::post('/update-allergy', [AllergyController::class, 'update']);
+    Route::post('/search-allergy', [AllergyController::class, 'search']);
 
 
 

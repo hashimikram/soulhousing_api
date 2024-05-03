@@ -78,12 +78,16 @@ class FloorController extends BaseController
         try {
             $facilityId = rand(12345, 67890);
             $data = $request->all();
+
             foreach ($data as $floorData) {
+                // Create a new floor
                 $floor = Floor::create([
                     'provider_id' => auth()->user()->id,
                     'facility_id' => $facilityId,
                     'floor_name' => $floorData['floor_title'] ?? '',
                 ]);
+
+                $bedCounter = 0; // Reset the bed counter for each floor
 
                 foreach ($floorData['rooms'] as $roomData) {
                     $room = Room::create([
@@ -92,8 +96,11 @@ class FloorController extends BaseController
                     ]);
 
                     foreach ($roomData['beds'] as $bedData) {
+                        $bedCounter++; // Increment the bed counter for each bed
                         Bed::create([
                             'room_id' => $room->id,
+                            'bed_no' => $bedCounter, // Set the bed number
+                            'comments' => $bedData['comments'],
                             'patient_id' => $bedData['patient_id'],
                             'occupied_at' => $bedData['occupied_at'] ?? Carbon::now(),
                             'booked_till' => $bedData['booked_at'] ?? Carbon::now(),
@@ -101,6 +108,7 @@ class FloorController extends BaseController
                     }
                 }
             }
+
 
             return response()->json(['message' => 'Data saved successfully'], 200);
         } catch (\Exception $e) {
