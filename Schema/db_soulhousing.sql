@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2024 at 10:43 AM
+-- Generation Time: May 03, 2024 at 02:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,14 +41,6 @@ CREATE TABLE `allergies` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `allergies`
---
-
-INSERT INTO `allergies` (`id`, `provider_id`, `patient_id`, `allergy_type`, `reaction`, `severity`, `allergy`, `onset_date`, `comments`, `created_at`, `updated_at`) VALUES
-(1, 21, 2, 32, NULL, NULL, 'Hey New Allergy', NULL, NULL, '2024-04-29 03:19:19', '2024-04-29 03:19:19'),
-(2, 21, 2, 2, NULL, 39, 'Hey Updated Field Here', NULL, 'Hey Hey', '2024-04-29 03:36:56', '2024-04-29 03:42:39');
-
 -- --------------------------------------------------------
 
 --
@@ -58,10 +50,13 @@ INSERT INTO `allergies` (`id`, `provider_id`, `patient_id`, `allergy_type`, `rea
 CREATE TABLE `beds` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `room_id` bigint(20) UNSIGNED NOT NULL,
-  `patient_id` bigint(20) UNSIGNED NOT NULL,
-  `occupied_at` varchar(255) NOT NULL,
-  `booked_till` varchar(255) NOT NULL,
-  `status` enum('1','0') NOT NULL DEFAULT '1',
+  `patient_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `bed_no` varchar(255) NOT NULL,
+  `bed_title` varchar(255) DEFAULT NULL,
+  `comments` longtext DEFAULT NULL,
+  `occupied_from` varchar(255) DEFAULT NULL,
+  `booked_till` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -70,13 +65,13 @@ CREATE TABLE `beds` (
 -- Dumping data for table `beds`
 --
 
-INSERT INTO `beds` (`id`, `room_id`, `patient_id`, `occupied_at`, `booked_till`, `status`, `created_at`, `updated_at`) VALUES
-(22, 13, 1, '2024-04-22 10:00:00', '2024-04-22 11:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(23, 13, 1, '2024-04-22 12:00:00', '2024-04-22 13:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(24, 14, 1, '2024-04-22 14:00:00', '2024-04-22 15:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(25, 14, 1, '2024-04-22 16:00:00', '2024-04-22 17:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(26, 15, 1, '2024-04-22 18:00:00', '2024-04-22 19:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(27, 15, 1, '2024-04-22 20:00:00', '2024-04-22 21:00:00', '1', '2024-04-22 07:24:04', '2024-04-22 07:24:04');
+INSERT INTO `beds` (`id`, `room_id`, `patient_id`, `bed_no`, `bed_title`, `comments`, `occupied_from`, `booked_till`, `status`, `created_at`, `updated_at`) VALUES
+(1, 33, NULL, '1', NULL, 'Oxygen, Blood', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(2, 33, NULL, '2', NULL, 'Hydra, Water', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(3, 34, NULL, '3', NULL, 'Oxygen, Blood', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(4, 34, NULL, '4', NULL, 'Oxygen, Blood', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(5, 35, NULL, '1', NULL, 'Blood', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(6, 35, NULL, '2', NULL, 'Oxygen', NULL, NULL, 'vacand', '2024-05-03 07:04:58', '2024-05-03 07:04:58');
 
 -- --------------------------------------------------------
 
@@ -168,13 +163,6 @@ CREATE TABLE `documents` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `documents`
---
-
-INSERT INTO `documents` (`id`, `provider_id`, `patient_id`, `title`, `type`, `description`, `date`, `file_size`, `file`, `created_at`, `updated_at`) VALUES
-(8, 21, 2, 'Hey Update This', 'New Update X-Ray', 'Description is Good', '2323-01-23 00:00:00', '42.15 KB', '202404241149_6628f1e69d40f.pdf', '2024-04-24 06:48:27', '2024-04-24 06:49:58');
-
 -- --------------------------------------------------------
 
 --
@@ -194,22 +182,6 @@ CREATE TABLE `encounter_note_sections` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `encounter_note_sections`
---
-
-INSERT INTO `encounter_note_sections` (`id`, `provider_id`, `patient_id`, `encounter_id`, `section_title`, `section_slug`, `section_text`, `sorting_order`, `attached_entities`, `created_at`, `updated_at`) VALUES
-(203, 21, 1, 35, 'Chief Complaint', 'chief_complaint', 'Chief Complaint Text', '1', NULL, '2024-04-22 06:42:44', '2024-04-22 06:42:44'),
-(204, 21, 1, 35, 'History', 'history', 'History Text', '2', NULL, '2024-04-22 06:42:44', '2024-04-22 06:42:44'),
-(205, 21, 1, 35, 'Medical History', 'medical_history', 'Medical History Text', '3', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(206, 21, 1, 35, 'Surgical History', 'surgical_history', 'Surgical History Text', '4', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(207, 21, 1, 35, 'Family History', 'family_history', 'Family History Text', '5', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(208, 21, 1, 35, 'Social History', 'social_history', 'Social History Text', '6', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(209, 21, 1, 35, 'Allergies', 'allergies', 'Allergies Text', '7', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(210, 21, 1, 35, 'Medications', 'medications', 'Medications Text', '8', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(211, 21, 1, 35, 'Review Of System', 'review_of_system', '{\"constitutional\":\"20\",\"heent\":\"10\",\"cv\":\"Cv\",\"gi\":\"Gi\",\"gu\":\"30\",\"musculoskeletal\":\"Musculoskeletal\",\"skin\":\"Skin\",\"psychiatric\":\"Psychiatric\",\"endocrine\":\"Endocrine\"}', '1', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45'),
-(212, 21, 1, 35, 'Physical Exam', 'physical_exam', '{\"general_appearance\":\"General Appearance Text\",\"head_and_neck\":\"Head and Neck Text\",\"eyes\":\"Eyes Text\",\"ears\":\"Ears Text\",\"nose\":\"Nose Text\",\"mouth_and_throat\":\"Mouth and Throat Text\",\"cardiovascular\":\"Cardiovascular Text\",\"respiratory_system\":\"Respiratory System Text\",\"abdomen\":\"Abdomen Text\",\"musculoskeletal_system\":\"Musculoskeletal System Text\",\"neurological_system\":\"Neurological System Text\",\"genitourinary_system\":\"Genitourinary System Text\",\"psychosocial_assessment\":\"Psychosocial Assessment Text\"}', '1', NULL, '2024-04-22 06:42:45', '2024-04-22 06:42:45');
 
 -- --------------------------------------------------------
 
@@ -247,8 +219,8 @@ CREATE TABLE `floors` (
 --
 
 INSERT INTO `floors` (`id`, `facility_id`, `provider_id`, `floor_name`, `created_at`, `updated_at`) VALUES
-(12, '34596', 21, 'Floor 1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(13, '34596', 21, 'Floor 2', '2024-04-22 07:24:04', '2024-04-22 07:24:04');
+(26, '21402', 21, 'Floor 1', '2024-05-03 07:04:57', '2024-05-03 07:04:57'),
+(27, '21402', 21, 'Floor 2', '2024-05-03 07:04:58', '2024-05-03 07:04:58');
 
 -- --------------------------------------------------------
 
@@ -470,12 +442,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (7, '2024_04_01_103901_create_contacts_table', 1),
 (9, '2024_04_02_073532_create_floors_table', 1),
 (10, '2024_04_02_073539_create_rooms_table', 1),
-(11, '2024_04_02_073544_create_beds_table', 1),
 (12, '2024_04_02_104409_create_pins_table', 1),
 (13, '2024_04_02_110012_create_notifications_table', 1),
 (15, '2024_04_03_064855_create_medications_table', 1),
 (16, '2024_04_04_093210_create_patient_encounters_table', 1),
-(21, '2024_04_01_071837_create_patients_table', 3),
 (22, '2024_04_04_093638_create_encounter_note_sections_table', 4),
 (24, '2024_04_22_081822_create_pysical_exams_table', 6),
 (26, '2024_04_06_090058_create_review_of_systems_table', 8),
@@ -485,7 +455,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (31, '2024_04_02_110353_create_user_details_table', 12),
 (32, '2024_04_26_074527_create_list_options_table', 13),
 (33, '2024_04_01_111829_create_problems_table', 14),
-(36, '2024_04_29_074933_create_allergies_table', 15);
+(36, '2024_04_29_074933_create_allergies_table', 15),
+(41, '2024_04_01_071837_create_patients_table', 17),
+(42, '2024_04_02_073544_create_beds_table', 18);
 
 -- --------------------------------------------------------
 
@@ -503,14 +475,6 @@ CREATE TABLE `notes` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `notes`
---
-
-INSERT INTO `notes` (`id`, `provider_id`, `patient_id`, `title`, `date`, `status`, `created_at`, `updated_at`) VALUES
-(1, 21, 2, 'Hey This is New Note 2 Edit', '2023-03-02 00:00:00', '0', '2024-04-24 04:57:35', '2024-04-24 05:16:55'),
-(3, 21, 2, 'Hey New Document', '2023-01-03 00:00:00', '1', '2024-04-24 06:00:19', '2024-04-24 06:00:19');
 
 -- --------------------------------------------------------
 
@@ -556,7 +520,7 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `patients` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `provider_id` bigint(20) UNSIGNED NOT NULL,
-  `patient_id` varchar(255) NOT NULL,
+  `mrn_no` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `first_name` varchar(255) NOT NULL,
   `middle_name` varchar(255) DEFAULT NULL,
@@ -587,9 +551,8 @@ CREATE TABLE `patients` (
 -- Dumping data for table `patients`
 --
 
-INSERT INTO `patients` (`id`, `provider_id`, `patient_id`, `title`, `first_name`, `middle_name`, `last_name`, `email`, `phone_no`, `nick_name`, `suffix`, `ssn`, `gender`, `date_of_birth`, `general_identity`, `other`, `location`, `pharmacy`, `address_1`, `address_2`, `city`, `state`, `country`, `zip_code`, `status`, `created_at`, `updated_at`) VALUES
-(1, 21, '24041', NULL, 'John', NULL, 'Nick', NULL, '03008062261', 'sam_nic', '771', 'abc', 'Make', '03-01-2003', 'volt', NULL, 'Abc Address', 'No', 'Street # 1', NULL, 'James', 'Lesture', 'London', '8831', '1', '2024-04-17 00:25:46', '2024-04-17 00:25:46'),
-(2, 21, '24042', 'Mr', 'John Edir', NULL, 'Nick', 'cdf@gmail.com', '43', 'sam_nic', '771', 'abc', 'Make', '03-01-2003', 'volt', NULL, 'Abc Address', 'No', 'Street # 1', NULL, 'James', 'Lesture', 'London', '8831', '1', '2024-04-17 00:26:35', '2024-04-22 01:49:07');
+INSERT INTO `patients` (`id`, `provider_id`, `mrn_no`, `title`, `first_name`, `middle_name`, `last_name`, `email`, `phone_no`, `nick_name`, `suffix`, `ssn`, `gender`, `date_of_birth`, `general_identity`, `other`, `location`, `pharmacy`, `address_1`, `address_2`, `city`, `state`, `country`, `zip_code`, `status`, `created_at`, `updated_at`) VALUES
+(1, 21, 'sk-0001', 'Mr', 'Usama', NULL, 'Akhtar', 'cdf@gmail.com', '43', 'sammi', '771', '772347', 'Male', '03-01-2003', 'volt', NULL, 'Abc Address', 'No', 'Street # 1', NULL, 'James', 'Lesture', 'London', '8831', '1', '2024-05-03 02:33:19', '2024-05-03 02:33:20');
 
 -- --------------------------------------------------------
 
@@ -610,18 +573,6 @@ CREATE TABLE `patient_encounters` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `patient_encounters`
---
-
-INSERT INTO `patient_encounters` (`id`, `provider_id`, `patient_id`, `signed_by`, `signed_at`, `encounter_type`, `encounter_template`, `reason`, `status`, `created_at`, `updated_at`) VALUES
-(30, 21, 1, 21, '2024-04-22T12:00:00', 'Updated Type', 'Updated Template', 'Updated Reason', '1', '2024-04-22 05:32:30', '2024-04-22 05:38:45'),
-(31, 21, 1, 21, '2024-04-22T12:00:00', 'Updated Type', 'Updated Template', 'Updated Reason', '1', '2024-04-22 05:41:53', '2024-04-22 05:42:34'),
-(32, 21, 1, 21, '2024-04-22T12:00:00', 'Type', 'Template', 'Reason', '1', '2024-04-22 06:38:58', '2024-04-22 06:38:58'),
-(33, 21, 1, 21, '2024-04-22T12:00:00', 'Type', 'Template', 'Reason', '1', '2024-04-22 06:40:22', '2024-04-22 06:40:22'),
-(34, 21, 1, 21, '2024-04-22T12:00:00', 'Type', 'Template', 'Reason', '1', '2024-04-22 06:41:11', '2024-04-22 06:41:11'),
-(35, 21, 1, 21, '2024-04-22T12:00:00', 'Type', 'Template', 'Reason', '1', '2024-04-22 06:42:44', '2024-04-22 06:42:44');
 
 -- --------------------------------------------------------
 
@@ -657,7 +608,9 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (8, 'App\\Models\\User', 21, 'Laravel', '98414c125a927b80a1f62aed037a261f1e59d5be09b17f5b381f4ea3d723f3b8', '[\"*\"]', NULL, NULL, '2024-04-29 01:51:03', '2024-04-29 01:51:03'),
 (9, 'App\\Models\\User', 21, 'Laravel', '4aec56065f4223d34c42020db3b7bad400e69af84ed1dae406ebe450b9382a35', '[\"*\"]', '2024-04-29 02:14:05', NULL, '2024-04-29 01:58:52', '2024-04-29 02:14:05'),
 (10, 'App\\Models\\User', 21, 'Laravel', '77b073dc4b15094b1131b76af0e37791bf5efc8cc95e195ef690eaea1deb4c9f', '[\"*\"]', NULL, NULL, '2024-04-29 03:16:31', '2024-04-29 03:16:31'),
-(11, 'App\\Models\\User', 21, 'Laravel', '1dd51c284c0bd82e1532d574f26a5523006d757b37489fc1f56e73499186cfaf', '[\"*\"]', '2024-04-29 03:42:39', NULL, '2024-04-29 03:16:34', '2024-04-29 03:42:39');
+(11, 'App\\Models\\User', 21, 'Laravel', '1dd51c284c0bd82e1532d574f26a5523006d757b37489fc1f56e73499186cfaf', '[\"*\"]', '2024-04-29 03:42:39', NULL, '2024-04-29 03:16:34', '2024-04-29 03:42:39'),
+(12, 'App\\Models\\User', 21, 'Laravel', '6848c237538a351c77059d88adfe34e72b5a879a035d722581b363da50316a84', '[\"*\"]', '2024-05-02 02:38:19', NULL, '2024-05-02 02:31:35', '2024-05-02 02:38:19'),
+(13, 'App\\Models\\User', 21, 'Laravel', '726b18beb60fbd279a60b3dab0675b0a057ff425fc3d9526616a59d6be7825cf', '[\"*\"]', '2024-05-03 07:05:11', NULL, '2024-05-03 01:17:11', '2024-05-03 07:05:11');
 
 -- --------------------------------------------------------
 
@@ -715,15 +668,6 @@ CREATE TABLE `problems` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `problems`
---
-
-INSERT INTO `problems` (`id`, `provider_id`, `patient_id`, `diagnosis`, `name`, `type_id`, `chronicity_id`, `severity_id`, `status_id`, `comments`, `onset`, `snowed`, `status`, `created_at`, `updated_at`) VALUES
-(1, 21, 2, 'New Disease Found', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', '30-12-2003', NULL, '1', '2024-04-26 05:13:55', '2024-04-26 05:13:55'),
-(2, 21, 2, 'New Disease Found Edit', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', '30-12-2003', '5435', '1', '2024-04-26 05:14:14', '2024-04-26 05:20:34'),
-(3, 21, 2, 'New Disease Found', 'Kevin Thomas', 6, 5, 12, 14, 'Hey New Comment', NULL, '5435', '1', '2024-04-26 05:21:36', '2024-04-26 05:21:36');
-
 -- --------------------------------------------------------
 
 --
@@ -761,9 +705,9 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `floor_id`, `room_name`, `created_at`, `updated_at`) VALUES
-(13, 12, 'Room 1', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(14, 12, 'Room 2', '2024-04-22 07:24:04', '2024-04-22 07:24:04'),
-(15, 13, 'Room 3', '2024-04-22 07:24:04', '2024-04-22 07:24:04');
+(33, 26, 'Room 1', '2024-05-03 07:04:57', '2024-05-03 07:04:57'),
+(34, 26, 'Room 2', '2024-05-03 07:04:58', '2024-05-03 07:04:58'),
+(35, 27, 'Room 3', '2024-05-03 07:04:58', '2024-05-03 07:04:58');
 
 -- --------------------------------------------------------
 
@@ -779,15 +723,6 @@ CREATE TABLE `sessions` (
   `payload` longtext NOT NULL,
   `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `sessions`
---
-
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('02p0CPpUiaYy9b0PMfEv4k4bd408WHG9pxBZmJX8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUUNnNncxazBraTI3bDNYM3k4SUN2OFE0anN0enE4WXpjNjVDMDJ0aSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714125154),
-('DlFvODhu7bhW0ejCcXyNOERJEnDlZFRGDjZDuakF', NULL, '127.0.0.1', 'PostmanRuntime/7.37.3', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUGcwWm1BSHNCdWZpanNLRGtsWmEzQWVnRFJKRjBOSTlWUjdPbnNwSCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714380019),
-('luGuGZkCSOVzsFZGzq88iNfbbDBzoBKtTd35M3V2', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYUtvc2NIejNKeGFGbmdPbW94SFZlcWlhTFhQenk1ZkNvWVFtTW5XNSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6NDUwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1714373920);
 
 -- --------------------------------------------------------
 
@@ -812,8 +747,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `user_type`, `remember_token`, `created_at`, `updated_at`) VALUES
-(21, 'new Name', 'provider@gmail.com', NULL, '$2y$12$2dT2vzAcs8IwHKJND6o6bOGg2mwmw26n4wsNUqnVm6lZySlfPWJZi', 'provider', NULL, '2024-04-06 08:23:25', '2024-04-29 01:59:01'),
-(22, 'abc', 'abc@gmail.com', NULL, '$2y$12$0ZQP.h4WkN1xL4FQknk4D.SGwaqdsbnT1Qg.rSrjtlgKWKVxFCzBy', 'provider', NULL, '2024-04-06 11:14:08', '2024-04-06 11:14:08');
+(21, 'new Name', 'provider@gmail.com', NULL, '$2y$12$2dT2vzAcs8IwHKJND6o6bOGg2mwmw26n4wsNUqnVm6lZySlfPWJZi', 'provider', NULL, '2024-04-06 08:23:25', '2024-04-29 01:59:01');
 
 -- --------------------------------------------------------
 
@@ -1095,7 +1029,7 @@ ALTER TABLE `allergies`
 -- AUTO_INCREMENT for table `beds`
 --
 ALTER TABLE `beds`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `contacts`
@@ -1125,7 +1059,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `floors`
 --
 ALTER TABLE `floors`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `insurances`
@@ -1155,7 +1089,7 @@ ALTER TABLE `medications`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `notes`
@@ -1173,7 +1107,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `patient_encounters`
@@ -1185,7 +1119,7 @@ ALTER TABLE `patient_encounters`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `physical_exams`
@@ -1215,7 +1149,7 @@ ALTER TABLE `review_of_systems`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `users`
