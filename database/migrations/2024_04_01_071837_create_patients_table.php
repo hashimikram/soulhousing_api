@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('provider_id');
             $table->foreign('provider_id')->references('id')->on('users')->onDelete('Cascade');
-            $table->string('patient_id');
+            $table->string('mrn_no')->nullable();
             $table->string('title')->nullable();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
@@ -37,7 +37,6 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->string('zip_code')->nullable();
-
             $table->enum('status', ['0', '1'])->default('1');
             $table->timestamps();
         });

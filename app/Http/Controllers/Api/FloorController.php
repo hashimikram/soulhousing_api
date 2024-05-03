@@ -55,9 +55,29 @@ class FloorController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function mapBedRooms($floor_id)
     {
-        //
+        $base = new BaseController();
+        try {
+            $floor = Floor::with([
+                'rooms',
+                'beds' => function ($query) {
+                    $query->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id','beds.occupied_from')
+                        ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
+                }
+            ])->where('floors.id', $floor_id)->first();
+            $rooms = $floor->rooms()->count() ?? Null;
+            $beds = $floor->beds()->count() ?? Null;
+            // Return the response
+            $response = [
+                'floor' => $floor,
+                'floor_id' => $floor->id,
+            ];
+            return $base->sendResponse($response, 'There are Total ' . $rooms . ' Rooms and Total ' . $beds . ' Beds in ' . $floor->id ?? NULL . ' Floor');
+        } catch (\Exception $e) {
+            // Handle the exception
+            return $base->sendError('Error', $e->getMessage());
+        }
     }
 
     /**
@@ -101,9 +121,7 @@ class FloorController extends BaseController
                             'room_id' => $room->id,
                             'bed_no' => $bedCounter, // Set the bed number
                             'comments' => $bedData['comments'],
-                            'patient_id' => $bedData['patient_id'],
-                            'occupied_at' => $bedData['occupied_at'] ?? Carbon::now(),
-                            'booked_till' => $bedData['booked_at'] ?? Carbon::now(),
+                            'status' => 'vacand',
                         ]);
                     }
                 }

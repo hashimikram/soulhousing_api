@@ -50,4 +50,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(userDetail::class,'user_id');
     }
+
+    public function beds()
+    {
+        return $this->hasOne(bed::class);
+    }
+
 }

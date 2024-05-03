@@ -29,13 +29,10 @@ class PatientController extends BaseController
 
         $patients = Patient::where('provider_id', auth()->user()->id)
             ->where('first_name', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('middle_name', 'LIKE', '%' . $searchTerm . '%')
             ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('phone_no', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('location', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('address_1', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('mrn_no', 'LIKE', '%' . $searchTerm . '%')
             ->orderBy('created_at', 'DESC')
+            ->select('first_name','last_name','gender','date_of_birth','mrn_no')
             ->get();
 
         $base = new BaseController();
@@ -81,13 +78,8 @@ class PatientController extends BaseController
         ]);
         $base = new BaseController();
         try {
-            $currentMonth = Carbon::now()->format('m');
-            $totalPatient = patient::whereMonth('created_at', $currentMonth)->count();
-            $countone = 1;
-            $countPatient = date('ym') . $totalPatient + $countone;
             $patient = new patient();
             $patient->provider_id = auth()->user()->id;
-            $patient->patient_id = $countPatient;
             $patient->title = $request->title;
             $patient->first_name = $request->first_name;
             $patient->middle_name = $request->middle_name;
@@ -110,6 +102,10 @@ class PatientController extends BaseController
             $patient->zip_code = $request->zip_code;
             $patient->country = $request->country;
             $patient->save();
+            $recentAdd = patient::find($patient->id);
+            $countPatient = 'sk-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+            $recentAdd->mrn_no = $countPatient;
+            $recentAdd->save();
             $data['patient_id'] = $patient->id;
             return $base->sendResponse($data, 'Patient Added Successfully');
         } catch (\Exception $e) {

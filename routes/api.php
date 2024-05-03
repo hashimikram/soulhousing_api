@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AllergyController;
+use App\Http\Controllers\Api\BedController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PinController;
 use App\Http\Controllers\Api\NoteController;
@@ -62,7 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
     Route::get('/floors', [FloorController::class, 'index']);
+    Route::post('/assign-bed', [BedController::class, 'assign_bed']);
+    Route::get('/bed-details/{id}', [BedController::class, 'show']);
     Route::get('/rooms-beds/{floor_id}', [FloorController::class, 'bedsAndrooms']);
+    Route::get('/map-rooms-beds/{floor_id}', [FloorController::class, 'mapBedRooms']);
+
 
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
@@ -86,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delete-review-of-system/{id}', [ReviewOfSystemController::class, 'destroy']);
     Route::get('review-of-system/{patient_id}', [ReviewOfSystemController::class, 'show']);
     Route::post('/update-review-of-system', [ReviewOfSystemController::class, 'update']);
-
     Route::get('/patient-summary/{id}', [PatientController::class, 'summary_patient']);
 
     // Note CRUD
@@ -117,6 +121,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/file/{name}', [FileController::class, 'show']);
     Route::get('/list-options', [ListOptionController::class, 'index']);
-
-
 });
