@@ -80,11 +80,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Encounter CRUD
     Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);
+    Route::post('/add-patient-encounter-notes', [PatientEncounterController::class, 'encounter_notes_store']);
+
     Route::get('patient-encounter/{patient_id}', [PatientEncounterController::class, 'show']);
     Route::get('patient-encounter-notes/{encounter_id}', [PatientEncounterController::class, 'encounter_notes']);
     Route::get('delete-patient-encounter/{id}', [PatientEncounterController::class, 'destroy']);
     Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
     Route::post('/update-patient-encounter-notes', [EncounterNoteSectionController::class, 'update']);
+    Route::get('patient-encounter-information/{patient_id}', [PatientEncounterController::class, 'patient_encounter_information']);
+
 
     // ReviewOfSystem CRUD
     Route::post('/add-review-of-system', [ReviewOfSystemController::class, 'store']);

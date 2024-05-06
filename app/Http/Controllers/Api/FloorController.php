@@ -62,7 +62,7 @@ class FloorController extends BaseController
             $floor = Floor::with([
                 'rooms',
                 'beds' => function ($query) {
-                    $query->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id','beds.occupied_from')
+                    $query->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
                         ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
                 }
             ])->where('floors.id', $floor_id)->first();

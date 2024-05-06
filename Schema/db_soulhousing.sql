@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2024 at 02:06 PM
+-- Generation Time: May 06, 2024 at 03:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -182,6 +182,20 @@ CREATE TABLE `encounter_note_sections` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `encounter_note_sections`
+--
+
+INSERT INTO `encounter_note_sections` (`id`, `provider_id`, `patient_id`, `encounter_id`, `section_title`, `section_slug`, `section_text`, `sorting_order`, `attached_entities`, `created_at`, `updated_at`) VALUES
+(223, 21, 1, 1, 'Chief Complaint', 'chief_complaint', 'Chief Complaint Text', '1', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(224, 21, 1, 1, 'History', 'history', 'History Text', '2', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(225, 21, 1, 1, 'Medical History', 'medical_history', 'Medical History Text', '3', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(226, 21, 1, 1, 'Surgical History', 'surgical_history', 'Surgical History Text', '4', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(227, 21, 1, 1, 'Family History', 'family_history', 'Family History Text', '5', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(228, 21, 1, 1, 'Social History', 'social_history', 'Social History Text', '6', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(229, 21, 1, 1, 'Allergies', 'allergies', 'Allergies Text', '7', NULL, '2024-05-06 07:56:34', '2024-05-06 07:56:34'),
+(230, 21, 1, 1, 'Medications', 'medications', 'Medications Text', '8', NULL, '2024-05-06 07:56:35', '2024-05-06 07:56:35');
 
 -- --------------------------------------------------------
 
@@ -379,7 +393,15 @@ INSERT INTO `list_options` (`id`, `list_id`, `option_id`, `title`, `sequence`, `
 (47, 'Reaction', 'shortness-breath', 'Shortness of breath/difficulty breathing', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:21', '2024-04-29 07:48:14'),
 (48, 'Reaction', 'sore-throat', 'Sore Throat', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:23', '2024-04-29 07:48:16'),
 (49, 'Reaction', 'swelling', 'Swelling', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:26', '2024-04-29 07:48:19'),
-(50, 'Reaction', 'other', 'Other', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:38', '2024-04-29 07:48:21');
+(50, 'Reaction', 'other', 'Other', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-04-29 07:47:38', '2024-04-29 07:48:21'),
+(51, 'Encounter Type', 'ALF-healths', 'ALF-healths', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:57:42', '2024-05-06 11:57:42'),
+(52, 'Encounter Type', 'annual_physical', 'Annual Physical', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(53, 'Encounter Type', 'annual_wellness_visit', 'Annual Wellness Visit', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(54, 'Encounter Type', 'cfa', 'CFA', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(55, 'Encounter Type', 'covid_test_2', 'Covid Test 2', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(56, 'Encounter Type', 'covid_vaccination', 'Covid Vaccination', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(57, 'Encounter Type', 'health_progress', 'Health Progress', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36'),
+(58, 'Specialty', 'general_medicine', 'General Medicine', '0', '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-05-06 11:58:36', '2024-05-06 11:58:36');
 
 -- --------------------------------------------------------
 
@@ -445,7 +467,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2024_04_02_104409_create_pins_table', 1),
 (13, '2024_04_02_110012_create_notifications_table', 1),
 (15, '2024_04_03_064855_create_medications_table', 1),
-(16, '2024_04_04_093210_create_patient_encounters_table', 1),
 (22, '2024_04_04_093638_create_encounter_note_sections_table', 4),
 (24, '2024_04_22_081822_create_pysical_exams_table', 6),
 (26, '2024_04_06_090058_create_review_of_systems_table', 8),
@@ -457,7 +478,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (33, '2024_04_01_111829_create_problems_table', 14),
 (36, '2024_04_29_074933_create_allergies_table', 15),
 (41, '2024_04_01_071837_create_patients_table', 17),
-(42, '2024_04_02_073544_create_beds_table', 18);
+(42, '2024_04_02_073544_create_beds_table', 18),
+(44, '2024_04_04_093210_create_patient_encounters_table', 19);
 
 -- --------------------------------------------------------
 
@@ -565,14 +587,24 @@ CREATE TABLE `patient_encounters` (
   `provider_id` bigint(20) UNSIGNED NOT NULL,
   `patient_id` bigint(20) UNSIGNED NOT NULL,
   `signed_by` bigint(20) UNSIGNED NOT NULL,
-  `signed_at` varchar(255) NOT NULL,
-  `encounter_type` varchar(255) NOT NULL,
-  `encounter_template` varchar(255) NOT NULL,
+  `encounter_date` varchar(255) NOT NULL,
+  `encounter_type` bigint(20) UNSIGNED DEFAULT NULL,
+  `specialty` bigint(20) UNSIGNED DEFAULT NULL,
+  `parent_encounter` bigint(20) UNSIGNED DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
   `reason` longtext NOT NULL,
+  `attachment` longtext DEFAULT NULL,
   `status` enum('1','0') NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `patient_encounters`
+--
+
+INSERT INTO `patient_encounters` (`id`, `provider_id`, `patient_id`, `signed_by`, `encounter_date`, `encounter_type`, `specialty`, `parent_encounter`, `location`, `reason`, `attachment`, `status`, `created_at`, `updated_at`) VALUES
+(1, 21, 1, 21, '2024-04-22T12:00:00', 57, 58, NULL, NULL, 'Reason', NULL, '1', '2024-05-06 07:51:19', '2024-05-06 07:51:19');
 
 -- --------------------------------------------------------
 
@@ -598,7 +630,7 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
-(1, 'App\\Models\\User', 21, 'Laravel', '42f37dcb17e7b00dde384b673a4bbf05a4d4637deb35ee647f5e4455bf3ea5fa', '[\"*\"]', '2024-04-22 07:24:04', NULL, '2024-04-06 03:23:54', '2024-04-22 07:24:04'),
+(1, 'App\\Models\\User', 21, 'Laravel', '42f37dcb17e7b00dde384b673a4bbf05a4d4637deb35ee647f5e4455bf3ea5fa', '[\"*\"]', '2024-05-06 07:07:44', NULL, '2024-04-06 03:23:54', '2024-05-06 07:07:44'),
 (2, 'App\\Models\\User', 21, 'Laravel', '6f19c0e4fdad9efc30080eb28f3e9ca586415f6dc9b0d8e94f4924db655719b9', '[\"*\"]', '2024-04-17 07:19:45', NULL, '2024-04-15 00:29:21', '2024-04-17 07:19:45'),
 (3, 'App\\Models\\User', 21, 'Laravel', '11c7a0310d94575347c78331b605b285770cd58130ee70c2e62079e658ecafb0', '[\"*\"]', '2024-04-16 03:40:24', NULL, '2024-04-16 03:15:06', '2024-04-16 03:40:24'),
 (4, 'App\\Models\\User', 21, 'Laravel', '4a591a54e2471205853fbbac42607c7ae3008156fce1bb6f4107c1b0c8a4b6f7', '[\"*\"]', '2024-04-22 01:51:52', NULL, '2024-04-22 01:45:35', '2024-04-22 01:51:52'),
@@ -610,7 +642,9 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (10, 'App\\Models\\User', 21, 'Laravel', '77b073dc4b15094b1131b76af0e37791bf5efc8cc95e195ef690eaea1deb4c9f', '[\"*\"]', NULL, NULL, '2024-04-29 03:16:31', '2024-04-29 03:16:31'),
 (11, 'App\\Models\\User', 21, 'Laravel', '1dd51c284c0bd82e1532d574f26a5523006d757b37489fc1f56e73499186cfaf', '[\"*\"]', '2024-04-29 03:42:39', NULL, '2024-04-29 03:16:34', '2024-04-29 03:42:39'),
 (12, 'App\\Models\\User', 21, 'Laravel', '6848c237538a351c77059d88adfe34e72b5a879a035d722581b363da50316a84', '[\"*\"]', '2024-05-02 02:38:19', NULL, '2024-05-02 02:31:35', '2024-05-02 02:38:19'),
-(13, 'App\\Models\\User', 21, 'Laravel', '726b18beb60fbd279a60b3dab0675b0a057ff425fc3d9526616a59d6be7825cf', '[\"*\"]', '2024-05-03 07:05:11', NULL, '2024-05-03 01:17:11', '2024-05-03 07:05:11');
+(13, 'App\\Models\\User', 21, 'Laravel', '726b18beb60fbd279a60b3dab0675b0a057ff425fc3d9526616a59d6be7825cf', '[\"*\"]', '2024-05-03 07:05:11', NULL, '2024-05-03 01:17:11', '2024-05-03 07:05:11'),
+(14, 'App\\Models\\User', 21, 'Laravel', 'ea7e20baefe187c73d4a4deee7bf335e13bcc2ecf952b4a718c5667f7e965148', '[\"*\"]', '2024-05-06 07:14:36', NULL, '2024-05-06 07:02:35', '2024-05-06 07:14:36'),
+(15, 'App\\Models\\User', 21, 'Laravel', '5eb40e20f1377b41eb3df2c7dcdaa2d4468cf8bc5914cc637135b7f3ac368311', '[\"*\"]', '2024-05-06 07:56:34', NULL, '2024-05-06 07:48:37', '2024-05-06 07:56:34');
 
 -- --------------------------------------------------------
 
@@ -723,6 +757,13 @@ CREATE TABLE `sessions` (
   `payload` longtext NOT NULL,
   `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('6VQgK93xWuTzG3YHxtbO3GQA9srjLKYdCJuXPJpQ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoib1Y2dktyT1UydTRNMUdyYnZ4eEJxZDR4U1VKUzJZd1E5Y0dUVHg0RyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fX0=', 1714999710);
 
 -- --------------------------------------------------------
 
@@ -939,7 +980,10 @@ ALTER TABLE `patient_encounters`
   ADD PRIMARY KEY (`id`),
   ADD KEY `patient_encounters_provider_id_foreign` (`provider_id`),
   ADD KEY `patient_encounters_patient_id_foreign` (`patient_id`),
-  ADD KEY `patient_encounters_signed_by_foreign` (`signed_by`);
+  ADD KEY `patient_encounters_signed_by_foreign` (`signed_by`),
+  ADD KEY `patient_encounters_encounter_type_foreign` (`encounter_type`),
+  ADD KEY `patient_encounters_specialty_foreign` (`specialty`),
+  ADD KEY `patient_encounters_parent_encounter_foreign` (`parent_encounter`);
 
 --
 -- Indexes for table `personal_access_tokens`
@@ -1047,7 +1091,7 @@ ALTER TABLE `documents`
 -- AUTO_INCREMENT for table `encounter_note_sections`
 --
 ALTER TABLE `encounter_note_sections`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=231;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1077,7 +1121,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `list_options`
 --
 ALTER TABLE `list_options`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `medications`
@@ -1089,7 +1133,7 @@ ALTER TABLE `medications`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `notes`
@@ -1113,13 +1157,13 @@ ALTER TABLE `patients`
 -- AUTO_INCREMENT for table `patient_encounters`
 --
 ALTER TABLE `patient_encounters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `physical_exams`
@@ -1251,9 +1295,12 @@ ALTER TABLE `patients`
 -- Constraints for table `patient_encounters`
 --
 ALTER TABLE `patient_encounters`
+  ADD CONSTRAINT `patient_encounters_encounter_type_foreign` FOREIGN KEY (`encounter_type`) REFERENCES `list_options` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `patient_encounters_parent_encounter_foreign` FOREIGN KEY (`parent_encounter`) REFERENCES `patient_encounters` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `patient_encounters_patient_id_foreign` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `patient_encounters_provider_id_foreign` FOREIGN KEY (`provider_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `patient_encounters_signed_by_foreign` FOREIGN KEY (`signed_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `patient_encounters_signed_by_foreign` FOREIGN KEY (`signed_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `patient_encounters_specialty_foreign` FOREIGN KEY (`specialty`) REFERENCES `list_options` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `physical_exams`
