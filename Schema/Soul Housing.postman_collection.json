@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "5e0715f9-6990-49da-91b4-f96a68a9e106",
+		"_postman_id": "92be3ddb-078e-49f4-ae8e-de8e755ecf23",
 		"name": "Soul Housing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26445050",
-		"_collection_link": "https://solar-spaceship-415824.postman.co/workspace/DaTech~55f7002d-2cb5-4c2e-84f5-292df04e8a96/collection/26445050-5e0715f9-6990-49da-91b4-f96a68a9e106?action=share&source=collection_link&creator=26445050"
+		"_exporter_id": "26445050"
 	},
 	"item": [
 		{
@@ -12,6 +11,296 @@
 			"item": [
 				{
 					"name": "Add Patient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "Asad",
+									"type": "text"
+								},
+								{
+									"key": "middle_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "Mustafa",
+									"type": "text"
+								},
+								{
+									"key": "nick_name",
+									"value": "sammi",
+									"type": "text"
+								},
+								{
+									"key": "suffix",
+									"value": "771",
+									"type": "text"
+								},
+								{
+									"key": "ssn",
+									"value": "772347",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "Male",
+									"type": "text"
+								},
+								{
+									"key": "date_of_birth",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "general_identity",
+									"value": "volt",
+									"type": "text"
+								},
+								{
+									"key": "other",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Abc Address",
+									"type": "text"
+								},
+								{
+									"key": "pharmacy",
+									"value": "No",
+									"type": "text"
+								},
+								{
+									"key": "address_1",
+									"value": "Street # 1",
+									"type": "text"
+								},
+								{
+									"key": "address_2",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "James",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "Lesture",
+									"type": "text"
+								},
+								{
+									"key": "zip_code",
+									"value": "8831",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "London",
+									"type": "text"
+								},
+								{
+									"key": "phone_no",
+									"value": "46",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "asad@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Mr",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/add-patient",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"add-patient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "first_name",
+									"value": "John Edir",
+									"type": "text"
+								},
+								{
+									"key": "middle_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "last_name",
+									"value": "Nick",
+									"type": "text"
+								},
+								{
+									"key": "nick_name",
+									"value": "sam_nic",
+									"type": "text"
+								},
+								{
+									"key": "suffix",
+									"value": "771",
+									"type": "text"
+								},
+								{
+									"key": "ssn",
+									"value": "abc",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "Make",
+									"type": "text"
+								},
+								{
+									"key": "date_of_birth",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "general_identity",
+									"value": "volt",
+									"type": "text"
+								},
+								{
+									"key": "other",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Abc Address",
+									"type": "text"
+								},
+								{
+									"key": "pharmacy",
+									"value": "No",
+									"type": "text"
+								},
+								{
+									"key": "address_1",
+									"value": "Street # 1",
+									"type": "text"
+								},
+								{
+									"key": "address_2",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "James",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "Lesture",
+									"type": "text"
+								},
+								{
+									"key": "zip_code",
+									"value": "8831",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "London",
+									"type": "text"
+								},
+								{
+									"key": "phone_no",
+									"value": "43",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "cdf@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Mr",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-patient",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-patient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Patient",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -40,28 +329,8 @@
 									"type": "text"
 								},
 								{
-									"key": "middle_name",
-									"value": "",
-									"type": "text"
-								},
-								{
 									"key": "last_name",
 									"value": "Nick",
-									"type": "text"
-								},
-								{
-									"key": "nick_name",
-									"value": "sam_nic",
-									"type": "text"
-								},
-								{
-									"key": "suffix",
-									"value": "771",
-									"type": "text"
-								},
-								{
-									"key": "ssn",
-									"value": "abc",
 									"type": "text"
 								},
 								{
@@ -73,219 +342,16 @@
 									"key": "date_of_birth",
 									"value": "03-01-2003",
 									"type": "text"
-								},
-								{
-									"key": "general_identity",
-									"value": "volt",
-									"type": "text"
-								},
-								{
-									"key": "other",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "location",
-									"value": "Abc Address",
-									"type": "text"
-								},
-								{
-									"key": "pharmacy",
-									"value": "No",
-									"type": "text"
-								},
-								{
-									"key": "address_1",
-									"value": "Street # 1",
-									"type": "text"
-								},
-								{
-									"key": "address_2",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "city",
-									"value": "James",
-									"type": "text"
-								},
-								{
-									"key": "state",
-									"value": "Lesture",
-									"type": "text"
-								},
-								{
-									"key": "suffix_1",
-									"value": "881",
-									"type": "text"
-								},
-								{
-									"key": "ssn_1",
-									"value": "hjm#1",
-									"type": "text"
-								},
-								{
-									"key": "zip_code",
-									"value": "8831",
-									"type": "text"
-								},
-								{
-									"key": "country",
-									"value": "London",
-									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}/add-patient",
+							"raw": "{{url}}/check-patient-record",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"add-patient"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Patient",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "first_name",
-									"value": "John New",
-									"type": "text"
-								},
-								{
-									"key": "middle_name",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "last_name",
-									"value": "Nick",
-									"type": "text"
-								},
-								{
-									"key": "nick_name",
-									"value": "sam_nic",
-									"type": "text"
-								},
-								{
-									"key": "suffix",
-									"value": "771",
-									"type": "text"
-								},
-								{
-									"key": "ssn",
-									"value": "abc",
-									"type": "text"
-								},
-								{
-									"key": "gender",
-									"value": "Make",
-									"type": "text"
-								},
-								{
-									"key": "date_of_birth",
-									"value": "03-01-2003",
-									"type": "text"
-								},
-								{
-									"key": "general_identity",
-									"value": "volt",
-									"type": "text"
-								},
-								{
-									"key": "other",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "location",
-									"value": "Abc Address",
-									"type": "text"
-								},
-								{
-									"key": "pharmacy",
-									"value": "No",
-									"type": "text"
-								},
-								{
-									"key": "address_1",
-									"value": "Street # 1",
-									"type": "text"
-								},
-								{
-									"key": "address_2",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "city",
-									"value": "James",
-									"type": "text"
-								},
-								{
-									"key": "state",
-									"value": "Lesture",
-									"type": "text"
-								},
-								{
-									"key": "suffix_1",
-									"value": "881",
-									"type": "text"
-								},
-								{
-									"key": "ssn_1",
-									"value": "hjm#1",
-									"type": "text"
-								},
-								{
-									"key": "zip_code",
-									"value": "8831",
-									"type": "text"
-								},
-								{
-									"key": "country",
-									"value": "London",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{url}}/update-patient",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"update-patient"
+								"check-patient-record"
 							]
 						}
 					},
@@ -299,7 +365,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "2|SAhqvAYM7h13llLIzSrEUivmP3kA0NPKteEzuJKPde8c15f8",
 									"type": "string"
 								}
 							]
@@ -366,7 +432,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "4|Rrd9HYZWQJWyZLoheFwL0bvnrUYwfdJVq210H69tf58522ed",
 									"type": "string"
 								}
 							]
@@ -391,6 +457,48 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search Patient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search_text",
+									"value": "001",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-patient",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-patient"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -405,7 +513,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
 									"type": "string"
 								}
 							]
@@ -834,7 +942,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "8|yP0OW8snj1baU7TKFmcHCdjETSIpFfiFg69wWn2S8fe16cb3",
 									"type": "string"
 								}
 							]
@@ -852,7 +960,7 @@
 							"formdata": [
 								{
 									"key": "patient_id",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								},
 								{
@@ -862,7 +970,7 @@
 								},
 								{
 									"key": "title",
-									"value": "",
+									"value": "helo",
 									"type": "text"
 								},
 								{
@@ -1313,7 +1421,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "7|1N37skbDtcvXS88FHD30RRx6Kec9db9yaj8Ou9DL2b838d78",
 									"type": "string"
 								}
 							]
@@ -1327,64 +1435,13 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "patient_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "diagnosis",
-									"value": "Hello World",
-									"type": "text"
-								},
-								{
-									"key": "cd_description",
-									"value": "Description Full Of Hello World",
-									"type": "text"
-								},
-								{
-									"key": "select_1",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_2",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_3",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_4",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_5",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "comments",
-									"value": "Nine Leaves",
-									"type": "text"
-								},
-								{
-									"key": "icd10",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "snowed",
-									"value": "",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\":\"2\",\r\n    \"diagnosis\":\"New Disease Found\",\r\n    \"name\":\"Kevin Thomas\",\r\n    \"type_id\":\"6\",\r\n    \"chronicity_id\":\"5\",\r\n    \"severity_id\":\"12\",\r\n    \"status_id\":\"14\",\r\n    \"onset\":\"30-12-2003\",\r\n    \"snowed\":\"5435\",\r\n    \"comments\":\"Hey New Comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/add-problem",
@@ -1406,7 +1463,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "7|1N37skbDtcvXS88FHD30RRx6Kec9db9yaj8Ou9DL2b838d78",
 									"type": "string"
 								}
 							]
@@ -1420,64 +1477,13 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "problem_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "diagnosis",
-									"value": "Hello World Eidt",
-									"type": "text"
-								},
-								{
-									"key": "cd_description",
-									"value": "Description Full Of Hello World Edit",
-									"type": "text"
-								},
-								{
-									"key": "select_1",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_2",
-									"value": "Edit",
-									"type": "text"
-								},
-								{
-									"key": "select_3",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_4",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "select_5",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "comments",
-									"value": "Nine Leaves",
-									"type": "text"
-								},
-								{
-									"key": "icd10",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "snowed",
-									"value": "",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"problem_id\":\"2\",\r\n    \"diagnosis\":\"New Disease Found Edit\",\r\n    \"name\":\"Kevin Thomas\",\r\n    \"type_id\":\"6\",\r\n    \"chronicity_id\":\"5\",\r\n    \"severity_id\":\"12\",\r\n    \"status_id\":\"14\",\r\n    \"onset\":\"30-12-2003\",\r\n    \"snowed\":\"5435\",\r\n    \"comments\":\"Hey New Comment\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/update-problem",
@@ -1499,7 +1505,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "15|cPfq2viCDN0JnrHTWPaBnkg9VmnT8lG1JlPFIgAp78c73307",
+									"value": "122|POLpvlmS0Dg2IU2m70gSGwthwEcgLDqVKZJWTxrC182c1e91",
 									"type": "string"
 								}
 							]
@@ -1513,13 +1519,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/get-problem/2",
+							"raw": "{{url}}/get-problem/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"get-problem",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -1558,6 +1564,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Search Problem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Self Limiting",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-problem",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-problem"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1572,7 +1625,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "15|W6a4fZinOiETCg5wwrfGwy2PMc6AiGLJNfBgLB3v48b7c875",
 									"type": "string"
 								}
 							]
@@ -1581,13 +1634,12 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"no_of_floors\": 2,\r\n    \"floors\": [\r\n        {\r\n            \"no_of_rooms\": 2,\r\n            \"floor_title\": \"Floor One\",\r\n            \"Rooms\": [\r\n                {\r\n                    \"room-title\": \"Room One\",\r\n                    \"no_of_beds\": 4,\r\n                    \"beds\": [\r\n                        {\r\n                            \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n\r\n                          \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n                           \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n                             \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"no_of_rooms\": 3,\r\n            \"floor_title\": \"Floor Two\",\r\n            \"Rooms\": [\r\n                {\r\n                    \"room-title\": \"Room Two\",\r\n                    \"no_of_beds\": 2,\r\n                    \"beds\": [\r\n                        {\r\n                            \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n                         \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"room-title\": \"Room THree\",\r\n                    \"no_of_beds\": 3,\r\n                    \"beds\": [\r\n                        {\r\n                           \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n                            \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        },\r\n                        {\r\n\r\n                            \"patient_id\": 2,\r\n                            \"occupied_at\": \"03-1-2003\",\r\n                            \"booked_at\": \"934323\"\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}\r\n",
+							"raw": "[\r\n    {\r\n        \"floor_title\": \"Floor 1\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 1\",\r\n                \"beds\": [\r\n                    {\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 10:00:00\",\r\n                        \"booked_at\": \"2024-04-22 11:00:00\"\r\n                    },\r\n                    {\r\n                        \"comments\": \"Hydra, Water\",\r\n                        \"occupied_at\": \"2024-04-22 12:00:00\",\r\n                        \"booked_at\": \"2024-04-22 13:00:00\"\r\n                    }\r\n                ]\r\n            },\r\n            {\r\n                \"room_title\": \"Room 2\",\r\n                \"beds\": [\r\n                    {\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 14:00:00\",\r\n                        \"booked_at\": \"2024-04-22 15:00:00\"\r\n                    },\r\n                    {\r\n                        \"comments\": \"Oxygen, Blood\",\r\n                        \"occupied_at\": \"2024-04-22 16:00:00\",\r\n                        \"booked_at\": \"2024-04-22 17:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"floor_title\": \"Floor 2\",\r\n        \"rooms\": [\r\n            {\r\n                \"room_title\": \"Room 3\",\r\n                \"beds\": [\r\n                    {\r\n                        \"comments\": \"Blood\",\r\n                        \"occupied_at\": \"2024-04-22 18:00:00\",\r\n                        \"booked_at\": \"2024-04-22 19:00:00\"\r\n                    },\r\n                    {\r\n                        \"comments\": \"Oxygen\",\r\n                        \"occupied_at\": \"2024-04-22 20:00:00\",\r\n                        \"booked_at\": \"2024-04-22 21:00:00\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1614,7 +1666,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "190|LyFy8X9tpVwGFcJG4pBwLj4nMYcuLB3WE1FKUeFd0c1d6745",
 									"type": "string"
 								}
 							]
@@ -1623,8 +1675,7 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -1650,7 +1701,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
 									"type": "string"
 								}
 							]
@@ -1659,8 +1710,7 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
@@ -1668,13 +1718,143 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{url}}/rooms-beds/8",
+							"raw": "{{url}}/rooms-beds/15",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"rooms-beds",
-								"8"
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Bed To Patient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "bed_id",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "patient_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "occupied_at",
+									"value": "2024-04-21T19:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "booked_till",
+									"value": "2024-04-22T19:00:00.000Z",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/assign-bed",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"assign-bed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Bed Details (7 is the BED ID in the Parameter)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/bed-details/17",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bed-details",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Map Rooms (19 is the Floor ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/map-rooms-beds/26",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"map-rooms-beds",
+								"26"
 							]
 						}
 					},
@@ -1693,7 +1873,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
 									"type": "string"
 								}
 							]
@@ -1751,7 +1931,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "18|jqy0hoLzR5tNuBxPLUmXbdS7dnpx4L7B0jdid8rf4c89c59b",
 									"type": "string"
 								}
 							]
@@ -1765,12 +1945,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/get-medication",
+							"raw": "{{url}}/get-medication/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"get-medication"
+								"get-medication",
+								"3"
 							]
 						}
 					},
@@ -1784,7 +1965,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "17|IAChVjU5uQSwjTJ2tdhlbllQMEN3T0e05wyn1VQW64ee4c09",
+									"value": "18|jqy0hoLzR5tNuBxPLUmXbdS7dnpx4L7B0jdid8rf4c89c59b",
 									"type": "string"
 								}
 							]
@@ -2119,7 +2300,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"value": "25|aqv5M1GN9zBroR7H5vKjq4Ci98yRIHyioAqay8NDd03ef158",
 									"type": "string"
 								}
 							]
@@ -2128,39 +2309,17 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "patient_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "signed_at",
-									"value": "03-01-2003",
-									"type": "text"
-								},
-								{
-									"key": "encounter_type",
-									"value": "singal",
-									"type": "text"
-								},
-								{
-									"key": "encounter_template",
-									"value": "Second Thing",
-									"type": "text"
-								},
-								{
-									"key": "reason",
-									"value": "A Lot of reaons available",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\": \"3\",\r\n    \"signed_at\": \"2024-04-22T12:00:00\",\r\n    \"encounter_type\": \"57\",\r\n    \"specialty\": \"58\",\r\n    \"reason\": \"Reason\",\r\n    \"parent_encounter\": \"1\",\r\n    \"location\": \"No Location Found\",\r\n    \"provider_id_patient\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/add-patient-encounter",
@@ -2196,34 +2355,13 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "id",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "signed_at",
-									"value": "03-01-2003",
-									"type": "text"
-								},
-								{
-									"key": "encounter_type",
-									"value": "singal Edit",
-									"type": "text"
-								},
-								{
-									"key": "encounter_template",
-									"value": "Second Thing",
-									"type": "text"
-								},
-								{
-									"key": "reason",
-									"value": "A Lot of reaons available",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"encounter_id\": 31,\r\n    \"patient_id\": \"1\",\r\n    \"signed_at\": \"2024-04-22T12:00:00\",\r\n    \"encounter_type\": \"Updated Type\",\r\n    \"encounter_template\": \"Updated Template\",\r\n    \"reason\": \"Updated Reason\",\r\n    \"section_text\": {\r\n        \"chief_complaint\": \"Updated Chief Complaint Text\",\r\n        \"history\": \"Updated History Text\",\r\n        \"medical_history\": \"Updated Medical History Text\",\r\n        \"surgical_history\": \"Updated Surgical History Text\",\r\n        \"family_history\": \"Updated Family History Text\",\r\n        \"social_history\": \"Updated Social History Text\",\r\n        \"allergies\": \"Updated Allergies Text\",\r\n        \"medications\": \"Updated Medications Text\"\r\n    },\r\n    \"review_of_system\": {\r\n        \"constitutional\": \"Updated 20\",\r\n        \"heent\": \"Updated 10\",\r\n        \"cv\": \"Updated Cv\",\r\n        \"gi\": \"Updated Gi\",\r\n        \"gu\": \"Updated 30\",\r\n        \"musculoskeletal\": \"Updated Musculoskeletal\",\r\n        \"skin\": \"Updated Skin\",\r\n        \"psychiatric\": \"Updated Psychiatric\",\r\n        \"endocrine\": \"Updated Endocrine\"\r\n    },\r\n    \"physical_exam\": {\r\n        \"general_appearance\": \"Updated General Appearance Text\",\r\n        \"head_and_neck\": \"Updated Head and Neck Text\",\r\n        \"eyes\": \"Updated Eyes Text\",\r\n        \"ears\": \"Updated Ears Text\",\r\n        \"nose\": \"Updated Nose Text\",\r\n        \"mouth_and_throat\": \"Updated Mouth and Throat Text\",\r\n        \"cardiovascular\": \"Updated Cardiovascular Text\",\r\n        \"respiratory_system\": \"Updated Respiratory System Text\",\r\n        \"abdomen\": \"Updated Abdomen Text\",\r\n        \"musculoskeletal_system\": \"Updated Musculoskeletal System Text\",\r\n        \"neurological_system\": \"Updated Neurological System Text\",\r\n        \"genitourinary_system\": \"Updated Genitourinary System Text\",\r\n        \"psychosocial_assessment\": \"Updated Psychosocial Assessment Text\"\r\n    }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{url}}/update-patient-encounter",
@@ -2259,13 +2397,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/patient-encounter/1",
+							"raw": "{{url}}/patient-encounter/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"patient-encounter",
-								"1"
+								"3"
 							]
 						}
 					},
@@ -2273,6 +2411,9 @@
 				},
 				{
 					"name": "Encounter Notes (3 is the Encounter ID in the Parameter)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -2288,18 +2429,21 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
 						"url": {
-							"raw": "{{url}}/patient-encounter-notes/3",
+							"raw": "{{url}}/patient-encounter-notes/5",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"patient-encounter-notes",
-								"3"
+								"5"
 							]
 						}
 					},
@@ -2334,6 +2478,197 @@
 							"path": [
 								"delete-patient-encounter",
 								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Patient Encounter Notes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "section_text",
+									"value": "Text Added",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-patient-encounter-notes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-patient-encounter-notes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patient Encounter Information Before Adding (1 is the Patient ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "21|tgFXlQRSjzpQ7Sm6gQz2LoNhM1ArqIu3aJ4jmi58685675da",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/patient-encounter-information/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"patient-encounter-information",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patient Encounter Notes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "29|hTPdP1ZrS1HMBl9VSslPhuqiYLEdxOgVNed7IN65e7327acd",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\": \"1\",\r\n    \"encounter_id\": \"5\",\r\n    \"sections\": [\r\n        {\r\n            \"section_title\": \"Chief Complaint\",\r\n            \"section_text\": \"chief_complaint Text One 5324234242\",\r\n            \"sorting_order\": \"1\"\r\n        },\r\n        {\r\n            \"section_title\": \"History of Present Illness\",\r\n            \"section_text\": \"history_of_present_illness Text\",\r\n            \"sorting_order\": \"2\"\r\n        },\r\n        {\r\n            \"section_title\": \"Review of Systems\",\r\n            \"section_text\": \"review_of_systems Text\",\r\n            \"sorting_order\": \"3\"\r\n        },\r\n        {\r\n            \"section_title\": \"Post Medical History\",\r\n            \"section_text\": \"Post Medical History Text\",\r\n            \"sorting_order\": \"4\"\r\n        },\r\n        {\r\n            \"section_title\": \"Family History\",\r\n            \"section_text\": \"family_history Text\",\r\n            \"sorting_order\": \"5\"\r\n        },\r\n        {\r\n            \"section_title\": \"Social History\",\r\n            \"section_text\": \"social_history Text\",\r\n            \"sorting_order\": \"6\"\r\n        },\r\n         {\r\n            \"section_title\": \"Medications\",\r\n            \"section_text\": \"medication Text\",\r\n            \"sorting_order\": \"7\"\r\n        },\r\n         {\r\n            \"section_title\": \"Allergies\",\r\n            \"section_text\": \"allergy Text\",\r\n            \"sorting_order\": \"8\"\r\n        },\r\n         {\r\n            \"section_title\": \"Vital Sign\",\r\n            \"section_text\": \"vital_sign Text\",\r\n            \"sorting_order\": \"9\"\r\n        },\r\n         {\r\n            \"section_title\": \"Physical Examination\",\r\n            \"section_text\": \"pgysical_examination Text\",\r\n            \"sorting_order\": \"10\"\r\n        },\r\n         {\r\n            \"section_title\": \"Plan\",\r\n            \"section_text\": \"Plan Text\",\r\n            \"sorting_order\": \"11\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/add-patient-encounter-notes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"add-patient-encounter-notes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encounter Templates",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "HmTmbTwklJsZiasanZGmxHP4HXHJmvSOryKfmXtMf623d591",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"template_name\": \"First Template\",\r\n  \"template_sections\": [\r\n    {\r\n      \"section_title\": \"Chief Complaint\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"1\",\r\n      \"section_slug\": \"chief_complaint\"\r\n    },\r\n    {\r\n      \"section_title\": \"History of Present Illness\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"2\",\r\n      \"section_slug\": \"history_of_present_illness\"\r\n    },\r\n    {\r\n      \"section_title\": \"Review of Systems\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"3\",\r\n      \"section_slug\": \"review_of_systems\"\r\n    },\r\n    {\r\n      \"section_title\": \"Post Medical History\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"4\",\r\n      \"section_slug\": \"post_medical_history\"\r\n    },\r\n    {\r\n      \"section_title\": \"Family History\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"5\",\r\n      \"section_slug\": \"family_history\"\r\n    },\r\n    {\r\n      \"section_title\": \"Social History\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"6\",\r\n      \"section_slug\": \"social_history\"\r\n    },\r\n    {\r\n      \"section_title\": \"Medications\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"7\",\r\n      \"section_slug\": \"medications\"\r\n    },\r\n    {\r\n      \"section_title\": \"Allergies\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"8\",\r\n      \"section_slug\": \"allergies\"\r\n    },\r\n    {\r\n      \"section_title\": \"Vital Sign\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"9\",\r\n      \"section_slug\": \"vital_sign\"\r\n    },\r\n    {\r\n      \"section_title\": \"Physical Examination\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"10\",\r\n      \"section_slug\": \"physical_examination\"\r\n    },\r\n    {\r\n      \"section_title\": \"Plan\",\r\n      \"section_text\": \"\",\r\n      \"sorting_order\": \"11\",\r\n      \"section_slug\": \"plan\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/encounter-template",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"encounter-template"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Encounter Templates",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "HmTmbTwklJsZiasanZGmxHP4HXHJmvSOryKfmXtMf623d591",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/get/encounter-template",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"get",
+								"encounter-template"
 							]
 						}
 					},
@@ -2731,6 +3066,797 @@
 			]
 		},
 		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\":\"2\",\r\n    \"title\":\"Hey This is New Note 2\",\r\n    \"date\":\"30-5-2023\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/store-note",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store-note"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patient Notes Get (2 is the Patient ID in the Paramete))",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "87|quIaucLmJtIQSLFhxJ9li7538DFbX260tmDSloNM3c1b0c49",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/notes/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"notes",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note (1 is the Note ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/notes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"notes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note (1 is the Note ID in the Paramter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"patient_id\": \"2\",\r\n    \"title\": \"Hey This is New Note 2 Edit\",\r\n    \"date\": \"2-3-2023\",\r\n    \"status\": \"0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/notes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"notes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Single Note (1 is the Note ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/single-note/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"single-note",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Note Search (2 is the Patient ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"search\":\"New\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/notes-search/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"notes-search",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Documents",
+			"item": [
+				{
+					"name": "Store Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "167|XdtkuKeXcMoCYZnb3LsiHG1kd9pt6L2sM1i8R4t507ef47cd",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Hey New Document",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "X-Ray",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "03-01-2023",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/conta/Downloads/screencapture-127-0-0-1-8000-video-call-2024-04-24-13_48_23.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/store-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store-document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patients Document (2 is the Patient ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/documents/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"documents",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document (5 is the Document ID in the Parameter)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/document/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"document",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "document_id",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Hey Update This",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "New Update X-Ray",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Description is Good",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "23-01-2323",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/conta/Downloads/DOC-20230921-WA0021.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Description",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-document"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Allergy",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "126|x9BEJLMjIo5uJbQMmUzVmkSyuwA6iNWmLf3TmiF427f9c19e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy_type",
+									"value": "32",
+									"type": "text"
+								},
+								{
+									"key": "allergy",
+									"value": "Hey New Allergy",
+									"type": "text"
+								},
+								{
+									"key": "reaction_id",
+									"value": "36",
+									"type": "text"
+								},
+								{
+									"key": "severity_id",
+									"value": "39",
+									"type": "text"
+								},
+								{
+									"key": "onset_date",
+									"value": "03-01-2003",
+									"type": "text"
+								},
+								{
+									"key": "comments",
+									"value": "Hey Hey",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/store-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store-allergy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient Allergies (2 is the Patient ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "126|x9BEJLMjIo5uJbQMmUzVmkSyuwA6iNWmLf3TmiF427f9c19e",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/allergies/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"allergies",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single Allergy (2 is the Allergy ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/single-allergy/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"single-allergy",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Allergy (2 is the Allergy ID)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/delete-allergy/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete-allergy",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Allergy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|XiJeB2G3ikTw5Fe3nBQlbgbMjmgNtl1R2NW6leJce24bff0d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy_type",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "allergy",
+									"value": "Hey Updated Field Here",
+									"type": "text"
+								},
+								{
+									"key": "reaction_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "severity_id",
+									"value": "39",
+									"type": "text"
+								},
+								{
+									"key": "onset_date",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "comments",
+									"value": "Hey Hey",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/update-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update-allergy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Allergy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "13|e9P0k52XS7tu8EOnXlbyuogc6mbdTPF7WTUnC5Ng5f3a1171",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "patient_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "search_text",
+									"value": "Drup Allery das da dsa dsad a",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/search-allergy",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search-allergy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Login",
 			"request": {
 				"method": "POST",
@@ -2934,6 +4060,273 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Patient Summary (3 is the Patient ID)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "19|EiVCiUfIy5CkRQ7lZTXv2Xd2kBUekX0Pe2BY5Rik80c1e545",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/patient-summary/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"patient-summary",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Uploaded File (File may be Image or PDF or word file etc, 202404241149_6628f1e69d40f.pdf is the FIle Name which is Come from Api Response)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "5|HNwwTYRpGEN22txepvj4W6aZnuFguZoOZgGFzemQ5f80940a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/file/202404241149_6628f1e69d40f.pdf",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"file",
+						"202404241149_6628f1e69d40f.pdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User Details",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "129|5ltfXSCVV3anzAC0mTXiERFtpnBfK3P9D7KrkG3D205ab726",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/login-user-details",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login-user-details"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Options",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "98|n1Fg8gyo6eLmtSgPezoSJLIFlzEZ8B92d7cOQRcY95dbd27c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/list-options",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"list-options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "129|5ltfXSCVV3anzAC0mTXiERFtpnBfK3P9D7KrkG3D205ab726",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "first_name",
+							"value": "Usama",
+							"type": "text"
+						},
+						{
+							"key": "middle_name",
+							"value": "Sami",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "Akhtar",
+							"type": "text"
+						},
+						{
+							"key": "suffix",
+							"value": "77623",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "Male",
+							"type": "text"
+						},
+						{
+							"key": "date_of_birth",
+							"value": "03-1-2003",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "Pakistan",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Sadqiabad",
+							"type": "text"
+						},
+						{
+							"key": "zip_code",
+							"value": "4642",
+							"type": "text"
+						},
+						{
+							"key": "home_phone",
+							"value": "030012345678",
+							"type": "text"
+						},
+						{
+							"key": "npi",
+							"value": "op",
+							"type": "text"
+						},
+						{
+							"key": "tax_type",
+							"value": "maincash",
+							"type": "text"
+						},
+						{
+							"key": "snn",
+							"value": "4389",
+							"type": "text"
+						},
+						{
+							"key": "ein",
+							"value": "Winner",
+							"type": "text"
+						},
+						{
+							"key": "epcs_status",
+							"value": "Loser",
+							"type": "text"
+						},
+						{
+							"key": "dea_number",
+							"value": "483247289",
+							"type": "text"
+						},
+						{
+							"key": "nadean",
+							"value": "sseqrwre",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "MR",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/update-profile",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"update-profile"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -2960,8 +4353,8 @@
 	],
 	"variable": [
 		{
-			"key": "url",
-			"value": "http://127.0.0.1:8000/api",
+			"key": "url_soul",
+			"value": "http://127.0.0.1:4500/api",
 			"type": "string"
 		}
 	]
