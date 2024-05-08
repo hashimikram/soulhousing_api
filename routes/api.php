@@ -16,10 +16,15 @@ use App\Http\Controllers\Api\ReviewOfSystemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\EncounterNoteSectionController;
+<<<<<<< HEAD
 use App\Http\Controllers\EncounterTemplateController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ListOptionController;
 use App\Models\EncounterTemplate;
+=======
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\ListOptionController;
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
 Route::post('login', [RegisteredUserController::class, 'login']);
 // Forgot Password
@@ -31,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [RegisteredUserController::class, 'change_password']);
     Route::get('/login-user-details', [RegisteredUserController::class, 'login_user_details']);
     Route::post('/update-profile', [RegisteredUserController::class, 'update_profile']);
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
     // Patient CRUD
     Route::post('/check-patient-record', [PatientController::class, 'check_availablity']);
@@ -40,6 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-patient', [PatientController::class, 'update']);
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
     Route::post('/search-patient', [PatientController::class, 'search']);
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
     // Insurance CRUD
     Route::post('/add-insurance', [InsuranceController::class, 'store']);
@@ -67,6 +80,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bed-details/{id}', [BedController::class, 'show']);
     Route::get('/rooms-beds/{floor_id}', [FloorController::class, 'bedsAndrooms']);
     Route::get('/map-rooms-beds/{floor_id}', [FloorController::class, 'mapBedRooms']);
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
@@ -87,7 +104,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
     Route::post('/update-patient-encounter-notes', [EncounterNoteSectionController::class, 'update']);
     Route::get('patient-encounter-information/{patient_id}', [PatientEncounterController::class, 'patient_encounter_information']);
+<<<<<<< HEAD
     Route::get('/encounter-status-update/{encounter_id}', [PatientEncounterController::class, 'status_update']);
+=======
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
 
     // ReviewOfSystem CRUD
@@ -96,6 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('review-of-system/{patient_id}', [ReviewOfSystemController::class, 'show']);
     Route::post('/update-review-of-system', [ReviewOfSystemController::class, 'update']);
     Route::get('/patient-summary/{id}', [PatientController::class, 'summary_patient']);
+<<<<<<< HEAD
 
     // Note CRUD
     Route::get('/notes/{patient_id}', [NoteController::class, 'index']);
@@ -125,5 +146,35 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/encounter-template', [EncounterTemplateController::class, 'store']);
     Route::get('/get/encounter-template', [EncounterTemplateController::class, 'index']);
 
+=======
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 
+    // Note CRUD
+    Route::get('/notes/{patient_id}', [NoteController::class, 'index']);
+    Route::post('/notes-search/{patient_id}', [NoteController::class, 'search']);
+    Route::get('/single-note/{id}', [NoteController::class, 'show']);
+    Route::post('/store-note', [NoteController::class, 'store']);
+    Route::put('/notes/{id}', [NoteController::class, 'update']);
+    Route::delete('/notes/{id}', [NoteController::class, 'destroy']);
+
+    // Document CRUD
+    Route::get('/documents/{patient_id}', [DocumentController::class, 'index']);
+    Route::post('/store-document', [DocumentController::class, 'store']);
+    Route::delete('/document/{id}', [DocumentController::class, 'destroy']);
+    Route::post('/update-document', [DocumentController::class, 'update']);
+    Route::post('/search-document', [DocumentController::class, 'search']);
+
+
+    // Allergy CRUD
+    Route::post('/store-allergy', [AllergyController::class, 'store']);
+    Route::get('/allergies/{patient_id}', [AllergyController::class, 'index']);
+    Route::get('/single-allergy/{id}', [AllergyController::class, 'show']);
+    Route::delete('/delete-allergy/{id}', [AllergyController::class, 'destroy']);
+    Route::post('/update-allergy', [AllergyController::class, 'update']);
+    Route::post('/search-allergy', [AllergyController::class, 'search']);
+
+
+
+    Route::get('/file/{name}', [FileController::class, 'show']);
+    Route::get('/list-options', [ListOptionController::class, 'index']);
 });

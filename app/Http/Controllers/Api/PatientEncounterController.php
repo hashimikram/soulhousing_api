@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Support\Str;
 use App\Models\PhysicalExam;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use DB;
 use App\Models\ReviewOfSystem;
 use Illuminate\Support\Facades\Schema;
+=======
+use App\Models\ReviewOfSystem;
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 use App\Models\PatientEncounter;
 use Illuminate\Support\Facades\Log;
 use App\Models\EncounterNoteSection;
@@ -43,23 +47,32 @@ class PatientEncounterController extends BaseController
             'patient_id' => 'required|exists:patients,id',
             'encounter_type' => 'required|exists:list_options,id',
             'specialty' => 'required|exists:list_options,id',
+<<<<<<< HEAD
             'parent_encounter' => 'nullable|exists:patient_encounters,id',
+=======
+            'parent_encounter' => 'exists:patient_encounters,id',
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             'reason' => 'required',
         ]);
         try {
             $encounter = new PatientEncounter();
             $encounter->patient_id = $request->patient_id;
             $encounter->provider_id = auth()->user()->id;
+<<<<<<< HEAD
             $encounter->provider_id_patient = $request->provider_id_patient;
             date_default_timezone_set('Asia/Karachi');
             $start = date('Y-m-d h:i:s', strtotime($request->signed_at));
             $encounter->encounter_date = $start;
+=======
+            $encounter->encounter_date = $request->signed_at;
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             $encounter->signed_by =  auth()->user()->id;
             $encounter->encounter_type = $request->encounter_type;
             $encounter->specialty = $request->specialty;
             $encounter->parent_encounter = $request->parent_encounter;
             $encounter->location = $request->location;
             $encounter->reason = $request->reason;
+<<<<<<< HEAD
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 $fileName = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -70,6 +83,8 @@ class PatientEncounterController extends BaseController
                 $encounter->attachment = $fileName;
             }
 
+=======
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             $encounter->save();
 
             // $data = $request->json()->all();
@@ -125,6 +140,7 @@ class PatientEncounterController extends BaseController
     public function encounter_notes_store(Request $request)
     {
 
+<<<<<<< HEAD
 
 
 
@@ -219,6 +235,51 @@ class PatientEncounterController extends BaseController
         //         return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
         //     }
         // }
+=======
+        $data = $request->json()->all();
+        $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
+
+        foreach ($includeFields as $sectionTitle) {
+            $sectionData = $data[$sectionTitle] ?? null;
+
+            if ($sectionData === null) {
+                continue;
+            }
+
+            if (is_array($sectionData)) {
+                if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
+                    EncounterNoteSection::create([
+                        'provider_id' => auth()->user()->id,
+                        'patient_id' => $request->patient_id,
+                        'encounter_id' => $request->encounter_id,
+                        'section_title' => ucwords(str_replace('_', ' ', $sectionTitle)),
+                        'section_slug' => $sectionTitle,
+                        'section_text' => json_encode($sectionData),
+                        'sorting_order' => 1,
+                    ]);
+                } else {
+                    foreach ($sectionData as $subsectionTitle => $subsectionData) {
+                        $sectionSlug = $sectionTitle;
+                        $sortingOrder = array_search($subsectionTitle, array_keys($data['sorting_order'])) + 1;
+
+                        EncounterNoteSection::create([
+                            'provider_id' => auth()->user()->id,
+                            'patient_id' => $request->patient_id,
+                            'encounter_id' => $request->encounter_id,
+                            'section_title' => ucwords(str_replace('_', ' ', $subsectionTitle)),
+                            'section_slug' => $subsectionTitle,
+                            'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
+                            'sorting_order' => $sortingOrder,
+                        ]);
+                    }
+                }
+                return response()->json(['message' => "Notes Added Successfully"], 200);
+
+            } else {
+                return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
+            }
+        }
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
     }
 
     /**
@@ -268,7 +329,10 @@ class PatientEncounterController extends BaseController
                 }
             }
             $formattedData[] = [
+<<<<<<< HEAD
                 'section_id' => $section->id,
+=======
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
                 'section_title' => $section->section_title,
                 'section_slug' => $section->section_slug,
                 'section_text' => $sectionText
@@ -362,6 +426,7 @@ class PatientEncounterController extends BaseController
         $encounter_type = ListOption::where('list_id', 'Encounter Type')->select('id', 'title')->get();
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
 
+<<<<<<< HEAD
         // Prepare fields' names from PatientEncounter table
         $encounter_fields = Schema::getColumnListing('patient_encounters');
 
@@ -373,11 +438,17 @@ class PatientEncounterController extends BaseController
         return response()->json([
             'existing_encounters' => $existing_encounters,
 
+=======
+
+        return response()->json([
+            'existing_encounters' => $existing_encounters,
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             'provider' => $providers,
             'encounter_type' => $encounter_type,
             'Specialty' => $Specialty,
         ], 200);
     }
+<<<<<<< HEAD
 
     public function status_update($encounter_id)
     {
@@ -397,4 +468,6 @@ class PatientEncounterController extends BaseController
             return response()->json(['message' => 'No Encounter Found']);
         }
     }
+=======
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
 }

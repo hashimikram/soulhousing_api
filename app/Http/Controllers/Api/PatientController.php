@@ -32,7 +32,11 @@ class PatientController extends BaseController
             ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
             ->orWhere('mrn_no', 'LIKE', '%' . $searchTerm . '%')
             ->orderBy('created_at', 'DESC')
+<<<<<<< HEAD
             ->select('first_name', 'last_name', 'gender', 'date_of_birth', 'mrn_no')
+=======
+            ->select('first_name','last_name','gender','date_of_birth','mrn_no')
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             ->get();
 
         $base = new BaseController();
@@ -77,6 +81,7 @@ class PatientController extends BaseController
             'phone_no' => 'required|unique:patients,phone_no,except,id',
         ]);
         $base = new BaseController();
+<<<<<<< HEAD
         $checkUniuqe = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
             ->where('gender', $request->gender)
@@ -121,6 +126,42 @@ class PatientController extends BaseController
             }
         } else {
             return $base->sendError('Patient Already Exists');
+=======
+        try {
+            $patient = new patient();
+            $patient->provider_id = auth()->user()->id;
+            $patient->title = $request->title;
+            $patient->first_name = $request->first_name;
+            $patient->middle_name = $request->middle_name;
+            $patient->last_name = $request->last_name;
+            $patient->nick_name = $request->nick_name;
+            $patient->phone_no = $request->phone_no;
+            $patient->email = $request->email;
+            $patient->suffix = $request->suffix;
+            $patient->ssn = $request->ssn;
+            $patient->gender = $request->gender;
+            $patient->date_of_birth = $request->date_of_birth;
+            $patient->general_identity = $request->general_identity;
+            $patient->other = $request->other;
+            $patient->location = $request->location;
+            $patient->pharmacy = $request->pharmacy;
+            $patient->address_1 = $request->address_1;
+            $patient->address_2 = $request->address_2;
+            $patient->city = $request->city;
+            $patient->state = $request->state;
+            $patient->zip_code = $request->zip_code;
+            $patient->country = $request->country;
+            $patient->save();
+            $recentAdd = patient::find($patient->id);
+            $countPatient = 'sk-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+            $recentAdd->mrn_no = $countPatient;
+            $recentAdd->save();
+            $data['patient_id'] = $patient->id;
+            return $base->sendResponse($data, 'Patient Added Successfully');
+        } catch (\Exception $e) {
+
+            return $base->sendError($e->getMessage());
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
         }
     }
 

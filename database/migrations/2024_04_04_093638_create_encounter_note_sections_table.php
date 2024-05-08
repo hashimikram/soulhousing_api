@@ -13,9 +13,15 @@ return new class extends Migration {
         Schema::create('encounter_note_sections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('provider_id');
+<<<<<<< HEAD
             $table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+=======
+            $table->foreign('provider_id')->references('id')->on('users')->onDelete('CASCADE');
+            $table->unsignedBigInteger('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('CASCADE');
+>>>>>>> cc214f700485de0e9327728ed3c1b4c66a330219
             $table->unsignedBigInteger('encounter_id');
             $table->foreign('encounter_id')->references('id')->on('patient_encounters')->onDelete('cascade');
             $table->string('section_title')->nullable();
