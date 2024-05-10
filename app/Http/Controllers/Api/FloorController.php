@@ -66,7 +66,7 @@ class FloorController extends BaseController
                         ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
                 }
             ])->where('floors.id', $floor_id)->first();
-dd($floor);
+
             $response = [
                 'floor' => [
                     'id' => $floor->id,
@@ -91,7 +91,6 @@ dd($floor);
                 ];
 
                 foreach ($room->beds as $bed) {
-                    $patient = $bed->patient;
                     $roomData['beds'][] = [
                         'id' => $bed->id,
                         'status' => $bed->status,
@@ -99,14 +98,14 @@ dd($floor);
                         'room_id' => $bed->room_id,
                         'patient_id' => $bed->patient_id,
                         'occupied_from' => $bed->occupied_from,
-                        'patient' => [
-                            'id' => $patient->id,
-                            'first_name' => $patient->first_name,
-                            'last_name' => $patient->last_name,
-                            'gender' => $patient->gender,
-                            'date_of_birth' => $patient->date_of_birth,
-                            'mrn_no' => $patient->mrn_no,
-                        ],
+                        'patient' => $bed->patient ? [
+                            'id' => $bed->patient->id,
+                            'first_name' => $bed->patient->first_name,
+                            'last_name' => $bed->patient->last_name,
+                            'gender' => $bed->patient->gender,
+                            'date_of_birth' => $bed->patient->date_of_birth,
+                            'mrn_no' => $bed->patient->mrn_no,
+                        ] : null,
                     ];
                 }
 
