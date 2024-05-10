@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+            $table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
             $table->unsignedBigInteger('encounter_id');
             $table->foreign('encounter_id')->references('id')->on('patient_encounters')->onDelete('cascade');
             $table->string('section_title')->nullable();

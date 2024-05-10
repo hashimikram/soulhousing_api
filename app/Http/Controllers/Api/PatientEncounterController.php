@@ -104,7 +104,7 @@ foreach ($sections as $sectionTitle) {
     }elseif($sectionTitle == 'Physical Exam'){
            $section->section_text="General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:";
     }else{
-        
+
     }
     $section->section_slug = $sectionSlug;
     $section->save();
@@ -140,7 +140,7 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
         $validatedData = $request->validate([
 
             'sections' => 'required|array',
-        
+
         ]);
 
         $patient_id = $request->patient_id;
@@ -192,7 +192,7 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
             ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
             ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
             ->where('patient_id', $patient_id)
- 
+
             ->get();
         foreach ($data as $reason) {
             if ($reason->status == '0') {
@@ -213,7 +213,7 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
     {
         // Get encounter note sections
         $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id','ASC')->get();
-    
+
         $formattedData = [];
         foreach ($sections as $section) {
             $sectionText = null;

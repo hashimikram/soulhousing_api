@@ -7,8 +7,8 @@ use App\Models\Contact;
 use App\Models\patient;
 use App\Models\Problem;
 use App\Models\medication;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\BaseController as BaseController;
 
@@ -28,17 +28,17 @@ class PatientController extends BaseController
     {
 
 
-      $loggedInUserId = auth()->user()->id;
+        $loggedInUserId = auth()->user()->id;
 
-    $patients = Patient::where('provider_id', $loggedInUserId)
-                        ->where(function ($query) use ($search_text) {
-                            $query->where('first_name', 'LIKE', '%' . $search_text . '%')
-                                  ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
-                                  ->orWhere('mrn_no', 'LIKE', '%' . $search_text . '%');
-                        })
-                        ->orderBy('created_at', 'DESC')
-                        ->select( DB::raw("CONCAT(first_name, ' ', last_name) AS patient_full_name"),'email','mrn_no')
-                        ->get();
+        $patients = Patient::where('provider_id', $loggedInUserId)
+            ->where(function ($query) use ($search_text) {
+                $query->where('first_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
+                    ->orWhere('mrn_no', 'LIKE', '%' . $search_text . '%');
+            })
+            ->orderBy('created_at', 'DESC')
+            ->select(DB::raw("CONCAT(first_name, ' ', last_name) AS patient_full_name"), 'email', 'mrn_no')
+            ->get();
 
         $base = new BaseController();
         return $base->sendResponse($patients, NULL);
@@ -82,68 +82,67 @@ class PatientController extends BaseController
             'phone_no' => 'required',
         ]);
         $base = new BaseController();
-         $checkUnique = patient::where('first_name', $request->first_name)
+        $checkUnique = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
             ->where('gender', $request->gender)
             ->where('date_of_birth', $request->date_of_birth)
             ->first();
-             if ($checkUnique == NULL) {
+        if ($checkUnique == NULL) {
             try {
-            
-            $patient = new patient();
-            $patient->provider_id = auth()->user()->id;
-            $patient->title = $request->title;
-            $patient->first_name = $request->first_name;
-            $patient->middle_name = $request->middle_name;
-            $patient->last_name = $request->last_name;
-            $patient->nick_name = $request->nick_name;
-            $patient->phone_no = $request->phone_no;
-            $patient->email = $request->email;
-            $patient->suffix = $request->suffix;
-            $patient->ssn = $request->ssn;
-            $patient->gender = $request->gender;
-            $patient->date_of_birth = $request->date_of_birth;
-            $patient->general_identity = $request->general_identity;
-            $patient->other = $request->other;
-            $patient->location = $request->location;
-            $patient->pharmacy = $request->pharmacy;
-            $patient->address_1 = $request->address_1;
-            $patient->address_2 = $request->address_2;
-            $patient->city = $request->city;
-            $patient->state = $request->state;
-            $patient->zip_code = $request->zip_code;
-            $patient->country = $request->country;
-            $patient->save();
-            $recentAdd = patient::find($patient->id);
-            $countPatient = 'sk-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
-            $recentAdd->mrn_no = $countPatient;
-            $recentAdd->save();
-            $data['patient_id'] = $patient->id;
-            return $base->sendResponse($data, 'Patient Added Successfully');
-        } catch (\Exception $e) {
 
-            return $base->sendError($e->getMessage());
-        }
+                $patient = new patient();
+                $patient->provider_id = auth()->user()->id;
+                $patient->title = $request->title;
+                $patient->first_name = $request->first_name;
+                $patient->middle_name = $request->middle_name;
+                $patient->last_name = $request->last_name;
+                $patient->nick_name = $request->nick_name;
+                $patient->phone_no = $request->phone_no;
+                $patient->email = $request->email;
+                $patient->suffix = $request->suffix;
+                $patient->ssn = $request->ssn;
+                $patient->gender = $request->gender;
+                $patient->date_of_birth = $request->date_of_birth;
+                $patient->general_identity = $request->general_identity;
+                $patient->other = $request->other;
+                $patient->location = $request->location;
+                $patient->pharmacy = $request->pharmacy;
+                $patient->address_1 = $request->address_1;
+                $patient->address_2 = $request->address_2;
+                $patient->city = $request->city;
+                $patient->state = $request->state;
+                $patient->zip_code = $request->zip_code;
+                $patient->country = $request->country;
+                $patient->save();
+                $recentAdd = patient::find($patient->id);
+                $countPatient = 'sk-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+                $recentAdd->mrn_no = $countPatient;
+                $recentAdd->save();
+                $data['patient_id'] = $patient->id;
+                return $base->sendResponse($data, 'Patient Added Successfully');
+            } catch (\Exception $e) {
+
+                return $base->sendError($e->getMessage());
+            }
         } else {
-           // Existing patient found, include its data in the error response
-    $existingPatientData = [];
+            // Existing patient found, include its data in the error response
+            $existingPatientData = [];
 
-    if ($checkUnique->first_name != $request->first_name) {
-        $existingPatientData['first_name'] = 'First name already exists';
-    }
-    if ($checkUnique->last_name != $request->last_name) {
-        $existingPatientData['last_name'] = 'Last name already exists';
-    }
-    if ($checkUnique->email != $request->email) {
-        $existingPatientData['email'] = 'Email already exists';
-    }
-    if ($checkUnique->date_of_birth != $request->date_of_birth) {
-        $existingPatientData['date_of_birth'] = 'Date of birth already exists';
-    }
+            if ($checkUnique->first_name != $request->first_name) {
+                $existingPatientData['first_name'] = 'First name already exists';
+            }
+            if ($checkUnique->last_name != $request->last_name) {
+                $existingPatientData['last_name'] = 'Last name already exists';
+            }
+            if ($checkUnique->email != $request->email) {
+                $existingPatientData['email'] = 'Email already exists';
+            }
+            if ($checkUnique->date_of_birth != $request->date_of_birth) {
+                $existingPatientData['date_of_birth'] = 'Date of birth already exists';
+            }
 
-    return $base->sendError($existingPatientData);
+            return $base->sendError($existingPatientData);
         }
-       
     }
 
     /**

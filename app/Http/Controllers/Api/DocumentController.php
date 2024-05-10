@@ -190,7 +190,10 @@ foreach ($documents as $document) {
      */
     public function destroy($id)
     {
-   
+<<<<<<< HEAD
+
+=======
+>>>>>>> 476b3df3f7b9fd4a143b6d0fd0c9d20bc402553f
 
         if (!is_numeric($id) || $id <= 0) {
             return response()->json(['error' => 'Invalid Document ID'], 400);
@@ -202,7 +205,14 @@ foreach ($documents as $document) {
             return response()->json(['error' => 'Document not found'], 404);
         }
 
-        
+<<<<<<< HEAD
+
+=======
+        if ($document->provider_id !== auth()->user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+>>>>>>> 476b3df3f7b9fd4a143b6d0fd0c9d20bc402553f
         try {
             $document->delete();
         } catch (\Exception $e) {

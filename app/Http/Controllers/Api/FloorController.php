@@ -193,25 +193,30 @@ class FloorController extends BaseController
                 foreach ($roomsData as $roomData) {
                     // Check if room title is present
                     if (!isset($roomData['room_title'])) {
-                        continue;
+                        continue; // Skip this iteration if room title is missing
                     }
+
                     $room = Room::create([
                         'floor_id' => $floorId,
                         'room_name' => $roomData['room_title']
                     ]);
                     $lastBedNumber = 0;
 
+                    // Check if beds data is present
                     if (isset($roomData['beds']) && is_array($roomData['beds'])) {
                         foreach ($roomData['beds'] as $bedData) {
+                            // Get the last bed number bedData in the room
                             $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
+                            // Start bed number from the next number after the last saved bed number
                             $bedNumber = $lastBedNumber + 1;
                             Log::info($bedNumber);
+                            // Check if comments, occupied_at, and booked_at are present
                             if (!isset($bedData['comments'], $bedData['occupied_at'], $bedData['booked_at'])) {
                                 continue; // Skip this iteration if required bed data is missing
                             }
 
                             Bed::create([
-                                'room_id' => $bedData['room_id'],
+                                'room_id' => $roomData['room_id'],
                                 'comments' => $bedData['comments'],
                                 'bed_no' => $bedNumber,
                                 'status' => 'vacand',
