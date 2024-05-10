@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-profile', [RegisteredUserController::class, 'update_profile']);
 
     // Patient CRUD
-    Route::post('/check-patient-record', [PatientController::class, 'check_availablity']);
+    Route::post('/check-patient-record', [PatientController::class, 'check_availability']);
     Route::post('/add-patient', [PatientController::class, 'store']);
     Route::get('/get-patients', [PatientController::class, 'index']);
     Route::get('/patient-detail/{patientId}', [PatientController::class, 'show']);
@@ -76,7 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-medication', [MedicationController::class, 'store']);
     Route::post('/update-medication', [MedicationController::class, 'update']);
     Route::get('/get-medication/{id}', [MedicationController::class, 'index']);
-    Route::get('/delete-medication/{medication}', [MedicationController::class,' destroy']);
+    Route::get('/delete-medication/{medication}', [MedicationController::class, ' destroy']);
 
     // Encounter CRUD
     Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);

@@ -26,18 +26,15 @@ class PatientController extends BaseController
 
     public function search($search_text)
     {
-
-
         $loggedInUserId = auth()->user()->id;
-
         $patients = Patient::where('provider_id', $loggedInUserId)
             ->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('last_name', 'LIKE', '%' . $search_text . '%')
                     ->orWhere('mrn_no', 'LIKE', '%' . $search_text . '%');
             })
-            ->orderBy('created_at', 'DESC')
-            ->select(DB::raw("CONCAT(first_name, ' ', last_name) AS patient_full_name"), 'email', 'mrn_no')
+            ->orderBy('created_at', 'ASC')
+            ->select(DB::raw("CONCAT(first_name, ' ', last_name) AS full_name"), 'email', 'mrn_no')
             ->get();
 
         $base = new BaseController();
@@ -48,20 +45,20 @@ class PatientController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function check_availablity(Request $request)
+    public function check_availability(Request $request)
     {
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
             'gender' => 'required',
         ]);
-        $checkUniuqe = patient::where('first_name', $request->first_name)
+        $checkUnique = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
             ->where('gender', $request->gender)
             ->where('date_of_birth', $request->date_of_birth)
             ->get();
         $base = new BaseController();
-        if (count($checkUniuqe) == 0) {
+        if (count($checkUnique) == 0) {
             return $base->sendResponse(NULL, 'No Patient Found');
         } else {
             return $base->sendError('Patient Already Exists');
@@ -184,8 +181,8 @@ class PatientController extends BaseController
         try {
             $currentMonth = Carbon::now()->format('m');
             $totalPatient = patient::whereMonth('created_at', $currentMonth)->count();
-            $countone = 1;
-            $countPatient = date('ym') . $totalPatient + $countone;
+            $count_one = 1;
+            $countPatient = date('ym') . $totalPatient + $count_one;
             $patient = patient::find($request->id);
             if ($patient != NULL) {
                 $patient->title = $request->title;
