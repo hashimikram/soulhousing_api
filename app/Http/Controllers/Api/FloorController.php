@@ -17,10 +17,50 @@ class FloorController extends BaseController
      */
     public function index()
     {
-        $floors = floor::where('provider_id', auth()->user()->id)->get();
+
+        $totalBedsCount = 0;
+        $vacantBedsCount = 0;
+        $pendingBedsCount = 0;
+
+        $data = []; // Initialize the data array
+
+        $floors = Floor::where('provider_id', auth()->user()->id)->get();
+
+        foreach ($floors as $floor) {
+            $totalBedsCount = 0;
+            $occupiedBedsCount = 0;
+            $pendingBedsCount = 0; // Initialize pending beds count inside the loop
+            foreach ($floor->rooms as $room) {
+                $totalBedsCount += count($room->beds);
+                foreach ($room->beds as $bed) {
+                    if ($bed->status === 'occupied') {
+                        $occupiedBedsCount++;
+                    } elseif ($bed->status === 'pending') {
+                        $pendingBedsCount++;
+                    } elseif ($bed->status === 'vacant') {
+                        $vacantBedsCount++;
+                    }
+                }
+            }
+
+            // Add floor data directly to the $data array
+            $data[] = [
+                'id' => $floor->id,
+                'facility_id' => $floor->facility_id,
+                'provider_id' => $floor->provider_id,
+                'floor_name' => $floor->floor_name,
+                'created_at' => $floor->created_at,
+                'updated_at' => $floor->updated_at,
+                'total_beds_count' => $totalBedsCount,
+                'occupied_beds_count' => $occupiedBedsCount + $pendingBedsCount,
+                'vacant_beds_count' => $vacantBedsCount,
+            ];
+        }
+
         $base = new BaseController();
-        if (count($floors) > 0) {
-            return $base->sendResponse($floors, 'Floors Data');
+        if (count($data) > 0) {
+            // Return the data directly without the 'data' key
+            return $base->sendResponse($data, 'Floors Data');
         } else {
             return $base->sendError('No Data Found');
         }
@@ -80,6 +120,12 @@ class FloorController extends BaseController
                 'floor_id' => $floor->id,
             ];
 
+            // Initialize counts for all beds
+            $totalBedsCount = 0;
+            $occupiedBedsCount = 0;
+            $pendingBedsCount = 0;
+            $vacantBedsCount = 0;
+
             foreach ($floor->rooms as $room) {
                 $roomData = [
                     'id' => $room->id,
@@ -91,7 +137,7 @@ class FloorController extends BaseController
                 ];
 
                 foreach ($room->beds as $bed) {
-                    $roomData['beds'][] = [
+                    $bedData = [
                         'id' => $bed->id,
                         'status' => $bed->status,
                         'bed_no' => $bed->bed_no,
@@ -107,12 +153,23 @@ class FloorController extends BaseController
                             'mrn_no' => $bed->patient->mrn_no,
                         ] : null,
                     ];
+
+
+                    $roomData['beds'][] = $bedData;
                 }
+
+
 
                 $response['floor']['rooms'][] = $roomData;
             }
 
+            // Set the beds_info after iterating through all rooms
+
             return $base->sendResponse($response, 'Beds with associated rooms mapped successfully');
+        } catch (\Exception $e) {
+            return $base->sendError('Error', $e->getMessage());
+        } catch (\Exception $e) {
+            return $base->sendError('Error', $e->getMessage());
         } catch (\Exception $e) {
             // Handle the exception
             return $base->sendError('Error', $e->getMessage());
@@ -160,7 +217,7 @@ class FloorController extends BaseController
                             'room_id' => $room->id,
                             'bed_no' => $bedCounter, // Set the bed number
                             'comments' => $bedData['comments'],
-                            'status' => 'vacand',
+                            'status' => 'vacant',
                         ]);
                     }
                 }

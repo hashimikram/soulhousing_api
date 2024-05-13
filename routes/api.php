@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\ReviewOfSystemController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\EncounterNoteSectionController;
+use App\Http\Controllers\Api\VitalController;
 use App\Http\Controllers\EncounterTemplateController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ListOptionController;
@@ -119,6 +120,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/delete-allergy/{id}', [AllergyController::class, 'destroy']);
     Route::post('/update-allergy', [AllergyController::class, 'update']);
     Route::post('/search-allergy', [AllergyController::class, 'search']);
+
+    // Vitals CRUD
+    Route::post('/store-vital', [VitalController::class, 'store']);
+    Route::get('/vitals/{patient_id}', [VitalController::class, 'index']);
+    Route::get('/single-vital/{id}', [VitalController::class, 'show']);
+    Route::delete('/delete-vital/{id}', [VitalController::class, 'destroy']);
+    Route::post('/update-vital', [VitalController::class, 'update']);
+
 
     Route::get('/file/{name}', [FileController::class, 'show']);
     Route::get('/list-options', [ListOptionController::class, 'index']);
