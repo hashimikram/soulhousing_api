@@ -62,7 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
-    Route::post('/update-floor-rooms', [FloorController::class, 'update']);
+    Route::post('/update-room', [FloorController::class, 'update_room']);
+    Route::post('/update-beds', [FloorController::class, 'update_bed']);
     Route::get('/floors', [FloorController::class, 'index']);
     Route::post('/assign-bed', [BedController::class, 'assign_bed']);
     Route::get('/bed-details/{id}', [BedController::class, 'show']);

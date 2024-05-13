@@ -177,49 +177,24 @@ class FloorController extends BaseController
      * Display the specified resource.
      */
 
-    public function update_one(Request $request)
+
+
+
+    public function update_room(Request $request)
     {
-        $data = $request->json()->all();
+        $validatedData = $request->validate([
+            'floor_id' => 'required|exists:floors,id',
+            'room_name' => 'nullable|string',
+        ]);
         try {
-            if (isset($data['floor_id']) || isset($data['room_title'])) {
-                $floorId = $data['floor_id'];
-                $roomTitle = $data['room_title'];
-
-                $floor = Floor::findOrFail($floorId);
-                if (isset($floor)) {
-                    // Create the room
-                    $room = Room::create([
-                        'floor_id' => $floorId,
-                        'room_name' => $roomTitle
-                    ]);
-                } else {
-                    return response()->json(['message' => 'Floor Not Found']);
-                }
-            }
-
-
-            // Check if beds data is present
-            if (isset($data['beds']) && is_array($data['beds'])) {
-                foreach ($data['beds'] as $bedData) {
-                    // Check if comments, occupied_at, and booked_at are present
-                    if (!isset($bedData['comments'], $bedData['occupied_at'], $bedData['booked_at'])) {
-                        continue; // Skip this iteration if required bed data is missing
-                    }
-                    $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
-                    // Start bed number from the next number after the last saved bed number
-                    $bedNumber = $lastBedNumber + 1;
-                    Bed::create([
-                        'room_id' => $bedData['room_id'],
-                        'bed_no' => $bedNumber,
-                        'comments' => $bedData['comments'],
-                        'occupied_at' => $bedData['occupied_at'],
-                        'booked_at' => $bedData['booked_at'],
-                        'status' => 'vacant', // assuming this is a default status
-                    ]);
-                }
-            }
-
-            return response()->json(['message' => 'Room and Beds created successfully']);
+            $room = Room::create([
+                'floor_id' => $request->floor_id,
+                'room_name' => $request->room_title
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Room Added In Floor',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -228,70 +203,90 @@ class FloorController extends BaseController
         }
     }
 
-
-    public function update(Request $request)
+    public function update_bed(Request $request)
     {
-        $data = $request->json()->all();
+        $validatedData = $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'comments' => 'nullable|string',
+            'booked_at' => 'nullable|date',
+        ]);
         try {
-            $floorId = isset($data['floor_id']) ? $data['floor_id'] : null;
-            $roomTitle = isset($data['room_title']) ? $data['room_title'] : null;
-
-            // Check if beds data is present
-            if (isset($data['beds']) && is_array($data['beds'])) {
-                foreach ($data['beds'] as $bedData) {
-                    // Check if comments, occupied_at, and booked_at are present
-                    if (!isset($bedData['comments'], $bedData['occupied_at'], $bedData['booked_at'])) {
-                        continue; // Skip this iteration if required bed data is missing
-                    }
-
-                    // If floor_id and room_title are not present, create a bed without a room
-                    if (!$floorId || !$roomTitle) {
-                        $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
-                        // Start bed number from the next number after the last saved bed number
-                        $bedNumber = $lastBedNumber + 1;
-                        Bed::create([
-                            'bed_no' => $bedNumber,
-                            'room_id' => $bedData['room_id'],
-                            'comments' => $bedData['comments'],
-                            'booked_at' => $bedData['booked_at'],
-                            'status' => 'vacant', // assuming this is a default status
-                        ]);
-                    } else {
-                        // If floor_id and room_title are present, create the room and beds
-                        $floor = Floor::findOrFail($floorId);
-                        if ($floor) {
-                            $room = Room::create([
-                                'floor_id' => $floorId,
-                                'room_name' => $roomTitle
-                            ]);
-                            $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
-                            // Start bed number from the next number after the last saved bed number
-                            $bedNumber = $lastBedNumber + 1;
-                            Bed::create([
-                                'bed_no' => $bedNumber,
-                                'room_id' => $bedData['room_id'],
-                                'comments' => $bedData['comments'],
-                                'booked_at' => $bedData['booked_at'],
-                                'status' => 'vacant', // assuming this is a default status
-                            ]);
-                        }
-                    }
-                }
-                return response()->json(['message' => 'Beds added successfully']);
-            } elseif ($floorId && $roomTitle) {
-                // If only floor_id and room_title are present, create the room
-                $floor = Floor::findOrFail($floorId);
-                if ($floor) {
-                    Room::create([
-                        'floor_id' => $floorId,
-                        'room_name' => $roomTitle
-                    ]);
-                    return response()->json(['message' => 'Room added successfully']);
-                }
+            $lastBedNumber = Bed::where('room_id', $validatedData['room_id'])->max('bed_no');
+            if ($lastBedNumber == NULL) {
+                $bedNumber = 1;
+            } else {
+                $bedNumber = $lastBedNumber + 1;
             }
 
+            Bed::create([
+                'bed_no' => $bedNumber,
+                'room_id' => $validatedData['room_id'],
+                'comments' => $validatedData['comments'] ?? null,
+                'status' => 'vacant', // assuming this is a default status
+            ]);
+            // $floorId = isset($data['floor_id']) ? $data['floor_id'] : null;
+            // $roomTitle = isset($data['room_title']) ? $data['room_title'] : null;
+
+            // // Check if beds data is present
+            // if (isset($data['beds']) && is_array($data['beds'])) {
+            //     foreach ($data['beds'] as $bedData) {
+            //         // Check if comments, occupied_at, and booked_at are present
+            //         if (!isset($bedData['comments'], $bedData['occupied_at'], $bedData['booked_at'])) {
+            //             continue; // Skip this iteration if required bed data is missing
+            //         }
+
+            //         // If floor_id and room_title are not present, create a bed without a room
+            //         if (!$floorId || !$roomTitle) {
+            //             $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
+            //             // Start bed number from the next number after the last saved bed number
+            //             $bedNumber = $lastBedNumber + 1;
+            //             Bed::create([
+            //                 'bed_no' => $bedNumber,
+            //                 'room_id' => $bedData['room_id'],
+            //                 'comments' => $bedData['comments'],
+            //                 'booked_at' => $bedData['booked_at'],
+            //                 'status' => 'vacant', // assuming this is a default status
+            //             ]);
+            //         } else {
+            //             // If floor_id and room_title are present, create the room and beds
+            //             $floor = Floor::findOrFail($floorId);
+            //             if ($floor) {
+            //                 $room = Room::create([
+            //                     'floor_id' => $floorId,
+            //                     'room_name' => $roomTitle
+            //                 ]);
+            //                 $lastBedNumber = Bed::where('room_id', $bedData['room_id'])->max('bed_no');
+            //                 // Start bed number from the next number after the last saved bed number
+            //                 $bedNumber = $lastBedNumber + 1;
+            //                 Bed::create([
+            //                     'bed_no' => $bedNumber,
+            //                     'room_id' => $bedData['room_id'],
+            //                     'comments' => $bedData['comments'],
+            //                     'booked_at' => $bedData['booked_at'],
+            //                     'status' => 'vacant', // assuming this is a default status
+            //                 ]);
+            //             }
+            //         }
+            //     }
+            //     return response()->json(['message' => 'Beds added successfully']);
+            // } elseif ($floorId && $roomTitle) {
+            //     // If only floor_id and room_title are present, create the room
+            //     $floor = Floor::findOrFail($floorId);
+            //     if ($floor) {
+            //         Room::create([
+            //             'floor_id' => $floorId,
+            //             'room_name' => $roomTitle
+            //         ]);
+            //         return response()->json(['message' => 'Room added successfully']);
+            //     }
+            // }
+
+
             // If no beds or room added, return an error
-            return response()->json(['error' => 'Invalid JSON payload. No beds or room added.'], 400);
+            return response()->json([
+                'success' => true,
+                'message' => 'Bed Added In Room',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
