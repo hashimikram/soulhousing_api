@@ -23,17 +23,25 @@ class BedController extends BaseController
         if ($beds != NULL) {
             try {
                 date_default_timezone_set('Asia/Karachi');
-                $occupied_at = date('Y-m-d h:i:s', strtotime($request->occupied_at));
-                $booked_till = date('Y-m-d h:i:s', strtotime($request->booked_till));
-                $beds->patient_id = $request->patient_id;
-                $beds->occupied_from = $occupied_at;
-                $beds->booked_till = $booked_till;
-                $beds->status = 'occupied';
-                $beds->save();
-                return response()->json([
-                    'code' => true,
-                    'message' => 'Patient Added',
-                ], 200);
+                $checkAssignBed = Bed::where(['patient_id' => $request->patient_id])->first();
+                if (isset($checkAssignBed)) {
+                    return response()->json([
+                        'code' => false,
+                        'message' => 'Patient Already Assigned',
+                    ], 200);
+                } else {
+                    $occupied_at = date('Y-m-d h:i:s', strtotime($request->occupied_at));
+                    $booked_till = date('Y-m-d h:i:s', strtotime($request->booked_till));
+                    $beds->patient_id = $request->patient_id;
+                    $beds->occupied_from = $occupied_at;
+                    $beds->booked_till = $booked_till;
+                    $beds->status = 'occupied';
+                    $beds->save();
+                    return response()->json([
+                        'code' => true,
+                        'message' => 'Patient Added',
+                    ], 200);
+                }
             } catch (\Exception $e) {
                 return response()->json([
                     'code' => false,
@@ -51,9 +59,26 @@ class BedController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function update_patient_bed(Request $request)
     {
-        //
+        $request->validate([
+            'bed_id' => 'required|exists:beds,id',
+            'patient_id' => 'required|exists:patients,id',
+        ]);
+        $bed = Bed::where(['id' => $request->bed_id])->first();
+        if (isset($bed)) {
+            $bed->patient_id = $request->patient_id;
+            $bed->save();
+            return response()->json([
+                'code' => true,
+                'message' => 'Patient Added',
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 'false',
+                'message' => 'Bed Not Found',
+            ], 404);
+        }
     }
 
     /**

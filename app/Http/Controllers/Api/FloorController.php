@@ -17,7 +17,6 @@ class FloorController extends BaseController
      */
     public function index()
     {
-
         $totalBedsCount = 0;
         $vacantBedsCount = 0;
         $pendingBedsCount = 0;
@@ -120,11 +119,6 @@ class FloorController extends BaseController
                 'floor_id' => $floor->id,
             ];
 
-            // Initialize counts for all beds
-            $totalBedsCount = 0;
-            $occupiedBedsCount = 0;
-            $pendingBedsCount = 0;
-            $vacantBedsCount = 0;
 
             foreach ($floor->rooms as $room) {
                 $roomData = [
