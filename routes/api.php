@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/single-vital/{id}', [VitalController::class, 'show']);
     Route::delete('/delete-vital/{id}', [VitalController::class, 'destroy']);
     Route::post('/update-vital', [VitalController::class, 'update']);
+    Route::post('/search-vital', [VitalController::class, 'search']);
 
 
     Route::get('/file/{name}', [FileController::class, 'show']);

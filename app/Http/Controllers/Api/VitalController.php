@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController as BaseController;
-
+use Termwind\Components\Raw;
 
 class VitalController extends BaseController
 {
@@ -29,9 +29,25 @@ class VitalController extends BaseController
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function search(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'from_date' => 'required|date|before_or_equal:to_date',
+            'to_date' => 'required|date|after_or_equal:from_date',
+            'patient_id' => 'required',
+        ], [
+            // Custom error messages
+            'from_date.before_or_equal' => 'The From Date must be before or equal to the To Date.',
+            'to_date.after_or_equal' => 'The To Date must be after or equal to the From Date.',
+        ]);
+        $fromDate = $validatedData['from_date'];
+        $toDate = $validatedData['to_date'];
+        $patientId = $validatedData['patient_id'];
+        $vitals = Vital::orderBy('id', 'DESC')->whereBetween('date', [$fromDate, $toDate])->where('patient_id', $patientId)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $vitals,
+        ], 200);
     }
 
     /**
