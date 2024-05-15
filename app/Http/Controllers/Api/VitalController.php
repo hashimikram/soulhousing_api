@@ -19,7 +19,7 @@ class VitalController extends BaseController
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $vitals = Vital::where('patient_id', $patient_id)->get();
+        $vitals = Vital::orderBy('id', 'DESC')->where('patient_id', $patient_id)->get();
         return response()->json([
             'success' => true,
             'data' => $vitals,
@@ -83,10 +83,10 @@ class VitalController extends BaseController
             'oxygenation_time_2' => 'nullable|string',
             'peak_flow' => 'nullable|string',
             'oxygenation_time_3' => 'nullable|string',
-            'office_test_oxygen_source_1' => 'nullable|string',
-            'office_test_date_1' => 'nullable|date',
-            'office_test_oxygen_source_2' => 'nullable|string',
-            'office_test_date_2' => 'nullable|date',
+            'office_test_blood_group' => 'nullable|string',
+            'blood_group_date' => 'nullable|date',
+            'office_test_pain_scale' => 'nullable|string',
+            'pain_scale_date' => 'nullable|date',
         ]);
 
         if (!auth()->check()) {
@@ -187,9 +187,7 @@ class VitalController extends BaseController
             'office_test_oxygen_source_2' => 'nullable|string',
             'office_test_date_2' => 'nullable|date',
         ]);
-        if (!auth()->check()) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+
         // Check if the user is authenticated
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);

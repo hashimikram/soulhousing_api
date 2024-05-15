@@ -59,10 +59,10 @@ return new class extends Migration
             $table->string('oxygenation_time_2')->nullable();
             $table->string('peak_flow')->nullable();
             $table->string('oxygenation_time_3')->nullable();
-            $table->string('office_test_oxygen_source_1')->nullable();
-            $table->string('office_test_date_1')->nullable();
-            $table->string('office_test_oxygen_source_2')->nullable();
-            $table->string('office_test_date_2')->nullable();
+            $table->string('office_test_blood_group')->nullable();
+            $table->string('blood_group_date')->nullable();
+            $table->string('office_test_pain_scale')->nullable();
+            $table->string('pain_scale_date')->nullable();
             $table->timestamps();
         });
     }

@@ -18,15 +18,12 @@ class FloorController extends BaseController
     public function index()
     {
         $data = []; // Initialize the data array
-
         $floors = Floor::where('provider_id', auth()->user()->id)->get();
-
         foreach ($floors as $floor) {
             $totalBedsCount = 0;
             $occupiedBedsCount = 0;
             $pendingBedsCount = 0;
             $vacantBedsCount = 0; // Reset vacantBedsCount for each floor
-
             foreach ($floor->rooms as $room) {
                 $totalBedsCount += count($room->beds);
                 foreach ($room->beds as $bed) {
@@ -39,7 +36,6 @@ class FloorController extends BaseController
                     }
                 }
             }
-
             // Add floor data directly to the $data array
             $data[] = [
                 'id' => $floor->id,
