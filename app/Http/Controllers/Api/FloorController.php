@@ -17,10 +17,6 @@ class FloorController extends BaseController
      */
     public function index()
     {
-        $totalBedsCount = 0;
-        $vacantBedsCount = 0;
-        $pendingBedsCount = 0;
-
         $data = []; // Initialize the data array
 
         $floors = Floor::where('provider_id', auth()->user()->id)->get();
@@ -28,15 +24,17 @@ class FloorController extends BaseController
         foreach ($floors as $floor) {
             $totalBedsCount = 0;
             $occupiedBedsCount = 0;
-            $pendingBedsCount = 0; // Initialize pending beds count inside the loop
+            $pendingBedsCount = 0;
+            $vacantBedsCount = 0; // Reset vacantBedsCount for each floor
+
             foreach ($floor->rooms as $room) {
                 $totalBedsCount += count($room->beds);
                 foreach ($room->beds as $bed) {
-                    if ($bed->status === 'occupied') {
+                    if ($bed->status == 'occupied') {
                         $occupiedBedsCount++;
-                    } elseif ($bed->status === 'pending') {
+                    } elseif ($bed->status == 'pending') {
                         $pendingBedsCount++;
-                    } elseif ($bed->status === 'vacant') {
+                    } elseif ($bed->status == 'vacant') {
                         $vacantBedsCount++;
                     }
                 }
@@ -52,7 +50,7 @@ class FloorController extends BaseController
                 'updated_at' => $floor->updated_at,
                 'total_beds_count' => $totalBedsCount,
                 'occupied_beds_count' => $occupiedBedsCount + $pendingBedsCount,
-                'vacant_beds_count' => $vacantBedsCount,
+                'vacant_beds_count' => $vacantBedsCount, // Use the correct vacantBedsCount for each floor
             ];
         }
 
@@ -64,6 +62,7 @@ class FloorController extends BaseController
             return $base->sendError('No Data Found');
         }
     }
+
 
     public function form_data(Request $request)
     {

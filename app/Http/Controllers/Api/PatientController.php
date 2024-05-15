@@ -19,7 +19,18 @@ class PatientController extends BaseController
      */
     public function index()
     {
-        $patients = patient::where('provider_id', auth()->user()->id)->orderBy('created_at', 'DESC')->get();
+        $patients = Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
+            ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
+            ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
+            ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
+            ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name', 'beds.bed_no')
+            ->where('patients.provider_id', auth()->user()->id)
+            ->orderBy('patients.created_at', 'DESC')
+            ->groupBy('patients.id') // Add 'patients.first_name' to the GROUP BY clause
+            ->get();
+
+
+
         $base = new BaseController();
         return $base->sendResponse($patients, 'All Patients Of Login Provider');
     }
@@ -34,7 +45,7 @@ class PatientController extends BaseController
                     ->orWhere('mrn_no', 'LIKE', '%' . $search_text . '%');
             })
             ->orderBy('created_at', 'ASC')
-            ->select(DB::raw("CONCAT(first_name, ' ', last_name) AS full_name"), 'email', 'mrn_no')
+            ->select(DB::raw("CONCAT(first_name, ' ', last_name) AS patient_full_name"), 'email', 'mrn_no', 'id')
             ->get();
 
         $base = new BaseController();

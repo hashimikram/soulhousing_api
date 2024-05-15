@@ -27,6 +27,7 @@ class BedController extends BaseController
                 if (isset($checkAssignBed)) {
                     return response()->json([
                         'code' => false,
+                        'status' => '1',
                         'message' => 'Patient Already Assigned',
                     ], 200);
                 } else {
@@ -65,8 +66,24 @@ class BedController extends BaseController
             'bed_id' => 'required|exists:beds,id',
             'patient_id' => 'required|exists:patients,id',
         ]);
-        $bed = Bed::where(['id' => $request->bed_id])->first();
+        $bed = Bed::where(['patient_id' => $request->patient_id])->first();
         if (isset($bed)) {
+            // remove old Patient and make Bed Empty
+            $bed->patient_id = NULL;
+            $bed->status = 'vacant';
+            $bed->occupied_from = NULL;
+            $bed->booked_till = NULL;
+            $bed->save();
+
+            // add to new bed
+            $newBed = Bed::find($request->bed_id);
+            $newBed->patient_id = $request->patient_id;
+            $newBed->status = 'occupied';
+            $newBed->save();
+            return response()->json([
+                'code' => true,
+                'message' => 'Patient Added',
+            ], 200);
             $bed->patient_id = $request->patient_id;
             $bed->save();
             return response()->json([
