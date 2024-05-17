@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\PhysicalExam;
 use Illuminate\Http\Request;
 use DB;
+use PDF;
 use App\Models\ReviewOfSystem;
 use Illuminate\Support\Facades\Schema;
 use App\Models\PatientEncounter;
@@ -47,85 +48,83 @@ class PatientEncounterController extends BaseController
             'reason' => 'required',
         ]);
         try {
-          $encounter = new PatientEncounter();
-$encounter->patient_id = $request->patient_id;
-$encounter->provider_id = auth()->user()->id;
-$encounter->provider_id_patient = $request->provider_id_patient;
-date_default_timezone_set('Asia/Karachi');
-$start = date('Y-m-d h:i:s', strtotime($request->signed_at));
-$encounter->encounter_date = $start;
-$encounter->signed_by =  auth()->user()->id;
-$encounter->encounter_type = $request->encounter_type;
-$encounter->specialty = $request->specialty;
-$encounter->parent_encounter = $request->parent_encounter;
-$encounter->location = $request->location;
-$encounter->status = '0';
-$encounter->reason = $request->reason;
-if ($request->hasFile('attachment')) {
-    $file = $request->file('attachment');
-    $fileName = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-    // Debug the destination directory path
-    $destinationPath = public_path('uploads');
-    // Move the file to the destination directory
-    $file->move($destinationPath, $fileName);
-    $encounter->attachment = $fileName;
-}
+            $encounter = new PatientEncounter();
+            $encounter->patient_id = $request->patient_id;
+            $encounter->provider_id = auth()->user()->id;
+            $encounter->provider_id_patient = $request->provider_id_patient;
+            date_default_timezone_set('Asia/Karachi');
+            $start = date('Y-m-d h:i:s', strtotime($request->signed_at));
+            $encounter->encounter_date = $start;
+            $encounter->signed_by =  auth()->user()->id;
+            $encounter->encounter_type = $request->encounter_type;
+            $encounter->specialty = $request->specialty;
+            $encounter->parent_encounter = $request->parent_encounter;
+            $encounter->location = $request->location;
+            $encounter->status = '0';
+            $encounter->reason = $request->reason;
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $fileName = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                // Debug the destination directory path
+                $destinationPath = public_path('uploads');
+                // Move the file to the destination directory
+                $file->move($destinationPath, $fileName);
+                $encounter->attachment = $fileName;
+            }
 
-$encounter->save();
+            $encounter->save();
 
-$sections = [
-    "Chief Complaint",
-    "History",
-    "Medical History",
-     "Surgical History",
-    "Family History",
-    "Social History",
-    "Allergies",
-       "Medications",
-        "Review of Systems",
-    "Vital Sign",
-    "Physical Exam",
-    "ASSESSMENTS/CARE PLAN",
-    "Follow Up"
-];
+            $sections = [
+                "Chief Complaint",
+                "History",
+                "Medical History",
+                "Surgical History",
+                "Family History",
+                "Social History",
+                "Allergies",
+                "Medications",
+                "Review of Systems",
+                "Vital Sign",
+                "Physical Exam",
+                "ASSESSMENTS/CARE PLAN",
+                "Follow Up"
+            ];
 
-$newSections = []; // Array to store newly created sections data
+            $newSections = []; // Array to store newly created sections data
 
-foreach ($sections as $sectionTitle) {
-    $sectionSlug = Str::slug($sectionTitle);
+            foreach ($sections as $sectionTitle) {
+                $sectionSlug = Str::slug($sectionTitle);
 
-    $section = new EncounterNoteSection();
-    $section->patient_id = $request->patient_id;
-    $section->provider_id = auth()->user()->id;
-    $section->encounter_id = $encounter->id;
-    $section->section_title = $sectionTitle;
-    if($sectionTitle == 'Review of Systems'){
-        $section->section_text="Constitutional:  \n HEENT: \n CV: \n GI: \n GU: \n Musculoskeletal: \n Skin: \n Psychiatric: \n Endocrine: \n Physical exam: \n";
-    }elseif($sectionTitle == 'Physical Exam'){
-           $section->section_text="General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:";
-    }else{
+                $section = new EncounterNoteSection();
+                $section->patient_id = $request->patient_id;
+                $section->provider_id = auth()->user()->id;
+                $section->encounter_id = $encounter->id;
+                $section->section_title = $sectionTitle;
+                if ($sectionTitle == 'Review of Systems') {
+                    $section->section_text = "Constitutional:  \n HEENT: \n CV: \n GI: \n GU: \n Musculoskeletal: \n Skin: \n Psychiatric: \n Endocrine: \n Physical exam: \n";
+                } elseif ($sectionTitle == 'Physical Exam') {
+                    $section->section_text = "General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:";
+                } else {
+                }
+                $section->section_slug = $sectionSlug;
+                $section->save();
+                $newSections[] = $section->toArray();
+            }
 
-    }
-    $section->section_slug = $sectionSlug;
-    $section->save();
-    $newSections[] = $section->toArray();
-}
-
- foreach ($newSections as &$section) {
-            $section['section_id'] = $section['id'];
-            unset($section['id']);
-        }
+            foreach ($newSections as &$section) {
+                $section['section_id'] = $section['id'];
+                unset($section['id']);
+            }
 
 
-$data = PatientEncounter::where('patient_encounters.id', $encounter->id)->leftjoin('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
-    ->leftjoin('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
-    ->leftjoin('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
-    ->leftjoin('patients', 'patients.id', '=', 'patient_encounters.patient_id')
-    ->select('patient_encounters.id',  'patient_encounters.encounter_date', 'patient_encounters.patient_id', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
-    ->first();
+            $data = PatientEncounter::where('patient_encounters.id', $encounter->id)->leftjoin('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
+                ->leftjoin('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
+                ->leftjoin('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
+                ->leftjoin('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+                ->select('patient_encounters.id',  'patient_encounters.encounter_date', 'patient_encounters.patient_id', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
+                ->first();
 
-return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 'new_sections' => $newSections], 201);
-
+            return response()->json(['encounter_id' => $encounter->id, 'encounter' => $data, 'new_sections' => $newSections], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -176,8 +175,6 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
         }
 
         return response()->json(['message' => "Notes Updated Successfully"], 200);
-
-
     }
 
     /**
@@ -212,7 +209,7 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
     public function encounter_notes($encounter_id)
     {
         // Get encounter note sections
-        $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id','ASC')->get();
+        $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get();
 
         $formattedData = [];
         foreach ($sections as $section) {
@@ -339,16 +336,34 @@ return response()->json(['encounter_id' => $encounter->id,'encounter' => $data, 
 
     public function status_update(Request $request)
     {
+        // Validate the request
         $request->validate([
-            'encounter_id'=>'required|exists:patient_encounters,id',
-            ]);
-        $encounter = PatientEncounter::FindOrFail($request->encounter_id);
-        if ($encounter != NULL) {
-           $encounter->status = '1';
+            'encounter_id' => 'required|exists:patient_encounters,id',
+        ]);
+        $encounter = PatientEncounter::findOrFail($request->encounter_id);
+        if ($encounter != null) {
+            $encounter->status = '1';
             $encounter->save();
+            $data = [
+                'title' => 'Status Change Report',
+                'encounter' => $encounter,
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('pdf.status_change', $data);
+            $encounterDate = \Carbon\Carbon::parse($encounter->encounter_date)->format('Y-m-d_H-i-s');
+            $patientId = $encounter->patient_id;
+            $fileName = "encounter_{$encounterDate}_patient_{$patientId}.pdf";
+            // Ensure the directory exists
+            $directoryPath = public_path('pdfs');
+            if (!file_exists($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
+            $filePath = $directoryPath . '/' . $fileName;
+            $pdf->save($filePath);
             return response()->json([
                 'code' => 'success',
-                'message' => 'Status Updated'
+                'message' => 'Status Updated',
             ], 200);
         } else {
             return response()->json(['message' => 'No Encounter Found']);

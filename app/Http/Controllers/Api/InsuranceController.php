@@ -19,6 +19,15 @@ class InsuranceController extends BaseController
         $insurance = Insurance::where('patient_id', $patient_id)->orderBy('created_at', 'DESC')->get();
         $base = new BaseController();
         if (count($insurance) > 0) {
+            foreach ($insurance as $data) {
+                if ($data->insurance_type == '1') {
+                    $data['insurance_type'] = 'Primary';
+                } elseif ($data->insurance_type == '2') {
+                    $data['insurance_type'] = 'Secondary';
+                } else {
+                    $data['insurance_type'] = 'Teartiary';
+                }
+            }
             return $base->sendResponse($insurance, 'Insurance Data');
         } else {
             $insurance = NULL;
