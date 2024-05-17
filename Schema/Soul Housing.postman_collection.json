@@ -517,7 +517,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "1|lzonFaZw0UWH4yItmBGIEa9697QKDuMsrma0OqRQa6177aed",
+									"value": "{{token_soul}}",
 									"type": "string"
 								}
 							]
@@ -526,8 +526,7 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
@@ -535,150 +534,40 @@
 							"formdata": [
 								{
 									"key": "patient_id",
-									"value": "2",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "plan_name",
+									"key": "insurance_name",
 									"value": "Premium",
 									"type": "text"
 								},
 								{
-									"key": "effective_date",
-									"value": "23-1-2023",
-									"type": "text"
-								},
-								{
-									"key": "effective_date_end",
-									"value": "23-1-2023",
-									"type": "text"
-								},
-								{
-									"key": "policy_number",
-									"value": "7738",
-									"type": "text"
-								},
-								{
-									"key": "group_number",
-									"value": "912",
-									"type": "text"
-								},
-								{
-									"key": "subscriber_employee",
-									"value": "Sam",
-									"type": "text"
-								},
-								{
-									"key": "se_address",
-									"value": "Hello World",
-									"type": "text"
-								},
-								{
-									"key": "se_address_2",
-									"value": "Street 1",
-									"type": "text"
-								},
-								{
-									"key": "se_city",
-									"value": "SDK",
-									"type": "text"
-								},
-								{
-									"key": "se_state",
-									"value": "BWP",
-									"type": "text"
-								},
-								{
-									"key": "se_zip_code",
-									"value": "7712",
-									"type": "text"
-								},
-								{
-									"key": "se_country",
-									"value": "London",
-									"type": "text"
-								},
-								{
-									"key": "relationship",
-									"value": "self",
+									"key": "policy_no",
+									"value": "8432",
 									"type": "text"
 								},
 								{
 									"key": "subscriber",
+									"value": "Sam",
+									"type": "text"
+								},
+								{
+									"key": "subscriber_relation",
 									"value": "no",
 									"type": "text"
 								},
 								{
-									"key": "date_of_birth",
-									"value": "03-1-2003",
-									"type": "text"
-								},
-								{
-									"key": "gender",
-									"value": "Male",
-									"type": "text"
-								},
-								{
-									"key": "s_s",
-									"value": "_true",
-									"type": "text"
-								},
-								{
-									"key": "subscriber_address",
-									"value": "GrowWork",
-									"type": "text"
-								},
-								{
-									"key": "subscriber_address2",
-									"value": "Shadewall Chouk",
-									"type": "text"
-								},
-								{
-									"key": "city",
-									"value": "Lahore",
-									"type": "text"
-								},
-								{
-									"key": "state",
-									"value": "Punjab",
-									"type": "text"
-								},
-								{
-									"key": "zip_code",
-									"value": "0012",
-									"type": "text"
-								},
-								{
-									"key": "country",
-									"value": "Pakistan",
-									"type": "text"
-								},
-								{
-									"key": "subscriber_phone",
-									"value": "030000123412",
-									"type": "text"
-								},
-								{
-									"key": "co_pay",
-									"value": "No",
-									"type": "text"
-								},
-								{
-									"key": "accept_assignment",
-									"value": "Yes",
-									"type": "text"
-								},
-								{
-									"key": "secondary_medicare_type",
-									"value": "Leaved",
+									"key": "insurance_type",
+									"value": "2",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{url}}/add-insurance",
+							"raw": "{{url_soul}}/add-insurance",
 							"host": [
-								"{{url}}"
+								"{{url_soul}}"
 							],
 							"path": [
 								"add-insurance"
@@ -2029,6 +1918,39 @@
 							],
 							"path": [
 								"update-patient-bed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vacant Beds on Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "11|U5DVorUWSKonncL7n6EIctblTVHA8CRysQPW6nPZ379f2d15",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url_soul}}/get-vacant-beds/1",
+							"host": [
+								"{{url_soul}}"
+							],
+							"path": [
+								"get-vacant-beds",
+								"1"
 							]
 						}
 					},
@@ -4752,6 +4674,11 @@
 		{
 			"key": "url_soul",
 			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token_soul",
+			"value": "12|i2GTEyuxFVKnnG14fFHrRgsMV7R0viCF3gGPjTQqc30a4afd",
 			"type": "string"
 		}
 	]

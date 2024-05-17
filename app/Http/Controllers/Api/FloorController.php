@@ -165,6 +165,84 @@ class FloorController extends BaseController
         }
     }
 
+    public function all_floors_by_status($status)
+    {
+        if ($status == '0') {
+            return response()->json([
+                'code' => 'success',
+                'data' => [],
+            ]);
+        } else {
+            $status = 'vacant';
+            $base = new BaseController();
+            try {
+                $floors = Floor::with(['rooms.beds' => function ($query) use ($status) {
+                    $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
+                        ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
+                }])->get();
+
+                $response = [];
+
+                foreach ($floors as $floor) {
+                    $floorData = [
+                        'id' => $floor->id,
+                        'facility_id' => $floor->facility_id,
+                        'provider_id' => $floor->provider_id,
+                        'floor_name' => $floor->floor_name,
+                        'created_at' => $floor->created_at,
+                        'updated_at' => $floor->updated_at,
+                        'rooms' => [],
+                    ];
+
+                    foreach ($floor->rooms as $room) {
+                        $roomData = [
+                            'id' => $room->id,
+                            'floor_id' => $room->floor_id,
+                            'room_name' => $room->room_name,
+                            'created_at' => $room->created_at,
+                            'updated_at' => $room->updated_at,
+                            'beds' => [],
+                        ];
+
+                        foreach ($room->beds as $bed) {
+                            // Ensure only vacant beds are included
+                            if ($bed->status == 'vacant') {
+                                $bedData = [
+                                    'id' => $bed->id,
+                                    'status' => $bed->status,
+                                    'bed_no' => $bed->bed_no,
+                                    'room_id' => $bed->room_id,
+                                    'patient_id' => $bed->patient_id,
+                                    'occupied_from' => $bed->occupied_from,
+                                    'patient' => $bed->patient ? [
+                                        'id' => $bed->patient->id,
+                                        'first_name' => $bed->patient->first_name,
+                                        'last_name' => $bed->patient->last_name,
+                                        'gender' => $bed->patient->gender,
+                                        'date_of_birth' => $bed->patient->date_of_birth,
+                                        'mrn_no' => $bed->patient->mrn_no,
+                                    ] : null,
+                                ];
+
+                                $roomData['beds'][] = $bedData;
+                            }
+                        }
+
+                        $floorData['rooms'][] = $roomData;
+                    }
+
+                    $response[] = $floorData;
+                }
+
+                return $base->sendResponse($response, 'Beds with status "' . $status . '" mapped successfully');
+            } catch (\Exception $e) {
+                return $base->sendError('Error', $e->getMessage());
+            }
+        }
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      */

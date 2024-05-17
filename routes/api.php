@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bed-details/{id}', [BedController::class, 'show']);
     Route::get('/rooms-beds/{floor_id}', [FloorController::class, 'bedsAndrooms']);
     Route::get('/map-rooms-beds/{floor_id}', [FloorController::class, 'mapBedRooms']);
+    Route::get('/get-vacant-beds/{status}', [FloorController::class, 'all_floors_by_status']);
 
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
@@ -129,6 +130,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/delete-vital/{id}', [VitalController::class, 'destroy']);
     Route::post('/update-vital', [VitalController::class, 'update']);
     Route::post('/search-vital', [VitalController::class, 'search']);
+
 
 
     Route::get('/file/{name}', [FileController::class, 'show']);
