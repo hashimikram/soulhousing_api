@@ -23,12 +23,15 @@ class PatientController extends BaseController
             ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
             ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
             ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
-            ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name', 'beds.bed_no')
+            ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
+            ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name', 'beds.bed_no', 'insurances.insurance_name')
             ->where('patients.provider_id', auth()->user()->id)
             ->orderBy('patients.created_at', 'DESC')
             ->groupBy('patients.id') // Add 'patients.first_name' to the GROUP BY clause
             ->get();
-
+        foreach ($patients as $data) {
+            $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
+        }
 
 
         $base = new BaseController();

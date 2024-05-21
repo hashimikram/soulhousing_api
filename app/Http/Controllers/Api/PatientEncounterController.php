@@ -361,6 +361,7 @@ class PatientEncounterController extends BaseController
             }
             $filePath = $directoryPath . '/' . $fileName;
             $pdf->save($filePath);
+
             return response()->json([
                 'code' => 'success',
                 'message' => 'Status Updated',
