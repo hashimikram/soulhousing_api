@@ -40,7 +40,6 @@ class PatientController extends BaseController
 
     public function search($search_text)
     {
-
         $loggedInUserId = auth()->user()->id;
         $patients = Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
             ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
