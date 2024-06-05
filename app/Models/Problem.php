@@ -22,4 +22,24 @@ class Problem extends Model
         'snowed',
     ];
     use HasFactory;
+
+    public function type()
+    {
+        return $this->belongsTo(ListOption::class, 'type_id');
+    }
+
+    public function chronicity()
+    {
+        return $this->belongsTo(ListOption::class, 'chronicity_id');
+    }
+
+    public function severity()
+    {
+        return $this->belongsTo(ListOption::class, 'severity_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(ListOption::class, 'status_id');
+    }
 }

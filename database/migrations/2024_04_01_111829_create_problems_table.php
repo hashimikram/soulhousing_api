@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,14 +18,17 @@ return new class extends Migration {
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
             $table->longText('diagnosis');
-            $table->longText('cd_description');
-            $table->string('select_1')->nullable();
-            $table->string('select_2')->nullable();
-            $table->string('select_3')->nullable();
-            $table->string('select_4')->nullable();
-            $table->string('select_5')->nullable();
+            $table->longText('name');
+            $table->unsignedBigInteger('type_id');
+            $table->foreign('type_id')->references('id')->on('list_options')->onDelete('Cascade');
+            $table->unsignedBigInteger('chronicity_id');
+            $table->foreign('chronicity_id')->references('id')->on('list_options')->onDelete('Cascade');
+            $table->unsignedBigInteger('severity_id');
+            $table->foreign('severity_id')->references('id')->on('list_options')->onDelete('Cascade');
+            $table->unsignedBigInteger('status_id');
+            $table->foreign('status_id')->references('id')->on('list_options')->onDelete('Cascade');
             $table->longText('comments');
-            $table->string('icd10')->nullable();
+            $table->string('onset')->nullable();
             $table->string('snowed')->nullable();
             $table->enum('status', ['0', '1'])->default('1');
             $table->timestamps();

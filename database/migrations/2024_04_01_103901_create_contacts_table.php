@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -33,21 +34,21 @@ return new class extends Migration {
             $table->string('mobile_number')->nullable();
             $table->string('fax')->nullable();
             $table->string('method_of_contact')->nullable();
-            $table->enum('support_contact', ['1', '0'])->default('0');
+            $table->enum('support_contact', ['1', '0'])->default('0')->nullable();
             $table->string('from_date')->nullable();
             $table->string('to_date')->nullable();
             $table->string('status')->nullable();
             $table->enum('indefinitely', ['1', '0'])->default('0');
-            $table->enum('power_of_attorney', ['1', '0'])->default('0');
+            $table->enum('power_of_attorney', ['1', '0'])->default('0')->nullable();
             $table->string('from_date2')->nullable();
             $table->string('to_date2')->nullable();
             $table->string('status2')->nullable();
             $table->enum('indefinitely2', ['1', '0'])->default('0');
-            $table->enum('power_of_attorney2', ['1', '0'])->default('0');
+            $table->enum('power_of_attorney2', ['1', '0'])->default('0')->nullable();
             $table->string('from_date3')->nullable();
             $table->string('to_date3')->nullable();
             $table->string('status3')->nullable();
-            $table->enum('indefinitely3', ['1', '0'])->default('0');
+            $table->enum('indefinitely3', ['1', '0'])->default('0')->nullable();
             $table->timestamps();
         });
     }
