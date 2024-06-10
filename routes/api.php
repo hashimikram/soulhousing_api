@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ProblemController;
 use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\PhysicalExamController;
 use App\Http\Controllers\ProblemQuoteController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\OperationLikeController;
@@ -28,12 +29,12 @@ use App\Http\Controllers\Api\MedicationController;
 use App\Http\Controllers\OperationCommentController;
 use App\Http\Controllers\EncounterTemplateController;
 use App\Http\Controllers\Api\ReviewOfSystemController;
+use App\Http\Controllers\PhysicalExamDetailController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\PatientEncounterController;
+use App\Http\Controllers\OperationAcknowledgeController;
 use App\Http\Controllers\ReviewOfSystemDetailController;
 use App\Http\Controllers\Api\EncounterNoteSectionController;
-use App\Http\Controllers\PhysicalExamController;
-use App\Http\Controllers\PhysicalExamDetailController;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
 // Forgot Password

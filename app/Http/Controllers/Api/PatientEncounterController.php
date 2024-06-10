@@ -212,20 +212,25 @@ class PatientEncounterController extends BaseController
             $reviewOfSystemDetail->provider_id = auth()->user()->id;
             $reviewOfSystemDetail->patient_id = $request->patient_id;
             $reviewOfSystemDetail->section_id = $section->id;
-            $reviewOfSystemDetail->constitutional = 'constitutional';
-            $reviewOfSystemDetail->head = 'Normocephalic and atraumatic. No tenderness or deformities.';
-            $reviewOfSystemDetail->neck = 'Neck is supple with full range of motion. No lymphadenopathy or masses. Thyroid is non-palpable and without enlargement.';
-            $reviewOfSystemDetail->eyes = 'Pupils equal, round, and reactive to light and accommodation (PERRLA). Extraocular movements intact. Sclerae are white, conjunctivae are pink, and no discharge or abnormalities noted. Visual acuity normal.';
-            $reviewOfSystemDetail->ears = 'Ears are symmetrical with no discharge or lesions. Tympanic membranes are intact and pearly gray with good light reflex. Hearing is normal.';
-            $reviewOfSystemDetail->nose = 'Nasal mucosa is pink and moist. No septal deviation or polyps. No sinus tenderness.';
-            $reviewOfSystemDetail->mouth = 'Oral mucosa is pink and moist. Teeth are in good repair. Pharynx is non-erythematous and tonsils are not enlarged. No lesions or abnormalities noted.';
-            $reviewOfSystemDetail->throat = 'Oral mucosa is pink and moist. Teeth are in good repair. Pharynx is non-erythematous and tonsils are not enlarged. No lesions or abnormalities noted.';
-            $reviewOfSystemDetail->cardiovascular = 'Heart sounds are normal with regular rate and rhythm. No murmurs, rubs, or gallops. Peripheral pulses are 2+ and equal bilaterally. No edema noted.';
-            $reviewOfSystemDetail->respiratory = 'Chest is symmetrical with normal respiratory effort. Breath sounds are clear to auscultation bilaterally. No wheezes, rales, or rhonchi.';
-            $reviewOfSystemDetail->gastrointestinal = 'gastrointestinal';
-            $reviewOfSystemDetail->genitourinary = 'External genitalia are normal in appearance. No hernias or masses. No tenderness on palpation.';
-            $reviewOfSystemDetail->musculoskeletal = 'Full range of motion in all joints. No deformities, swelling, or tenderness. Muscle strength is 5/5 bilaterally in all extremities.';
-            $reviewOfSystemDetail->endorsis = 'endorsis';
+            $reviewOfSystemDetail->general = "No fever, chills, or weight changes. No fatigue, malaise, or weakness.";
+            $reviewOfSystemDetail->skin = 'No rashes, lumps, itching, dryness, color changes, or lesions.';
+            $reviewOfSystemDetail->head = 'No headaches, dizziness, or head injury.';
+            $reviewOfSystemDetail->eyes = 'Vision is normal without blurring or double vision. No pain, redness, discharge, or recent changes in vision.';
+            $reviewOfSystemDetail->ears = 'No hearing loss, ringing, or pain. No discharge.';
+            $reviewOfSystemDetail->nose = 'No nasal congestion, discharge, nosebleeds, or sinus pain.';
+            $reviewOfSystemDetail->mouth_throat = 'No sore throat, bleeding gums, or hoarseness. No dental issues.';
+            $reviewOfSystemDetail->neck = 'No lumps, pain, or stiffness.';
+            $reviewOfSystemDetail->breasts = 'No lumps, pain, or nipple discharge.';
+            $reviewOfSystemDetail->respiratory = 'No cough, shortness of breath, wheezing, or chest pain.';
+            $reviewOfSystemDetail->cardiovascular = 'No chest pain, palpitations, or irregular heartbeat. No swelling in extremities.';
+            $reviewOfSystemDetail->gastrointestinal = 'No nausea, vomiting, diarrhea, or constipation. No abdominal pain, heartburn, or blood in stool.';
+            $reviewOfSystemDetail->genitourinary = 'No difficulty urinating, frequency, urgency, or incontinence. No blood in urine or pain during urination.';
+            $reviewOfSystemDetail->musculoskeletal = 'No muscle or joint pain, stiffness, swelling, or weakness.';
+            $reviewOfSystemDetail->neurological = 'No seizures, fainting, or dizziness. No weakness, numbness, or tingling.';
+            $reviewOfSystemDetail->psychiatric = 'No anxiety, depression, mood changes, or sleep disturbances.';
+            $reviewOfSystemDetail->endocrine = 'No excessive thirst or urination. No heat or cold intolerance.';
+            $reviewOfSystemDetail->hematologic_lymphatic = 'No easy bruising or bleeding. No enlarged lymph nodes.';
+            $reviewOfSystemDetail->allergic_immunologic = 'No known allergies. No recurrent infections.';
             $reviewOfSystemDetail->save();
         }
     }
@@ -242,20 +247,24 @@ class PatientEncounterController extends BaseController
             $physicalExamDetail->provider_id = auth()->user()->id;
             $physicalExamDetail->patient_id = $request->patient_id;
             $physicalExamDetail->section_id = $section->id;
-            $physicalExamDetail->constitutional = 'constitutional';
-            $physicalExamDetail->ears_nose_mouth_throat = 'Oral mucosa is pink and moist. Teeth are in good repair. Pharynx is non-erythematous and tonsils are not enlarged. No lesions or abnormalities noted.';
+            $physicalExamDetail->general_appearance = 'Patient is alert, oriented, and appears well-nourished and well-developed. No apparent distress.';
+            $physicalExamDetail->skin = 'Skin is warm, dry, and intact with normal color and turgor. No rashes, lesions, or abnormalities noted.';
+            $physicalExamDetail->head = 'Normocephalic and atraumatic. No tenderness or deformities.';
+            $physicalExamDetail->eyes = 'Pupils equal, round, and reactive to light and accommodation (PERRLA). Extraocular movements intact. Sclerae are white, conjunctivae are pink, and no discharge or abnormalities noted. Visual acuity normal.';
+            $physicalExamDetail->ears = 'Ears are symmetrical with no discharge or lesions. Tympanic membranes are intact and pearly gray with good light reflex. Hearing is normal.';
+            $physicalExamDetail->nose = 'Nasal mucosa is pink and moist. No septal deviation or polyps. No sinus tenderness.';
+            $physicalExamDetail->mouth_throat = 'Oral mucosa is pink and moist. Teeth are in good repair. Pharynx is non-erythematous and tonsils are not enlarged. No lesions or abnormalities noted.';
             $physicalExamDetail->neck = 'Neck is supple with full range of motion. No lymphadenopathy or masses. Thyroid is non-palpable and without enlargement.';
-            $physicalExamDetail->respiratory = 'Chest is symmetrical with normal respiratory effort. Breath sounds are clear to auscultation bilaterally. No wheezes, rales, or rhonchi.';
+            $physicalExamDetail->chest_lungs = 'Chest is symmetrical with normal respiratory effort. Breath sounds are clear to auscultation bilaterally. No wheezes, rales, or rhonchi.';
             $physicalExamDetail->cardiovascular = 'Heart sounds are normal with regular rate and rhythm. No murmurs, rubs, or gallops. Peripheral pulses are 2+ and equal bilaterally. No edema noted.';
-            $physicalExamDetail->lungs = 'Chest is symmetrical with normal respiratory effort. Breath sounds are clear to auscultation bilaterally. No wheezes, rales, or rhonchi.';
-            $physicalExamDetail->chest_breasts = 'chest_breasts';
-            $physicalExamDetail->heart = 'Heart sounds are normal with regular rate and rhythm. No murmurs, rubs, or gallops. Peripheral pulses are 2+ and equal bilaterally. No edema noted.';
-            $physicalExamDetail->gastrointestinal_abdomen = 'gastrointestinal_abdomen';
+            $physicalExamDetail->abdomen = 'Abdomen is flat and non-tender with active bowel sounds in all quadrants. No masses or organomegaly. No signs of hepatosplenomegaly.';
             $physicalExamDetail->genitourinary = 'External genitalia are normal in appearance. No hernias or masses. No tenderness on palpation.';
-            $physicalExamDetail->lymphatic = 'No palpable lymphadenopathy. No signs of bruising or bleeding.';
             $physicalExamDetail->musculoskeletal = 'Full range of motion in all joints. No deformities, swelling, or tenderness. Muscle strength is 5/5 bilaterally in all extremities.';
-            $physicalExamDetail->skin = 'No signs of allergic reactions. Skin tests, if performed, are negative.';
-            $physicalExamDetail->extremities = 'Full range of motion in all joints. No deformities, swelling, or tenderness. Muscle strength is 5/5 bilaterally in all extremities.';
+            $physicalExamDetail->neurological = 'Alert and oriented to person, place, and time. Cranial nerves II-XII intact. Motor and sensory functions are normal. Reflexes are 2+ and symmetric. Gait is steady.';
+            $physicalExamDetail->psychiatric = 'Patient has normal mood and affect. Appropriate behavior. Speech is clear and coherent. No signs of anxiety or depression.';
+            $physicalExamDetail->endocrine = 'No thyroid enlargement or tenderness. No signs of hormonal imbalance.';
+            $physicalExamDetail->hematologic_lymphatic = 'No palpable lymphadenopathy. No signs of bruising or bleeding.';
+            $physicalExamDetail->allergic_immunologic = 'No signs of allergic reactions. Skin tests, if performed, are negative.';
             $physicalExamDetail->save();
         }
     }
@@ -363,6 +372,56 @@ class PatientEncounterController extends BaseController
                     $sectionText = $section->section_text;
                 }
             }
+
+            // Initialize dataSection
+            $dataSection = [];
+
+            if ($section->section_title == 'Review of Systems') {
+                $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
+                foreach ($reviewOfSystemDetails as $data) {
+                    $sectionText = "General: {$data->general}\n"
+                        . "Skin: {$data->skin}\n"
+                        . "Head: {$data->head}\n"
+                        . "Eyes: {$data->eyes}\n"
+                        . "Ears: {$data->ears}\n"
+                        . "Nose: {$data->nose}\n"
+                        . "Mouth/Throat: {$data->mouth_throat}\n"
+                        . "Neck: {$data->neck}\n"
+                        . "Breasts: {$data->breasts}\n"
+                        . "Respiratory: {$data->respiratory}\n"
+                        . "cardiovascular: {$data->cardiovascular}\n"
+                        . "gastrointestinal: {$data->gastrointestinal}\n"
+                        . "Musculoskeletal: {$data->musculoskeletal}\n"
+                        . "Neurological: {$data->neurological}\n"
+                        . "Psychiatric: {$data->psychiatric}\n"
+                        . "Endocrine: {$data->endocrine}\n"
+                        . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"
+                        . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                }
+            } elseif ($section->section_title == 'Physical Exam') {
+                $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
+                foreach ($physicalExamDetails as $data) {
+                    $sectionText = "General Appearance: {$data->general_appearance}\n"
+                        . "Skin: {$data->skin}\n"
+                        . "Head: {$data->head}\n"
+                        . "Eyes: {$data->eyes}\n"
+                        . "Ears: {$data->ears}\n"
+                        . "Nose: {$data->nose}\n"
+                        . "Mouth/Throat: {$data->mouth_throat}\n"
+                        . "Neck: {$data->neck}\n"
+                        . "Chest/Lungs: {$data->chest_lungs}\n"
+                        . "Cardiovascular: {$data->cardiovascular}\n"
+                        . "Abdomen: {$data->abdomen}\n"
+                        . "Genitourinary: {$data->genitourinary}\n"
+                        . "Musculoskeletal: {$data->musculoskeletal}\n"
+                        . "Neurological: {$data->neurological}\n"
+                        . "Psychiatric: {$data->psychiatric}\n"
+                        . "Endocrine: {$data->endocrine}\n"
+                        . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"
+                        . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                }
+            }
+
             $formattedData[] = [
                 'section_id' => $section->id,
                 'section_title' => $section->section_title,
@@ -371,6 +430,7 @@ class PatientEncounterController extends BaseController
                 'id_default' => (int) $section->id_default,
             ];
         }
+
         $response = [
             'success' => true,
             'data' => $formattedData,
@@ -379,6 +439,8 @@ class PatientEncounterController extends BaseController
 
         return response()->json($response, 200);
     }
+
+
 
 
 

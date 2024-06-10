@@ -52,10 +52,17 @@ class Vital extends Model
         'oxygenation_time_2',
         'peak_flow',
         'oxygenation_time_3',
+<<<<<<< HEAD
         'office_test_oxygen_source_1',
         'office_test_date_1',
         'office_test_oxygen_source_2',
         'office_test_date_2',
+=======
+        'office_test_blood_group',
+        'blood_group_date',
+        'office_test_pain_scale',
+        'pain_scale_date',
+>>>>>>> e38328c8e344df74e0aaed970b850148fd6f728b
     ];
     use HasFactory;
 }

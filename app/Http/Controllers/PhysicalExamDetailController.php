@@ -37,7 +37,7 @@ class PhysicalExamDetailController extends Controller
      */
     public function show($section_id, $patient_id)
     {
-        $data = PhysicalExamDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->get();
+        $data = PhysicalExamDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->first();
         return response()->json([
             'code' => 'success',
             'data' => $data
@@ -62,20 +62,24 @@ class PhysicalExamDetailController extends Controller
         if (!$physicalExamDetail) {
             return response()->json(['error' => 'Physical exam detail not found.'], 404);
         }
-        $physicalExamDetail->constitutional = $request->input('constitutional', 'constitutional');
-        $physicalExamDetail->ears_nose_mouth_throat = $request->input('ears_nose_mouth_throat');
-        $physicalExamDetail->neck = $request->input('neck');
-        $physicalExamDetail->respiratory = $request->input('respiratory');
-        $physicalExamDetail->cardiovascular = $request->input('cardiovascular');
-        $physicalExamDetail->lungs = $request->input('lungs');
-        $physicalExamDetail->chest_breasts = $request->input('chest_breasts');
-        $physicalExamDetail->heart = $request->input('heart');
-        $physicalExamDetail->gastrointestinal_abdomen = $request->input('gastrointestinal_abdomen');
-        $physicalExamDetail->genitourinary = $request->input('genitourinary');
-        $physicalExamDetail->lymphatic = $request->input('lymphatic');
-        $physicalExamDetail->musculoskeletal = $request->input('musculoskeletal');
+        $physicalExamDetail->general_appearance = $request->input('general_appearance', 'constitutional');
         $physicalExamDetail->skin = $request->input('skin');
-        $physicalExamDetail->extremities = $request->input('extremities');
+        $physicalExamDetail->head = $request->input('head');
+        $physicalExamDetail->eyes = $request->input('eyes');
+        $physicalExamDetail->ears = $request->input('ears');
+        $physicalExamDetail->nose = $request->input('nose');
+        $physicalExamDetail->mouth_throat = $request->input('mouth_throat');
+        $physicalExamDetail->neck = $request->input('neck');
+        $physicalExamDetail->chest_lungs = $request->input('chest_lungs');
+        $physicalExamDetail->cardiovascular = $request->input('cardiovascular');
+        $physicalExamDetail->abdomen = $request->input('abdomen');
+        $physicalExamDetail->genitourinary = $request->input('genitourinary');
+        $physicalExamDetail->musculoskeletal = $request->input('musculoskeletal');
+        $physicalExamDetail->neurological = $request->input('neurological');
+        $physicalExamDetail->psychiatric = $request->input('psychiatric');
+        $physicalExamDetail->endocrine = $request->input('endocrine');
+        $physicalExamDetail->hematologic_lymphatic = $request->input('hematologic_lymphatic');
+        $physicalExamDetail->allergic_immunologic = $request->input('allergic_immunologic');
         $physicalExamDetail->save();
 
         return response()->json(['message' => 'Physical exam detail updated successfully.']);

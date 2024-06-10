@@ -38,7 +38,7 @@ class ReviewOfSystemDetailController extends Controller
      */
     public function show($section_id, $patient_id)
     {
-        $data = ReviewOfSystemDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->get();
+        $data = ReviewOfSystemDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->first();
         return response()->json([
             'code' => 'success',
             'data' => $data
@@ -69,21 +69,25 @@ class ReviewOfSystemDetailController extends Controller
             return response()->json(['error' => 'Review of system detail not found.'], 404);
         }
 
-        $reviewOfSystemDetail->constitutional = $request->input('constitutional');
+        $reviewOfSystemDetail->general = $request->input('general');
+        $reviewOfSystemDetail->skin = $request->input('skin');
         $reviewOfSystemDetail->head = $request->input('head');
-        $reviewOfSystemDetail->neck = $request->input('neck');
         $reviewOfSystemDetail->eyes = $request->input('eyes');
         $reviewOfSystemDetail->ears = $request->input('ears');
         $reviewOfSystemDetail->nose = $request->input('nose');
-        $reviewOfSystemDetail->mouth = $request->input('mouth');
-        $reviewOfSystemDetail->throat = $request->input('throat');
-        $reviewOfSystemDetail->cardiovascular = $request->input('cardiovascular');
+        $reviewOfSystemDetail->mouth_throat = $request->input('mouth_throat');
+        $reviewOfSystemDetail->neck = $request->input('neck');
+        $reviewOfSystemDetail->breasts = $request->input('breasts');
         $reviewOfSystemDetail->respiratory = $request->input('respiratory');
+        $reviewOfSystemDetail->cardiovascular = $request->input('cardiovascular');
         $reviewOfSystemDetail->gastrointestinal = $request->input('gastrointestinal');
         $reviewOfSystemDetail->genitourinary = $request->input('genitourinary');
         $reviewOfSystemDetail->musculoskeletal = $request->input('musculoskeletal');
-        $reviewOfSystemDetail->endorsis = $request->input('endorsis');
-
+        $reviewOfSystemDetail->neurological = $request->input('neurological');
+        $reviewOfSystemDetail->psychiatric = $request->input('psychiatric');
+        $reviewOfSystemDetail->endocrine = $request->input('endocrine');
+        $reviewOfSystemDetail->hematologic_lymphatic = $request->input('hematologic_lymphatic');
+        $reviewOfSystemDetail->allergic_immunologic = $request->input('allergic_immunologic');
         $reviewOfSystemDetail->save();
 
         return response()->json(['message' => 'Review of system detail updated successfully.']);
