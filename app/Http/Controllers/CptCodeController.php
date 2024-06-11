@@ -15,19 +15,16 @@ class CptCodeController extends Controller
         //
     }
 
-    public function search(Request $request)
+    public function search($search_text)
     {
         // Ensure the user is authenticated
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Validate the search term
-        $request->validate([
-            'search_text' => 'nullable|string|min:2',
-        ]);
 
-        $searchTerm = $request->input('search_text');
+
+        $searchTerm = $search_text;
 
         // Base query
         $query = CptCode::query();

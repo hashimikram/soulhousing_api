@@ -181,4 +181,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operation-acknowledge-post', [OperationAcknowledgeController::class, 'store']);
     Route::post('/operation-comments', [OperationCommentController::class, 'getComments']);
     Route::post('/operation-likes', [OperationLikeController::class, 'getLikes']);
+
+      Route::get('/search-code/{search_text}', [CptCodeController::class, 'search']);
 });

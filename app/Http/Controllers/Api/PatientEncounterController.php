@@ -157,38 +157,54 @@ class PatientEncounterController extends BaseController
         ];
     }
 
-    private function createEncounterSections(Request $request, $encounter, $sections)
-    {
-        $newSections = [];
+  private function createEncounterSections(Request $request, $encounter, $sections)
+{
+    $newSections = [];
 
-        foreach ($sections as $index => $sectionTitle) {
-            $section = new EncounterNoteSection();
-            $section->patient_id = $request->patient_id;
-            $section->id_default = $index + 1;
-            $section->provider_id = auth()->user()->id;
-            $section->encounter_id = $encounter->id;
-            $section->section_title = $sectionTitle;
-            $section->section_text = $this->getSectionText($sectionTitle);
-            $section->section_slug = Str::slug($sectionTitle);
-            $section->save();
-            $newSections[] = $section->toArray();
+    foreach ($sections as $index => $sectionTitle) {
+        $section = new EncounterNoteSection();
+        $section->patient_id = $request->patient_id;
+        $section->id_default = $index + 1;
+        $section->provider_id = auth()->user()->id;
+        $section->encounter_id = $encounter->id;
+        $section->section_title = $sectionTitle;
+        $section->section_text = $this->getSectionText($sectionTitle);
+        $section->section_slug = Str::slug($sectionTitle);
+        $section->save();
 
-            if ($sectionTitle == 'Review of Systems') {
-                $this->createReviewOfSystemDetail($request, $section);
+        $sectionData = $section->toArray();
+        $sectionData['section_id'] = $section->id;
+
+        // Call specific methods for Review of Systems and Physical Exam
+        if ($sectionTitle == 'Review of Systems') {
+            $this->createReviewOfSystemDetail($request, $section);
+
+            $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
+                ->where('section_id', $section->id)
+                ->where('provider_id', auth()->user()->id)
+                ->first();
+
+            if ($rosDetails) {
+                $sectionData['section'] = $rosDetails->toArray();
             }
+        } elseif ($sectionTitle == 'Physical Exam') {
+            $this->createPhysicalExamDetail($request, $section);
+             $rosDetails = PhysicalExamDetail::where('patient_id', $request->patient_id)
+                ->where('section_id', $section->id)
+                ->where('provider_id', auth()->user()->id)
+                ->first();
 
-            if ($sectionTitle == 'Physical Exam') {
-                $this->createPhysicalExamDetail($request, $section);
+            if ($rosDetails) {
+                $sectionData['section'] = $rosDetails->toArray();
             }
         }
 
-        foreach ($newSections as &$section) {
-            $section['section_id'] = $section['id'];
-            unset($section['id']);
-        }
-
-        return $newSections;
+        $newSections[] = $sectionData;
     }
+
+    return $newSections;
+}
+
 
     private function getSectionText($sectionTitle)
     {
