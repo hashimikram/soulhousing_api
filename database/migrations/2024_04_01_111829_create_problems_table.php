@@ -19,14 +19,11 @@ return new class extends Migration
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
             $table->longText('diagnosis');
             $table->longText('name');
-            $table->unsignedBigInteger('type_id');
-            $table->foreign('type_id')->references('id')->on('list_options')->onDelete('Cascade');
-            $table->unsignedBigInteger('chronicity_id');
-            $table->foreign('chronicity_id')->references('id')->on('list_options')->onDelete('Cascade');
-            $table->unsignedBigInteger('severity_id');
-            $table->foreign('severity_id')->references('id')->on('list_options')->onDelete('Cascade');
-            $table->unsignedBigInteger('status_id');
-            $table->foreign('status_id')->references('id')->on('list_options')->onDelete('Cascade');
+               $table->string('type_id')->nullable();
+                  $table->string('chronicity_id')->nullable();
+                     $table->string('severity_id')->nullable();
+                        $table->string('status_id')->nullable();
+
             $table->longText('comments');
             $table->string('onset')->nullable();
             $table->string('snowed')->nullable();

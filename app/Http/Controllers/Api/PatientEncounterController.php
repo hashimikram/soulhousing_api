@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use PDO;
+use App\Models\Problem;
 use App\Models\Vital;
 use App\Models\ListOption;
 use Illuminate\Support\Str;
@@ -57,11 +58,63 @@ class PatientEncounterController extends BaseController
 
             $data = $this->getEncounterData($encounter);
 
-            return response()->json([
-                'encounter_id' => $encounter->id,
-                'encounter' => $data,
-                'new_sections' => $newSections
-            ], 201);
+            // Get encounter note sections
+            $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id', 'ASC')->get();
+
+            $formattedData = [];
+            foreach ($sections as $section) {
+                $sectionText = null;
+                if ($section->section_text !== null) {
+                    $decodedText = json_decode($section->section_text, true);
+                    if ($decodedText !== null) {
+                        $sectionText = $decodedText;
+                    } else {
+                        $sectionText = $section->section_text;
+                    }
+                }
+
+                // Initialize dataSection
+                $dataSection = [];
+
+                if ($section->section_title == 'Review of Systems') {
+                    $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
+                    foreach ($reviewOfSystemDetails as $data) {
+                        $sectionText = "General: {$data->general}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Breasts: {$data->breasts}\n" . "Respiratory: {$data->respiratory}\n" . "cardiovascular: {$data->cardiovascular}\n" . "gastrointestinal: {$data->gastrointestinal}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                    }
+                } elseif ($section->section_title == 'Physical Exam') {
+                    $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
+                    foreach ($physicalExamDetails as $data) {
+                        $sectionText = "General Appearance: {$data->general_appearance}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Chest/Lungs: {$data->chest_lungs}\n" . "Cardiovascular: {$data->cardiovascular}\n" . "Abdomen: {$data->abdomen}\n" . "Genitourinary: {$data->genitourinary}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                    }
+                } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
+                    $problems = Problem::where('patient_id', $section->patient_id)
+                        ->where('provider_id', auth()->user()->id)
+                        ->get();
+
+                    $sectionText = ''; // Initialize an empty string to accumulate all section text
+
+                    foreach ($problems as $data) {
+                        $sectionText .= "Code: {$data->diagnosis}\n" . "Description: {$data->name}\n";
+                    }
+                }
+
+                $formattedData[] = [
+                    'section_id' => $section->id,
+                    'section_title' => $section->section_title,
+                    'section_slug' => $section->section_slug,
+                    'section_text' => $sectionText,
+                    'id_default' => (int) $section->id_default,
+                ];
+            }
+
+            return response()->json(
+                [
+                    'encounter_id' => $encounter->id,
+                    'encounter' => $data,
+                    'new_sections' => $formattedData,
+                ],
+                201,
+            );
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
@@ -140,77 +193,127 @@ class PatientEncounterController extends BaseController
 
     private function getSections()
     {
-        return [
-            "Chief Complaint",
-            "History",
-            "Medical History",
-            "Surgical History",
-            "Family History",
-            "Social History",
-            "Allergies",
-            "Medications",
-            "Review of Systems",
-            "Vital Sign",
-            "Physical Exam",
-            "ASSESSMENTS/CARE PLAN",
-            "Follow Up"
-        ];
+        return ['Chief Complaint', 'History', 'Medical History', 'Surgical History', 'Family History', 'Social History', 'Allergies', 'Medications', 'Review of Systems', 'Vital Sign', 'Physical Exam', 'ASSESSMENTS/CARE PLAN', 'Follow Up'];
     }
 
-  private function createEncounterSections(Request $request, $encounter, $sections)
-{
-    $newSections = [];
+    private function createEncounterSections(Request $request, $encounter, $sections)
+    {
+        $newSections = [];
 
-    foreach ($sections as $index => $sectionTitle) {
-        $section = new EncounterNoteSection();
-        $section->patient_id = $request->patient_id;
-        $section->id_default = $index + 1;
-        $section->provider_id = auth()->user()->id;
-        $section->encounter_id = $encounter->id;
-        $section->section_title = $sectionTitle;
-        $section->section_text = $this->getSectionText($sectionTitle);
-        $section->section_slug = Str::slug($sectionTitle);
-        $section->save();
+        foreach ($sections as $index => $sectionTitle) {
+            $section = new EncounterNoteSection();
+            $section->patient_id = $request->patient_id;
+            $section->id_default = $index + 1;
+            $section->provider_id = auth()->user()->id;
+            $section->encounter_id = $encounter->id;
+            $section->section_title = $sectionTitle;
+            $section->section_text = $this->getSectionText($sectionTitle);
+            $section->section_slug = Str::slug($sectionTitle);
+            $section->save();
 
-        $sectionData = $section->toArray();
-        $sectionData['section_id'] = $section->id;
+            $sectionData = $section->toArray();
+            $sectionData['section_id'] = $section->id;
 
-        // Call specific methods for Review of Systems and Physical Exam
-        if ($sectionTitle == 'Review of Systems') {
-            $this->createReviewOfSystemDetail($request, $section);
+            // Call specific methods for Review of Systems and Physical Exam
+            if ($sectionTitle == 'Review of Systems') {
+                $this->createReviewOfSystemDetail($request, $section);
+                $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
+                    ->where('section_id', $section->id)
+                    ->where('provider_id', auth()->user()->id)
+                    ->first();
 
-            $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
-                ->where('section_id', $section->id)
-                ->where('provider_id', auth()->user()->id)
-                ->first();
+                if ($rosDetails) {
+                    $sectionData = $rosDetails->toArray();
 
-            if ($rosDetails) {
-                $sectionData['section'] = $rosDetails->toArray();
+                    $sectionText =
+                        'Constitutional: ' .
+                        $sectionData['general'] .
+                        "\n" .
+                        'Skin: ' .
+                        $sectionData['skin'] .
+                        "\n" .
+                        'Head: ' .
+                        $sectionData['head'] .
+                        "\n" .
+                        'Eyes: ' .
+                        $sectionData['eyes'] .
+                        "\n" .
+                        'Ears: ' .
+                        $sectionData['ears'] .
+                        "\n" .
+                        'Nose: ' .
+                        $sectionData['nose'] .
+                        "\n" .
+                        'Mouth/Throat: ' .
+                        $sectionData['mouth_throat'] .
+                        "\n" .
+                        'Neck: ' .
+                        $sectionData['neck'] .
+                        "\n" .
+                        'Breasts: ' .
+                        $sectionData['breasts'] .
+                        "\n" .
+                        'Respiratory: ' .
+                        $sectionData['respiratory'] .
+                        "\n" .
+                        'Cardiovascular: ' .
+                        $sectionData['cardiovascular'] .
+                        "\n" .
+                        'Gastrointestinal: ' .
+                        $sectionData['gastrointestinal'] .
+                        "\n" .
+                        'Genitourinary: ' .
+                        $sectionData['genitourinary'] .
+                        "\n" .
+                        'Musculoskeletal: ' .
+                        $sectionData['musculoskeletal'] .
+                        "\n" .
+                        'Neurological: ' .
+                        $sectionData['neurological'] .
+                        "\n" .
+                        'Psychiatric: ' .
+                        $sectionData['psychiatric'] .
+                        "\n" .
+                        'Endocrine: ' .
+                        $sectionData['endocrine'] .
+                        "\n" .
+                        'Hematologic/Lymphatic: ' .
+                        $sectionData['hematologic_lymphatic'] .
+                        "\n" .
+                        'Allergic/Immunologic: ' .
+                        $sectionData['allergic_immunologic'] .
+                        "\n";
+
+                    $sectionData['section_text'] = $sectionText;
+                }
+            } elseif ($sectionTitle == 'Physical Exam') {
+                $this->createPhysicalExamDetail($request, $section);
+                $rosDetails = PhysicalExamDetail::where('patient_id', $request->patient_id)
+                    ->where('section_id', $section->id)
+                    ->where('provider_id', auth()->user()->id)
+                    ->first();
+
+                if ($rosDetails) {
+                    $sectionData = $rosDetails->toArray();
+
+                    $sectionText =
+                        'General Appearance: ' . $sectionData['general_appearance'] . "\n" . 'Skin: ' . $sectionData['skin'] . "\n" . 'Head: ' . $sectionData['head'] . "\n" . 'Eyes: ' . $sectionData['eyes'] . "\n" . 'Ears: ' . $sectionData['ears'] . "\n" . 'Nose: ' . $sectionData['nose'] . "\n" . 'Mouth/Throat: ' . $sectionData['mouth_throat'] . "\n" . 'Neck: ' . $sectionData['neck'] . "\n" . 'Chest/Lungs: ' . $sectionData['chest_lungs'] . "\n" . 'Cardiovascular: ' . $sectionData['cardiovascular'] . "\n" . 'Abdomen: ' . $sectionData['abdomen'] . "\n" . 'Genitourinary: ' . $sectionData['genitourinary'] . "\n" . 'Musculoskeletal: ' . $sectionData['musculoskeletal'] . "\n" . 'Neurological: ' . $sectionData['neurological'] . "\n" . 'Psychiatric: ' . $sectionData['psychiatric'] . "\n" . 'Endocrine: ' . $sectionData['endocrine'] . "\n" . 'Hematologic/Lymphatic: ' . $sectionData['hematologic_lymphatic'] . "\n" . 'Allergic/Immunologic: ' . $sectionData['allergic_immunologic'] . "\n";
+
+                    $sectionData['section_text'] = $sectionText;
+                }
             }
-        } elseif ($sectionTitle == 'Physical Exam') {
-            $this->createPhysicalExamDetail($request, $section);
-             $rosDetails = PhysicalExamDetail::where('patient_id', $request->patient_id)
-                ->where('section_id', $section->id)
-                ->where('provider_id', auth()->user()->id)
-                ->first();
 
-            if ($rosDetails) {
-                $sectionData['section'] = $rosDetails->toArray();
-            }
+            $newSections[] = $sectionData;
         }
 
-        $newSections[] = $sectionData;
+        return $newSections;
     }
-
-    return $newSections;
-}
-
 
     private function getSectionText($sectionTitle)
     {
         $templates = [
             'Review of Systems' => "Constitutional:  \n HEENT: \n CV: \n GI: \n GU: \n Musculoskeletal: \n Skin: \n Psychiatric: \n Endocrine: \n Physical exam: \n",
-            'Physical Exam' => "General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:"
+            'Physical Exam' => "General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:",
         ];
 
         return $templates[$sectionTitle] ?? '';
@@ -228,7 +331,7 @@ class PatientEncounterController extends BaseController
             $reviewOfSystemDetail->provider_id = auth()->user()->id;
             $reviewOfSystemDetail->patient_id = $request->patient_id;
             $reviewOfSystemDetail->section_id = $section->id;
-            $reviewOfSystemDetail->general = "No fever, chills, or weight changes. No fatigue, malaise, or weakness.";
+            $reviewOfSystemDetail->general = 'No fever, chills, or weight changes. No fatigue, malaise, or weakness.';
             $reviewOfSystemDetail->skin = 'No rashes, lumps, itching, dryness, color changes, or lesions.';
             $reviewOfSystemDetail->head = 'No headaches, dizziness, or head injury.';
             $reviewOfSystemDetail->eyes = 'Vision is normal without blurring or double vision. No pain, redness, discharge, or recent changes in vision.';
@@ -298,14 +401,8 @@ class PatientEncounterController extends BaseController
 
     public function encounter_notes_store(Request $request)
     {
-
-
-
-
         $validatedData = $request->validate([
-
             'sections' => 'required|array',
-
         ]);
 
         $patient_id = $request->patient_id;
@@ -316,15 +413,12 @@ class PatientEncounterController extends BaseController
             $sectionSlug = Str::slug($sectionData['section_title']);
 
             // Find the existing section by patient ID, encounter ID, and section slug
-            $existingSection = EncounterNoteSection::where('patient_id', $patient_id)
-                ->where('encounter_id', $encounter_id)
-                ->where('section_slug', $sectionSlug)
-                ->first();
+            $existingSection = EncounterNoteSection::where('patient_id', $patient_id)->where('encounter_id', $encounter_id)->where('section_slug', $sectionSlug)->first();
 
             if ($existingSection) {
                 // If the section already exists, update its section_text
                 $existingSection->update([
-                    'section_text' => $sectionData['section_text']
+                    'section_text' => $sectionData['section_text'],
                 ]);
             } else {
                 // If the section doesn't exist, create a new one
@@ -340,7 +434,7 @@ class PatientEncounterController extends BaseController
             }
         }
 
-        return response()->json(['message' => "Notes Updated Successfully"], 200);
+        return response()->json(['message' => 'Notes Updated Successfully'], 200);
     }
 
     /**
@@ -348,7 +442,6 @@ class PatientEncounterController extends BaseController
      */
     public function show($patient_id)
     {
-
         $data = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
             ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
             ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
@@ -395,46 +488,22 @@ class PatientEncounterController extends BaseController
             if ($section->section_title == 'Review of Systems') {
                 $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
                 foreach ($reviewOfSystemDetails as $data) {
-                    $sectionText = "General: {$data->general}\n"
-                        . "Skin: {$data->skin}\n"
-                        . "Head: {$data->head}\n"
-                        . "Eyes: {$data->eyes}\n"
-                        . "Ears: {$data->ears}\n"
-                        . "Nose: {$data->nose}\n"
-                        . "Mouth/Throat: {$data->mouth_throat}\n"
-                        . "Neck: {$data->neck}\n"
-                        . "Breasts: {$data->breasts}\n"
-                        . "Respiratory: {$data->respiratory}\n"
-                        . "cardiovascular: {$data->cardiovascular}\n"
-                        . "gastrointestinal: {$data->gastrointestinal}\n"
-                        . "Musculoskeletal: {$data->musculoskeletal}\n"
-                        . "Neurological: {$data->neurological}\n"
-                        . "Psychiatric: {$data->psychiatric}\n"
-                        . "Endocrine: {$data->endocrine}\n"
-                        . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"
-                        . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                    $sectionText = "General: {$data->general}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Breasts: {$data->breasts}\n" . "Respiratory: {$data->respiratory}\n" . "cardiovascular: {$data->cardiovascular}\n" . "gastrointestinal: {$data->gastrointestinal}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
                 }
             } elseif ($section->section_title == 'Physical Exam') {
                 $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
                 foreach ($physicalExamDetails as $data) {
-                    $sectionText = "General Appearance: {$data->general_appearance}\n"
-                        . "Skin: {$data->skin}\n"
-                        . "Head: {$data->head}\n"
-                        . "Eyes: {$data->eyes}\n"
-                        . "Ears: {$data->ears}\n"
-                        . "Nose: {$data->nose}\n"
-                        . "Mouth/Throat: {$data->mouth_throat}\n"
-                        . "Neck: {$data->neck}\n"
-                        . "Chest/Lungs: {$data->chest_lungs}\n"
-                        . "Cardiovascular: {$data->cardiovascular}\n"
-                        . "Abdomen: {$data->abdomen}\n"
-                        . "Genitourinary: {$data->genitourinary}\n"
-                        . "Musculoskeletal: {$data->musculoskeletal}\n"
-                        . "Neurological: {$data->neurological}\n"
-                        . "Psychiatric: {$data->psychiatric}\n"
-                        . "Endocrine: {$data->endocrine}\n"
-                        . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"
-                        . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                    $sectionText = "General Appearance: {$data->general_appearance}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Chest/Lungs: {$data->chest_lungs}\n" . "Cardiovascular: {$data->cardiovascular}\n" . "Abdomen: {$data->abdomen}\n" . "Genitourinary: {$data->genitourinary}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                }
+            } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
+                $problems = Problem::where('patient_id', $section->patient_id)
+                    ->where('provider_id', auth()->user()->id)
+                    ->get();
+
+                $sectionText = ''; // Initialize an empty string to accumulate all section text
+
+                foreach ($problems as $data) {
+                    $sectionText .= "Code: {$data->diagnosis}\n" . "Description: {$data->name}\n";
                 }
             }
 
@@ -450,23 +519,17 @@ class PatientEncounterController extends BaseController
         $response = [
             'success' => true,
             'data' => $formattedData,
-            'message' => 'Encounter note sections fetched successfully'
+            'message' => 'Encounter note sections fetched successfully',
         ];
 
         return response()->json($response, 200);
     }
-
-
-
-
-
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request)
     {
-
         try {
             // Extract JSON data from the request
             $data = $request->json()->all();
@@ -516,7 +579,7 @@ class PatientEncounterController extends BaseController
             }
             return response()->json(['message' => 'Data updated successfully'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' =>  $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -527,7 +590,7 @@ class PatientEncounterController extends BaseController
     {
         PatientEncounter::destroy($id);
         $base = new BaseController();
-        return $base->sendResponse(NULL, 'Patient Encounter Deleted');
+        return $base->sendResponse(null, 'Patient Encounter Deleted');
     }
 
     public function patient_encounter_information($patient_id)
@@ -545,13 +608,16 @@ class PatientEncounterController extends BaseController
             $existing_encounters = $encounter_fields;
         }
 
-        return response()->json([
-            'existing_encounters' => $existing_encounters,
+        return response()->json(
+            [
+                'existing_encounters' => $existing_encounters,
 
-            'provider' => $providers,
-            'encounter_type' => $encounter_type,
-            'Specialty' => $Specialty,
-        ], 200);
+                'provider' => $providers,
+                'encounter_type' => $encounter_type,
+                'Specialty' => $Specialty,
+            ],
+            200,
+        );
     }
 
     public function status_update(Request $request)
@@ -560,13 +626,16 @@ class PatientEncounterController extends BaseController
             'encounter_id' => 'required|exists:patient_encounters,id',
         ]);
         $encounter = PatientEncounter::FindOrFail($request->encounter_id);
-        if ($encounter != NULL) {
+        if ($encounter != null) {
             $encounter->status = '1';
             $encounter->save();
-            return response()->json([
-                'code' => 'success',
-                'message' => 'Status Updated'
-            ], 200);
+            return response()->json(
+                [
+                    'code' => 'success',
+                    'message' => 'Status Updated',
+                ],
+                200,
+            );
         } else {
             return response()->json(['message' => 'No Encounter Found']);
         }

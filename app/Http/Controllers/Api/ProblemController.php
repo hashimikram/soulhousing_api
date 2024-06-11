@@ -15,7 +15,7 @@ class ProblemController extends BaseController
      */
     public function index($patient_id)
     {
-        $problem = Problem::with(['type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title'])
+        $problem = Problem::where('add_page','problem_page')->with(['type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title'])
             ->where('patient_id', $patient_id)
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -84,6 +84,7 @@ class ProblemController extends BaseController
         try {
             DB::beginTransaction();
             $problem = new Problem();
+            $problem->add_page="problem_page";
             $problem->provider_id = auth()->user()->id;
             $problem->patient_id = $validatedData['patient_id'];
             $problem->diagnosis = $validatedData['diagnosis'];
@@ -94,13 +95,39 @@ class ProblemController extends BaseController
             $problem->status_id = $validatedData['status_id'];
             $problem->comments = $validatedData['comments'];
             $problem->onset = $validatedData['onset'];
-            $problem->snowed = $validatedData['snowed'];
             $problem->save();
             DB::commit();
             return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $base->sendError($problem, $e->getMessage());
+            return $base->sendError( $e->getMessage());
+        }
+    }
+
+    public function store_note_section(Request $request){
+         if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $validatedData = $request->validate([
+            'patient_id' => 'required|exists:patients,id',
+            'diagnosis' => 'required',
+            'name' => 'required',
+        ]);
+        $base = new BaseController();
+        try {
+            DB::beginTransaction();
+            $problem = new Problem();
+            $problem->add_page="encounter_note";
+            $problem->provider_id = auth()->user()->id;
+            $problem->patient_id = $validatedData['patient_id'];
+            $problem->diagnosis = $validatedData['diagnosis'];
+                        $problem->name = $validatedData['name'];
+            $problem->save();
+            DB::commit();
+            return $base->sendResponse($problem, 'Problem created successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $base->sendError( $e->getMessage());
         }
     }
 

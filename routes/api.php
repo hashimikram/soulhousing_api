@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-problem', [ProblemController::class, 'update']);
     Route::get('/delete-problem/{problem}', [ProblemController::class, 'destroy']);
     Route::post('/search-problem', [ProblemController::class, 'search']);
+     Route::post('/add-problem/note-section', [ProblemController::class, 'store_note_section']);
 
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
