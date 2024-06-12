@@ -23,7 +23,15 @@ return new class extends Migration
                   $table->string('chronicity_id')->nullable();
                      $table->string('severity_id')->nullable();
                         $table->string('status_id')->nullable();
+<<<<<<< HEAD
            
+=======
+<<<<<<< HEAD
+           
+=======
+
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
             $table->longText('comments');
             $table->string('onset')->nullable();
             $table->string('snowed')->nullable();

@@ -13,9 +13,24 @@ class userDetail extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
 
     public function comment()
     {
         return $this->hasMany(Comment::class,'user_id');
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> e38328c8e344df74e0aaed970b850148fd6f728b
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
 }

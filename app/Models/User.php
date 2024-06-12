@@ -60,7 +60,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tweet::class);
     }
+<<<<<<< HEAD
     
+=======
+<<<<<<< HEAD
+    
+=======
+
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
        public function operation()
     {
         return $this->hasMany(Operation::class);

@@ -124,7 +124,14 @@ class ProblemController extends BaseController
                         $problem->name = $validatedData['name'];
             $problem->save();
             DB::commit();
+<<<<<<< HEAD
             $problem->assessment_section_id=$request->assessment_section_id;
+=======
+<<<<<<< HEAD
+            $problem->assessment_section_id=$request->assessment_section_id;
+=======
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
             return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -153,7 +160,19 @@ class ProblemController extends BaseController
      */
     public function update(Request $request)
     {
+<<<<<<< HEAD
   
+=======
+<<<<<<< HEAD
+  
+=======
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
 
         $validatedData = $request->validate([
             'problem_id' => 'required|exists:problems,id',
@@ -165,6 +184,13 @@ class ProblemController extends BaseController
             'status_id' => 'exists:list_options,id',
             'onset' => 'nullable|date',
             'comments' => 'required|nullable',
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+            'snowed' => 'nullable',
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
         ]);
         $base = new BaseController();
 
@@ -176,7 +202,17 @@ class ProblemController extends BaseController
 
         try {
             DB::beginTransaction();
+<<<<<<< HEAD
            
+=======
+<<<<<<< HEAD
+           
+=======
+            if ($problem->provider_id !== auth()->user()->id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
             $problem->diagnosis = $validatedData['diagnosis'];
             $problem->name = $validatedData['name'];
             $problem->type_id = $validatedData['type_id'];
@@ -185,7 +221,15 @@ class ProblemController extends BaseController
             $problem->status_id = $validatedData['status_id'];
             $problem->comments = $validatedData['comments'];
             $problem->onset = $validatedData['onset'];
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+
+=======
+            $problem->snowed = $validatedData['snowed'];
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
             $problem->save();
             DB::commit();
             return $base->sendResponse($problem, 'Problem updated successfully');

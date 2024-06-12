@@ -9,7 +9,15 @@ class FileController extends Controller
     public function show($name)
     {
         // Assume the images are stored in the public directory under 'images'
+<<<<<<< HEAD
         $imagePath = public_path('/uploads/' . $name);
+=======
+<<<<<<< HEAD
+        $imagePath = public_path('/uploads/' . $name);
+=======
+        $imagePath = public_path('storage/uploads/' . $name);
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
 
         // Check if the file exists
         if (!file_exists($imagePath)) {

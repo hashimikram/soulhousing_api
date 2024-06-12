@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/generate-pdf', [PdfController::class, 'generatePdf']);
 
 Route::get('/testing-form', function () {
     return view('testing');

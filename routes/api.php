@@ -182,6 +182,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operation-acknowledge-post', [OperationAcknowledgeController::class, 'store']);
     Route::post('/operation-comments', [OperationCommentController::class, 'getComments']);
     Route::post('/operation-likes', [OperationLikeController::class, 'getLikes']);
+<<<<<<< HEAD
     
+=======
+<<<<<<< HEAD
+    
+=======
+
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
+>>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
       Route::get('/search-code/{search_text}', [CptCodeController::class, 'search']);
 });
