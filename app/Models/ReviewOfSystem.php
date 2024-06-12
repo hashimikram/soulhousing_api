@@ -11,6 +11,6 @@ class ReviewOfSystem extends Model
 
     protected $fillable = [
         'patient_id',
-
+        'provider_id',
     ];
 }

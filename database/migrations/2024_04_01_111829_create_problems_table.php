@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,14 +18,14 @@ return new class extends Migration {
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
             $table->longText('diagnosis');
-            $table->longText('cd_description');
-            $table->string('select_1')->nullable();
-            $table->string('select_2')->nullable();
-            $table->string('select_3')->nullable();
-            $table->string('select_4')->nullable();
-            $table->string('select_5')->nullable();
+            $table->longText('name');
+               $table->string('type_id')->nullable();
+                  $table->string('chronicity_id')->nullable();
+                     $table->string('severity_id')->nullable();
+                        $table->string('status_id')->nullable();
+           
             $table->longText('comments');
-            $table->string('icd10')->nullable();
+            $table->string('onset')->nullable();
             $table->string('snowed')->nullable();
             $table->enum('status', ['0', '1'])->default('1');
             $table->timestamps();

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Termwind\Components\Raw;
 
 class RegisteredUserController extends Controller
 {
@@ -43,8 +44,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $detail=new userDetail();
-        $detail->user_id=$user->id;
+        $detail = new userDetail();
+        $detail->user_id = $user->id;
         $detail->save();
 
         event(new Registered($user));
@@ -92,10 +93,7 @@ class RegisteredUserController extends Controller
                 : response()->json(['message' => 'Unable to send reset link'], 422);
         } else {
             return response()->json(['message' => 'We cant find a user with that email address.'], 404);
-
         }
-
-
     }
 
     public function reset_password(Request $request): \Illuminate\Http\JsonResponse
@@ -143,5 +141,51 @@ class RegisteredUserController extends Controller
         $user->save();
         Auth::user()->tokens()->delete();
         return $base->sendResponse($user, 'Password Changed Successfully');
+    }
+
+    public function login_user_details()
+    {
+        $user = User::join('user_details', 'user_details.user_id', '=', 'users.id')
+            ->select('users.id as userId','users.name as first_name', 'users.email', 'users.email_verified_at', 'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
+            ->where('user_details.user_id', auth()->user()->id)->first();
+
+        if ($user != NULL) {
+            return response()->json($user);
+        } else {
+            return response()->json([
+                'code' => false,
+                'message' => 'No User Found',
+            ], 404);
+        }
+    }
+
+    public function  update_profile(Request $request)
+    {
+
+        $user = User::find(auth()->user()->id);
+        $user->name = $request->first_name;
+        $user->save();
+        $userDetail = userDetail::where('user_id', auth()->user()->id)->first();
+        $userDetail->title = $request->title;
+        $userDetail->middle_name = $request->middle_name;
+        $userDetail->last_name = $request->last_name;
+        $userDetail->suffix = $request->suffix;
+        $userDetail->gender = $request->gender;
+        $userDetail->date_of_birth = $request->date_of_birth;
+        $userDetail->country = $request->country;
+        $userDetail->city = $request->city;
+        $userDetail->zip_code = $request->zip_code;
+        $userDetail->home_phone = $request->home_phone;
+        $userDetail->npi = $request->npi;
+        $userDetail->tax_type = $request->tax_type;
+        $userDetail->snn = $request->snn;
+        $userDetail->ein = $request->ein;
+        $userDetail->epcs_status = $request->epcs_status;
+        $userDetail->dea_number = $request->dea_number;
+        $userDetail->nadean = $request->nadean;
+        $userDetail->save();
+
+
+        return response()->json('Profile Updated');
     }
 }
