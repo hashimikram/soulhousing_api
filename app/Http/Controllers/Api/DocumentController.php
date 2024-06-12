@@ -20,9 +20,15 @@ class DocumentController extends BaseController
         }
         $documents = Document::with('patient:id,first_name,last_name')->where('patient_id', $patient_id)->get();
 
+<<<<<<< HEAD
 foreach ($documents as $document) {
     $document->provider = auth()->user()->name;
 }
+=======
+        foreach ($documents as $document) {
+            $document->provider = auth()->user()->name;
+        }
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
         if ($documents->isEmpty()) {
             return response()->json(['message' => 'No Document Found for the specified patient'], 400);
         }
@@ -190,7 +196,10 @@ foreach ($documents as $document) {
      */
     public function destroy($id)
     {
+<<<<<<< HEAD
    
+=======
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
 
         if (!is_numeric($id) || $id <= 0) {
             return response()->json(['error' => 'Invalid Document ID'], 400);
@@ -202,7 +211,14 @@ foreach ($documents as $document) {
             return response()->json(['error' => 'Document not found'], 404);
         }
 
+<<<<<<< HEAD
         
+=======
+
+        if ($document->provider_id !== auth()->user()->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
         try {
             $document->delete();
         } catch (\Exception $e) {

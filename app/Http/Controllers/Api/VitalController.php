@@ -20,8 +20,13 @@ class VitalController extends BaseController
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $vitals = Vital::orderBy('id', 'DESC')->where('patient_id', $patient_id)->get();
+<<<<<<< HEAD
         foreach($vitals as $data){
             $data->create_date=date('d-m-Y h:i A', strtotime($data->created_at));
+=======
+        foreach ($vitals as $data) {
+            $data->create_date = date('d-m-Y h:i A', strtotime($data->created_at));
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
         }
         return response()->json([
             'success' => true,

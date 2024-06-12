@@ -42,4 +42,15 @@ class Problem extends Model
     {
         return $this->belongsTo(ListOption::class, 'status_id');
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+    public function patients()
+    {
+        return $this->belongsTo(patient::class, 'patient_id');
+    }
+>>>>>>> e38328c8e344df74e0aaed970b850148fd6f728b
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
 }

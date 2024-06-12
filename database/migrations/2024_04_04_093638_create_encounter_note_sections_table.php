@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -18,7 +19,11 @@ return new class extends Migration {
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
             $table->unsignedBigInteger('encounter_id');
             $table->foreign('encounter_id')->references('id')->on('patient_encounters')->onDelete('cascade');
+<<<<<<< HEAD
                 $table->string('id_default');
+=======
+            $table->string('id_default');
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
             $table->string('section_title')->nullable();
             $table->string('section_slug')->nullable();
             $table->longText('section_text')->nullable();

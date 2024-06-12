@@ -22,4 +22,14 @@ class patient extends Model
     public function documents(){
         return $this->hasMany(Document::class);
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+    public function problems(){
+        return $this->hasMany(Problem::class,'patient_id');
+    }
+>>>>>>> e38328c8e344df74e0aaed970b850148fd6f728b
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
 }

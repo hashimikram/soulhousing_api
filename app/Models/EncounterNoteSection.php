@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class EncounterNoteSection extends Model
 {
     use HasFactory;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
     protected $fillable = [
         'provider_id',
         'patient_id',

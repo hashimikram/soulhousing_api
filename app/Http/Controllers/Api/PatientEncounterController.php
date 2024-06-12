@@ -4,12 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use PDO;
 use App\Models\Problem;
+<<<<<<< HEAD
 use App\Models\patient;
 use App\Models\Vital;
 use App\Models\ListOption;
 use PDF;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+=======
+use App\Models\Vital;
+use App\Models\ListOption;
+use Illuminate\Support\Str;
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
 use App\Models\PhysicalExam;
 use Illuminate\Http\Request;
 use App\Models\ReviewOfSystem;
@@ -60,7 +66,11 @@ class PatientEncounterController extends BaseController
             DB::commit();
 
             $data = $this->getEncounterData($encounter);
+<<<<<<< HEAD
    
+=======
+
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
             // Get encounter note sections
             $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id', 'ASC')->get();
 
@@ -414,6 +424,7 @@ class PatientEncounterController extends BaseController
         // Loop through each section in the request and update it
         foreach ($validatedData['sections'] as $sectionData) {
             $sectionSlug = Str::slug($sectionData['section_title']);
+<<<<<<< HEAD
             Log::info($sectionSlug);
            $existingSection = EncounterNoteSection::where('encounter_id', $encounter_id)->where('section_slug',$sectionSlug)
              ->first();
@@ -423,6 +434,18 @@ class PatientEncounterController extends BaseController
             $existingSection->save();
             Log::info('Section Text Updated');
         } else {
+=======
+
+            // Find the existing section by patient ID, encounter ID, and section slug
+            $existingSection = EncounterNoteSection::where('patient_id', $patient_id)->where('encounter_id', $encounter_id)->where('section_slug', $sectionSlug)->first();
+
+            if ($existingSection) {
+                // If the section already exists, update its section_text
+                $existingSection->update([
+                    'section_text' => $sectionData['section_text'],
+                ]);
+            } else {
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
                 // If the section doesn't exist, create a new one
                 $section = new EncounterNoteSection();
                 $section->patient_id = $patient_id;
@@ -630,6 +653,7 @@ class PatientEncounterController extends BaseController
         $encounter = PatientEncounter::FindOrFail($request->encounter_id);
         if ($encounter != null) {
             $encounter->status = '1';
+<<<<<<< HEAD
           
             $patient=patient::where('id',$encounter->patient_id)->first();
             if($patient){
@@ -660,6 +684,16 @@ class PatientEncounterController extends BaseController
                 'code' => 'success',
                 'message' => 'Status Updated',
             ], 200);
+=======
+            $encounter->save();
+            return response()->json(
+                [
+                    'code' => 'success',
+                    'message' => 'Status Updated',
+                ],
+                200,
+            );
+>>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
         } else {
             return response()->json(['message' => 'No Encounter Found']);
         }
