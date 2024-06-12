@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\API\BaseController as BaseController;
-use App\Http\Requests\InsuranceRequest;
 use App\Models\Insurance;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\InsuranceUpdate;
+use App\Http\Requests\InsuranceRequest;
+use App\Http\Controllers\Api\BaseController as BaseController;
 
 class InsuranceController extends BaseController
 {
@@ -17,6 +19,15 @@ class InsuranceController extends BaseController
         $insurance = Insurance::where('patient_id', $patient_id)->orderBy('created_at', 'DESC')->get();
         $base = new BaseController();
         if (count($insurance) > 0) {
+            foreach ($insurance as $data) {
+                if ($data->insurance_type == '1') {
+                    $data['insurance_type'] = 'Primary';
+                } elseif ($data->insurance_type == '2') {
+                    $data['insurance_type'] = 'Secondary';
+                } else {
+                    $data['insurance_type'] = 'Teartiary';
+                }
+            }
             return $base->sendResponse($insurance, 'Insurance Data');
         } else {
             $insurance = NULL;
@@ -37,19 +48,43 @@ class InsuranceController extends BaseController
      */
     public function store(InsuranceRequest $request)
     {
+        // Validate the request data
         $validatedData = $request->validated();
+
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $base = new BaseController();
+        DB::beginTransaction();
         try {
-            $validatedData['provider_id'] = auth()->user()->id;
-            $validatedData['patient_id'] = $request->patient_id;
-            $insurance = Insurance::create($validatedData);
-            return $base->sendResponse($insurance, 'Insurance created successfully');
+            $checkInsurance = Insurance::where([
+                'provider_id' => $user->id,
+                'patient_id' => $validatedData['patient_id'],
+                'insurance_type' => $validatedData['insurance_type']
+            ])->first();
+
+            if ($checkInsurance) {
+                DB::rollBack();
+                return $base->sendResponse(null, 'Insurance Already Exists');
+            } else {
+                $validatedData['provider_id'] = $user->id;
+                $insurance = Insurance::create($validatedData);
+                DB::commit();
+                return $base->sendResponse($insurance, 'Insurance created successfully');
+            }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            $insurance = [];
-            return $base->sendError($insurance, 'Internal Server Error');
+            DB::rollBack();
+            Log::error('Insurance creation failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $base->sendError([], 'Internal Server Error');
         }
     }
+
 
 
     /**
@@ -71,9 +106,8 @@ class InsuranceController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(InsuranceRequest $request, Insurance $insurance)
+    public function update(InsuranceUpdate $request, Insurance $insurance)
     {
-
         $validatedData = $request->validated();
         $base = new BaseController();
         try {
@@ -100,7 +134,5 @@ class InsuranceController extends BaseController
         $base = new BaseController();
         $insurance->delete();
         return $base->sendResponse([], 'Insurance deleted successfully');
-
     }
-
 }
