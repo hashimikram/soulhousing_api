@@ -34,7 +34,6 @@ class ReviewOfSystemController extends BaseController
 
             // Create a new ReviewOfSystem instance
             $reviewOfSystem = new ReviewOfSystem();
-
             // Assign attributes
             $reviewOfSystem->provider_id = $providerId;
             $reviewOfSystem->patient_id = $request->patient_id;

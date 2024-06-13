@@ -8,15 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class bed extends Model
 {
     use HasFactory;
-    protected $fillable=[
+    protected $fillable = [
         'room_id',
         'patient_id',
+        'comments',
+        'bed_no',
         'occupied_at',
-        'booked_till'
+        'booked_till',
+        'status'
     ];
 
     public function room()
     {
         return $this->belongsTo(room::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(patient::class);
     }
 }
