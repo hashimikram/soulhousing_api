@@ -84,12 +84,14 @@ class BedController extends BaseController
                 'code' => true,
                 'message' => 'Patient Added',
             ], 200);
+
             $bed->patient_id = $request->patient_id;
             $bed->save();
             return response()->json([
                 'code' => true,
                 'message' => 'Patient Added',
             ], 200);
+
         } else {
             return response()->json([
                 'code' => 'false',

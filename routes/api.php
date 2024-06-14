@@ -56,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
     Route::get('/search-patient/{search_text}', [PatientController::class, 'search']);
 
+    Route::get('/us-states', [PatientController::class, 'states']);
+
+
     // Insurance CRUD
     Route::post('/add-insurance', [InsuranceController::class, 'store']);
     Route::get('/get-insurance/{patient_id}', [InsuranceController::class, 'index']);
@@ -168,7 +171,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy']);
     Route::post('/like-post', [LikeController::class, 'store']);
     Route::post('/comment-post', [CommentController::class, 'store']);
-    Route::post('/acknowledge-post', [AcknowledgeController::class, 'store']);
     Route::post('/comments', [CommentController::class, 'getComments']);
     Route::post('/likes', [LikeController::class, 'getLikes']);
 

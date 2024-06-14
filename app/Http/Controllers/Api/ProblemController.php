@@ -15,7 +15,9 @@ class ProblemController extends BaseController
      */
     public function index($patient_id)
     {
+
         $problem = Problem::where('add_page','problem_page')->with(['type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title'])
+
             ->where('patient_id', $patient_id)
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -78,7 +80,6 @@ class ProblemController extends BaseController
             'status_id' => 'exists:list_options,id',
             'onset' => 'nullable|date',
             'comments' => 'required|nullable',
-            'snowed' => 'nullable',
         ]);
         $base = new BaseController();
         try {
@@ -153,7 +154,6 @@ class ProblemController extends BaseController
      */
     public function update(Request $request)
     {
-  
 
         $validatedData = $request->validate([
             'problem_id' => 'required|exists:problems,id',
@@ -176,7 +176,6 @@ class ProblemController extends BaseController
 
         try {
             DB::beginTransaction();
-           
             $problem->diagnosis = $validatedData['diagnosis'];
             $problem->name = $validatedData['name'];
             $problem->type_id = $validatedData['type_id'];
@@ -185,7 +184,6 @@ class ProblemController extends BaseController
             $problem->status_id = $validatedData['status_id'];
             $problem->comments = $validatedData['comments'];
             $problem->onset = $validatedData['onset'];
-
             $problem->save();
             DB::commit();
             return $base->sendResponse($problem, 'Problem updated successfully');

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+
+
 use Carbon\Carbon;
 use App\Models\Contact;
 use App\Models\patient;
 use App\Models\Problem;
 use App\Models\medication;
+use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +36,6 @@ class PatientController extends BaseController
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
         }
 
-
         $base = new BaseController();
         return $base->sendResponse($patients, 'All Patients Of Login Provider');
     }
@@ -55,18 +57,16 @@ class PatientController extends BaseController
             })
             ->orderBy('patients.created_at', 'DESC')
             ->groupBy('patients.id') // Add 'patients.first_name' to the GROUP BY clause
-              ->where('patients.provider_id', auth()->user()->id)
+            ->where('patients.provider_id', auth()->user()->id)
             ->get();
         foreach ($patients as $data) {
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
-$data->patient_full_name = $data->first_name . ' ' . $data->last_name;
+            $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
         }
 
 
         $base = new BaseController();
         return $base->sendResponse($patients, 'Search Patients Of Login Provider');
-
-
     }
 
     /**
@@ -92,6 +92,7 @@ $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
         }
     }
 
+
     /**
      * Store a newly created resource in storage.
      */
@@ -103,8 +104,9 @@ $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
             'ssn' => 'required',
             'gender' => 'required',
             'email' => 'required|email',
-            'phone_no' => 'required',
+            'phone_no' => 'required'
         ]);
+
         $base = new BaseController();
         $checkUnique = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
@@ -113,7 +115,6 @@ $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
             ->first();
         if ($checkUnique == NULL) {
             try {
-
                 $patient = new patient();
                 $patient->provider_id = auth()->user()->id;
                 $patient->title = $request->title;
@@ -269,5 +270,11 @@ $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
         ];
 
         return response()->json($data, 200);
+    }
+
+    public function states()
+    {
+        $states = State::all();
+        return response()->json($states, 200);
     }
 }

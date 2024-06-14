@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\CptCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 class CptCodeController extends Controller
 {
     /**
@@ -22,6 +21,7 @@ class CptCodeController extends Controller
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
+
 
         $searchTerm = $search_text;
         // Base query

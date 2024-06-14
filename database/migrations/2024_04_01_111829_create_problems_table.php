@@ -19,11 +19,10 @@ return new class extends Migration
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
             $table->longText('diagnosis');
             $table->longText('name');
-               $table->string('type_id')->nullable();
-                  $table->string('chronicity_id')->nullable();
-                     $table->string('severity_id')->nullable();
-                        $table->string('status_id')->nullable();
-           
+            $table->string('type_id')->nullable();
+            $table->string('chronicity_id')->nullable();
+            $table->string('severity_id')->nullable();
+            $table->string('status_id')->nullable();
             $table->longText('comments');
             $table->string('onset')->nullable();
             $table->string('snowed')->nullable();

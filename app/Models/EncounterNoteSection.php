@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class EncounterNoteSection extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'provider_id',
         'patient_id',

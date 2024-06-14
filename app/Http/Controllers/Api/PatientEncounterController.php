@@ -101,7 +101,6 @@ class PatientEncounterController extends BaseController
                     }
                 }
 
-
                 $encounter_details = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
                     ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
                     ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
@@ -109,8 +108,6 @@ class PatientEncounterController extends BaseController
                     ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
                     ->where('patient_encounters.id', $encounter->id)
                     ->first();
-
-
 
                 $formattedData[] = [
                     'section_id' => $section->id,
@@ -152,7 +149,7 @@ class PatientEncounterController extends BaseController
         $encounter = new PatientEncounter();
         $encounter->patient_id = $request->patient_id;
         $encounter->provider_id = auth()->user()->id;
-        $encounter->provider_id_patient = $request->provider_id_patient;
+        $encounter->provider_id_patient = auth()->user()->id;
         date_default_timezone_set('Asia/Karachi');
         $encounter->encounter_date = $this->parseEncounterDate($request->signed_at);
         $encounter->signed_by = auth()->user()->id;
@@ -445,6 +442,26 @@ class PatientEncounterController extends BaseController
                 $section->section_text = $sectionData['section_text'];
                 $section->sorting_order = 1; // Use sorting_order from payload
                 $section->save();
+                // Find the existing section by patient ID, encounter ID, and section slug
+                $existingSection = EncounterNoteSection::where('patient_id', $patient_id)->where('encounter_id', $encounter_id)->where('section_slug', $sectionSlug)->first();
+
+                if ($existingSection) {
+                    // If the section already exists, update its section_text
+                    $existingSection->update([
+                        'section_text' => $sectionData['section_text'],
+                    ]);
+                } else {
+                    // If the section doesn't exist, create a new one
+                    $section = new EncounterNoteSection();
+                    $section->patient_id = $patient_id;
+                    $section->provider_id = auth()->user()->id;
+                    $section->encounter_id = $encounter_id;
+                    $section->section_title = $sectionData['section_title'];
+                    $section->section_slug = $sectionSlug;
+                    $section->section_text = $sectionData['section_text'];
+                    $section->sorting_order = 1; // Use sorting_order from payload
+                    $section->save();
+                }
             }
         }
 
@@ -461,6 +478,7 @@ class PatientEncounterController extends BaseController
             ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
             ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
             ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make')
+            ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
             ->where('patient_id', $patient_id)
 
             ->get();
@@ -560,6 +578,7 @@ class PatientEncounterController extends BaseController
         return response()->json($response, 200);
     }
 
+
     /**
      * Update the specified resource in storage.
      */
@@ -638,15 +657,16 @@ class PatientEncounterController extends BaseController
         // Prepare fields' names from PatientEncounter table
         $encounter_fields = Schema::getColumnListing('patient_encounters');
         $loginProvider = User::where('id', auth()->user()->id)->select('name', 'id')->first();
+        // Prepare fields' names from PatientEncounter table
+        $encounter_fields = Schema::getColumnListing('patient_encounters');
+
         // If there are no existing encounters, set $existing_encounters to an empty array
         if ($existing_encounters->isEmpty()) {
             $existing_encounters = $encounter_fields;
         }
-
         return response()->json(
             [
                 'existing_encounters' => $existing_encounters,
-
                 'provider' => $providers,
                 'encounter_type' => $encounter_type,
                 'Specialty' => $Specialty,
@@ -664,7 +684,6 @@ class PatientEncounterController extends BaseController
         $encounter = PatientEncounter::FindOrFail($request->encounter_id);
         if ($encounter != null) {
             $encounter->status = '1';
-
             $patient = patient::where('id', $encounter->patient_id)->first();
             if ($patient) {
                 $data = [
