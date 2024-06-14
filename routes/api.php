@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-patient', [PatientController::class, 'update']);
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
     Route::get('/search-patient/{search_text}', [PatientController::class, 'search']);
+    Route::get('/us-states', [PatientController::class, 'states']);
 
     // Insurance CRUD
     Route::post('/add-insurance', [InsuranceController::class, 'store']);
