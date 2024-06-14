@@ -52,43 +52,16 @@ class Vital extends Model
         'oxygenation_time_2',
         'peak_flow',
         'oxygenation_time_3',
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
->>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
+
         'office_test_oxygen_source_1',
         'office_test_date_1',
         'office_test_oxygen_source_2',
         'office_test_date_2',
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
->>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
         'office_test_blood_group',
         'blood_group_date',
         'office_test_pain_scale',
         'pain_scale_date',
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
-        'almi',
-        'muscle_mass',
-        'fat_mass',
-        'hand_grip',
-        'VO2MAX'
-<<<<<<< HEAD
-=======
-=======
->>>>>>> e38328c8e344df74e0aaed970b850148fd6f728b
->>>>>>> 1c7f9ed22f1a431c9cef97cd82022b8454954102
->>>>>>> 5f5cac5326938618709759d14757778d0bd916b2
+
     ];
     use HasFactory;
 }
