@@ -60,7 +60,7 @@ class PatientEncounterController extends BaseController
             DB::commit();
 
             $data = $this->getEncounterData($encounter);
-   
+
             // Get encounter note sections
             $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id', 'ASC')->get();
 
@@ -101,6 +101,17 @@ class PatientEncounterController extends BaseController
                     }
                 }
 
+
+                $encounter_details = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
+                    ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
+                    ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
+                    ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+                    ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
+                    ->where('patient_encounters.id', $encounter->id)
+                    ->first();
+
+
+
                 $formattedData[] = [
                     'section_id' => $section->id,
                     'section_title' => $section->section_title,
@@ -114,6 +125,7 @@ class PatientEncounterController extends BaseController
                 [
                     'encounter_id' => $encounter->id,
                     'encounter' => $data,
+                    'encounter_details' => $encounter_details,
                     'new_sections' => $formattedData,
                 ],
                 201,
@@ -415,14 +427,14 @@ class PatientEncounterController extends BaseController
         foreach ($validatedData['sections'] as $sectionData) {
             $sectionSlug = Str::slug($sectionData['section_title']);
             Log::info($sectionSlug);
-           $existingSection = EncounterNoteSection::where('encounter_id', $encounter_id)->where('section_slug',$sectionSlug)
-             ->first();
-             Log::info($existingSection->id);
-        if ($existingSection) {
-            $existingSection->section_text = $sectionData['section_text'];
-            $existingSection->save();
-            Log::info('Section Text Updated');
-        } else {
+            $existingSection = EncounterNoteSection::where('encounter_id', $encounter_id)->where('section_slug', $sectionSlug)
+                ->first();
+            Log::info($existingSection->id);
+            if ($existingSection) {
+                $existingSection->section_text = $sectionData['section_text'];
+                $existingSection->save();
+                Log::info('Section Text Updated');
+            } else {
                 // If the section doesn't exist, create a new one
                 $section = new EncounterNoteSection();
                 $section->patient_id = $patient_id;
@@ -448,7 +460,7 @@ class PatientEncounterController extends BaseController
             ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
             ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
             ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
-            ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender')
+            ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make')
             ->where('patient_id', $patient_id)
 
             ->get();
@@ -507,8 +519,29 @@ class PatientEncounterController extends BaseController
                 foreach ($problems as $data) {
                     $sectionText .= "Code: {$data->diagnosis}\n" . "Description: {$data->name}\n";
                 }
-            }
+            } elseif ($section->section_title == 'Vital Sign') {
+                // Retrieve the latest vital record for the patient and provider
+                $latestVital = Vital::where('patient_id', $section->patient_id)
+                    ->where('provider_id', auth()->user()->id)
+                    ->orderBy('created_at', 'desc') // Assuming 'created_at' is the timestamp column
+                    ->first();
 
+                $sectionText = ''; // Initialize an empty string to accumulate the section text
+
+                if ($latestVital) {
+                    // Get all column names from the 'vitals' table
+                    $columns = Schema::getColumnListing('vitals');
+
+                    foreach ($columns as $column) {
+                        if (!is_null($latestVital->$column)) {
+                            $label = ucwords(str_replace('_', ' ', $column));
+                            $sectionText .= "{$label}: {$latestVital->$column}\n";
+                        }
+                    }
+                }
+
+                // Output or use the $sectionText as needed
+            }
             $formattedData[] = [
                 'section_id' => $section->id,
                 'section_title' => $section->section_title,
@@ -601,10 +634,10 @@ class PatientEncounterController extends BaseController
         $providers = User::where('user_type', 'provider')->get();
         $encounter_type = ListOption::where('list_id', 'Encounter Type')->select('id', 'title')->get();
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
-
+        $facilities = DB::table('facilities')->where('user_id', auth()->user()->id)->select('id', 'address')->get();
         // Prepare fields' names from PatientEncounter table
         $encounter_fields = Schema::getColumnListing('patient_encounters');
-
+        $loginProvider = User::where('id', auth()->user()->id)->select('name', 'id')->first();
         // If there are no existing encounters, set $existing_encounters to an empty array
         if ($existing_encounters->isEmpty()) {
             $existing_encounters = $encounter_fields;
@@ -617,11 +650,12 @@ class PatientEncounterController extends BaseController
                 'provider' => $providers,
                 'encounter_type' => $encounter_type,
                 'Specialty' => $Specialty,
+                'facilities' => $facilities,
+                'loginProvider' => $loginProvider
             ],
             200,
         );
     }
-
     public function status_update(Request $request)
     {
         $request->validate([
@@ -630,32 +664,32 @@ class PatientEncounterController extends BaseController
         $encounter = PatientEncounter::FindOrFail($request->encounter_id);
         if ($encounter != null) {
             $encounter->status = '1';
-          
-            $patient=patient::where('id',$encounter->patient_id)->first();
-            if($patient){
-                $data = [
-                'name' => $patient->first_name .' '. $patient->last_name,
-                'encounter_id' => $encounter->id,
-                'data'=>$encounter->encounter_date,
-            ];
 
-            // Generate PDF
-            $pdf = PDF::loadView('PDF.status_change', $data);
-            $encounterDate = \Carbon\Carbon::parse($encounter->encounter_date)->format('Y-m-d_H-i-s');
-            $today_date=Carbon::now()->format('d-M-Y');
-            $patientId = $encounter->patient_id;
-            $fileName = "encounter_{$encounterDate}_patient_{$patientId}_{$today_date}_.pdf";
-            // Ensure the directory exists
-            $directoryPath = public_path('uploads');
-            if (!file_exists($directoryPath)) {
-                mkdir($directoryPath, 0777, true);
+            $patient = patient::where('id', $encounter->patient_id)->first();
+            if ($patient) {
+                $data = [
+                    'name' => $patient->first_name . ' ' . $patient->last_name,
+                    'encounter_id' => $encounter->id,
+                    'data' => $encounter->encounter_date,
+                ];
+
+                // Generate PDF
+                $pdf = PDF::loadView('PDF.status_change', $data);
+                $encounterDate = \Carbon\Carbon::parse($encounter->encounter_date)->format('Y-m-d_H-i-s');
+                $today_date = Carbon::now()->format('d-M-Y');
+                $patientId = $encounter->patient_id;
+                $fileName = "encounter_{$encounterDate}_patient_{$patientId}_{$today_date}_.pdf";
+                // Ensure the directory exists
+                $directoryPath = public_path('uploads');
+                if (!file_exists($directoryPath)) {
+                    mkdir($directoryPath, 0777, true);
+                }
+                $filePath = $directoryPath . '/' . $fileName;
+                $pdf->save($filePath);
             }
-            $filePath = $directoryPath . '/' . $fileName;
-            $pdf->save($filePath);
-            }
-            $encounter->pdf_make=$fileName;
-              $encounter->save();
-           
+            $encounter->pdf_make = $fileName;
+            $encounter->save();
+
             return response()->json([
                 'code' => 'success',
                 'message' => 'Status Updated',

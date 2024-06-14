@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CptCode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CptCodeController extends Controller
 {
@@ -22,12 +23,9 @@ class CptCodeController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-
-
         $searchTerm = $search_text;
-
         // Base query
-        $query = CptCode::query();
+        $query = DB::table('problem_quotes');
 
         // Apply search filter if search term is provided
         if ($searchTerm) {
