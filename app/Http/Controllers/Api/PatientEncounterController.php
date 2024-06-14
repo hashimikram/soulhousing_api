@@ -540,9 +540,62 @@ class PatientEncounterController extends BaseController
             } elseif ($section->section_title == 'Vital Sign') {
                 // Retrieve the latest vital record for the patient and provider
                 $latestVital = Vital::where('patient_id', $section->patient_id)
-                    ->where('provider_id', auth()->user()->id)
-                    ->orderBy('created_at', 'desc') // Assuming 'created_at' is the timestamp column
-                    ->first();
+                ->where('provider_id', auth()->user()->id)
+                ->orderBy('created_at', 'desc')
+                ->select(
+                    'weight_lbs',
+                    'weight_oz',
+                    'weight_kg',
+                    'height_ft',
+                    'height_in',
+                    'height_cm',
+                    'bmi_kg',
+                    'bmi_in',
+                    'bsa_cm2',
+                    'waist_cm',
+                    'systolic',
+                    'diastolic',
+                    'position',
+                    'cuff_size',
+                    'cuff_location',
+                    'cuff_time',
+                    'fasting',
+                    'postprandial',
+                    'fasting_blood_sugar',
+                    'blood_sugar_time',
+                    'pulse_result',
+                    'pulse_rhythm',
+                    'pulse_time',
+                    'body_temp_result_f',
+                    'body_temp_result_c',
+                    'body_temp_method',
+                    'body_temp_time',
+                    'respiration_result',
+                    'respiration_pattern',
+                    'respiration_time',
+                    'saturation',
+                    'oxygenation_method',
+                    'device',
+                    'oxygen_source_1',
+                    'oxygenation_time_1',
+                    'inhaled_o2_concentration',
+                    'oxygen_flow',
+                    'oxygen_source_2',
+                    'oxygenation_time_2',
+                    'peak_flow',
+                    'oxygenation_time_3',
+                    'office_test_oxygen_source_1',
+                    'office_test_date_1',
+                    'office_test_oxygen_source_2',
+                    'office_test_date_2',
+                    'pulse_beats_in',
+                    'resp_rate',
+                    'head_in',
+                    'waist_in',
+                    'glucose'
+                )
+                ->first();
+
 
                 $sectionText = ''; // Initialize an empty string to accumulate the section text
 
