@@ -36,6 +36,8 @@ class PatientController extends BaseController
             ->get();
 
         foreach ($patients as $data) {
+            $data->patient_full_name=$data->first_name.' '.$data->last_name;
+            $data->provider_full_name=auth()->user()->name;
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
             $data->problems = Problem::where('patient_id', $data->id)->get();
@@ -69,6 +71,8 @@ class PatientController extends BaseController
             ->where('patients.provider_id', auth()->user()->id)
             ->get();
         foreach ($patients as $data) {
+            $data->patient_full_name=$data->first_name.' '.$data->last_name;
+            $data->provider_full_name=auth()->user()->name;
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
             $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
