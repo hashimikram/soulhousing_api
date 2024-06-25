@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WarningController;
 use App\Models\ProblemQuote;
 use App\Models\EncounterTemplate;
 use Illuminate\Support\Facades\Route;
@@ -77,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-problem', [ProblemController::class, 'update']);
     Route::get('/delete-problem/{problem}', [ProblemController::class, 'destroy']);
     Route::post('/search-problem', [ProblemController::class, 'search']);
-     Route::post('/add-problem/note-section', [ProblemController::class, 'store_note_section']);
+    Route::post('/add-problem/note-section', [ProblemController::class, 'store_note_section']);
 
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
@@ -174,6 +175,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments', [CommentController::class, 'getComments']);
     Route::post('/likes', [LikeController::class, 'getLikes']);
 
+    // WarningController
+    Route::post('/warning-store', [WarningController::class, 'store']);
+    Route::get('/get-warnings/{patient_id}', [WarningController::class, 'index']);
 
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
     Route::get('/operation-get-tweets', [OperationController::class, 'index']);
@@ -185,6 +189,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operation-acknowledge-post', [OperationAcknowledgeController::class, 'store']);
     Route::post('/operation-comments', [OperationCommentController::class, 'getComments']);
     Route::post('/operation-likes', [OperationLikeController::class, 'getLikes']);
-
-      Route::get('/search-code/{search_text}', [CptCodeController::class, 'search']);
+    Route::get('/search-code/{search_text}', [CptCodeController::class, 'search']);
 });

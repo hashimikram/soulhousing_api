@@ -57,7 +57,11 @@
 </head>
 
 <body>
-    @php $sections = App\Models\EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get(); @endphp
+    @php
+        $sections = App\Models\EncounterNoteSection::where('encounter_id', $encounter_id)
+            ->orderBy('id', 'ASC')
+            ->get();
+    @endphp
     <div class="container mt-5">
         <header>
             <img src="{{ asset('public/ri_1.png') }}" alt="" />
@@ -84,7 +88,7 @@
                     <br />
                 </p>
                 <h1 style="padding-left: 5pt; text-indent: 0pt; text-align: left">
-                    {{$item->section_title}}:
+                    {{ $item->section_title }}:
                 </h1>
                 <p
                     style="
@@ -93,11 +97,11 @@
       line-height: 200%;
       text-align: left;
     ">
-                   {{$item->section_text}}
+                    {{ $item->section_text }}
                 </p>
             @endforeach
 
-        
+
             <h1 style="padding-left: 5pt; text-indent: 0pt; text-align: left">
                 Follow Up:
             </h1>

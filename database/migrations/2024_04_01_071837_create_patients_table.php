@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone_no');
             $table->string('nick_name')->nullable();
-            $table->string('suffix')->nullable();
+            $table->string('medical_no')->nullable();
+            $table->longText('medical_dependency')->nullable();
             $table->string('ssn');
             $table->string('gender')->nullable();
             $table->string('date_of_birth');

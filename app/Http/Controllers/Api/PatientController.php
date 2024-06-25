@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Http\Requests\MedicationRequest;
+use App\Models\Allergy;
 
 class PatientController extends BaseController
 {
@@ -30,15 +32,22 @@ class PatientController extends BaseController
             ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name', 'beds.bed_no', 'insurances.insurance_name')
             ->where('patients.provider_id', auth()->user()->id)
             ->orderBy('patients.created_at', 'DESC')
-            ->groupBy('patients.id') // Add 'patients.first_name' to the GROUP BY clause
+            ->groupBy('patients.id') // Ensure the group by clause is appropriate for your use case
             ->get();
+
         foreach ($patients as $data) {
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
+            $data->allergies = Allergy::where('patient_id', $data->id)->get();
+            $data->problems = Problem::where('patient_id', $data->id)->get();
+            $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
         }
 
-        $base = new BaseController();
-        return $base->sendResponse($patients, 'All Patients Of Login Provider');
+        return response()->json([
+            'success' => true,
+            'data' => $patients
+        ]);
     }
+
 
     public function search($search_text)
     {
@@ -62,11 +71,15 @@ class PatientController extends BaseController
         foreach ($patients as $data) {
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
             $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
+            $data->allergies = Allergy::where('patient_id', $data->id)->get();
+            $data->problems = Problem::where('patient_id', $data->id)->get();
+            $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
         }
 
-
-        $base = new BaseController();
-        return $base->sendResponse($patients, 'Search Patients Of Login Provider');
+        return response()->json([
+            'success' => true,
+            'data' => $patients
+        ]);
     }
 
     /**
@@ -124,7 +137,8 @@ class PatientController extends BaseController
                 $patient->nick_name = $request->nick_name;
                 $patient->phone_no = $request->phone_no;
                 $patient->email = $request->email;
-                $patient->suffix = $request->suffix;
+                $patient->medical_no = $request->medical_no;
+                $patient->medical_dependency = $request->medical_dependency;
                 $patient->ssn = $request->ssn;
                 $patient->gender = $request->gender;
                 $patient->date_of_birth = $request->date_of_birth;
@@ -176,11 +190,20 @@ class PatientController extends BaseController
     public function show($patientId)
     {
         $patient = Patient::find($patientId);
+        $allergies = Allergy::where('patient_id', $patientId)->get();
+        $problems = Problem::where('patient_id', $patientId)->get();
+        $medications = Medication::where('patient_id', $patientId)->where('status', 'active')->latest()->get();
         if (!$patient) {
             return response()->json(['message' => 'Patient not found'], 404);
         }
         $base = new BaseController();
-        return $base->sendResponse($patient, 'Patient Detail of ID ' . $patient->id);
+        return response()->json([
+            'success' => true,
+            'data' => $patient,
+            'allergies' => $allergies,
+            'medication' => $medications,
+            'problems' => $problems,
+        ]);
     }
 
 
@@ -220,7 +243,8 @@ class PatientController extends BaseController
                 $patient->nick_name = $request->nick_name;
                 $patient->phone_no = $request->phone_no;
                 $patient->email = $request->email;
-                $patient->suffix = $request->suffix;
+                $patient->medical_no = $request->medical_no;
+                $patient->medical_dependency = $request->medical_dependency;
                 $patient->ssn = $request->ssn;
                 $patient->gender = $request->gender;
                 $patient->date_of_birth = $request->date_of_birth;
