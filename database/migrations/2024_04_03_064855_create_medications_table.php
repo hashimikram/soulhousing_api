@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->foreign('provider_id')->references('id')->on('users')->onDelete('CASCADE');
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('CASCADE');
+            $table->text('title')->nullable();
+            $table->text('strength')->nullable();
             $table->string('user_free_text')->default('0');
             $table->string('prescribe_date');
             $table->string('action')->nullable();

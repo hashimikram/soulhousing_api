@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MedicalLetterController;
 use App\Http\Controllers\WarningController;
 use App\Models\ProblemQuote;
 use App\Models\EncounterTemplate;
@@ -178,6 +179,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // WarningController
     Route::post('/warning-store', [WarningController::class, 'store']);
     Route::get('/get-warnings/{patient_id}', [WarningController::class, 'index']);
+
+    // MedicalLetterController
+    Route::post('/medical-letter-store', [MedicalLetterController::class, 'store']);
+    Route::get('/get-medical-letter/{patient_id}', [MedicalLetterController::class, 'index']);
 
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
     Route::get('/operation-get-tweets', [OperationController::class, 'index']);

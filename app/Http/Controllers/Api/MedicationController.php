@@ -39,6 +39,8 @@ class MedicationController extends BaseController
             $medication->favourite_medication = $request->favourite_medication;
             $medication->provider_id = auth()->user()->id;
             $medication->patient_id = $request->patient_id;
+            $medication->title=$request->title;
+            $medication->strength=$request->strength;
             $medication->user_free_text = $request->user_free_text;
             $medication->prescribe_date = $request->prescribe_date;
             $medication->action = $request->action;
@@ -104,6 +106,8 @@ class MedicationController extends BaseController
             $medication = medication::find($request->id);
             if ($medication != NULL) {
                 $medication->favourite_medication = $request->favourite_medication;
+                $medication->title=$request->title;
+                $medication->strength=$request->strength;
                 $medication->user_free_text = $request->user_free_text;
                 $medication->prescribe_date = $request->prescribe_date;
                 $medication->action = $request->action;

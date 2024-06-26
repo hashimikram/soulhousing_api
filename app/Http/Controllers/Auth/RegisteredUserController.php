@@ -14,18 +14,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Termwind\Components\Raw;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): View
-    {
-        return view('auth.register');
-    }
-
     /**
      * Handle an incoming registration request.
      *
@@ -35,7 +26,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -53,6 +44,14 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Display the registration view.
+     */
+    public function create(): View
+    {
+        return view('auth.register');
     }
 
     public function login(Request $request)
@@ -83,7 +82,7 @@ class RegisteredUserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user != NULL) {
+        if ($user != null) {
             $status = Password::sendResetLink(
                 $request->only('email')
             );
@@ -146,10 +145,11 @@ class RegisteredUserController extends Controller
     public function login_user_details()
     {
         $user = User::join('user_details', 'user_details.user_id', '=', 'users.id')
-            ->select('users.id as userId','users.name as first_name', 'users.email', 'users.email_verified_at', 'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
+            ->select('users.id as userId', 'users.name as first_name', 'users.email', 'users.email_verified_at',
+                'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
             ->where('user_details.user_id', auth()->user()->id)->first();
-
-        if ($user != NULL) {
+        $user->image = env('APP_URL').'public/uploads/'.$user->image;
+        if ($user != null) {
             return response()->json($user);
         } else {
             return response()->json([
@@ -159,7 +159,7 @@ class RegisteredUserController extends Controller
         }
     }
 
-    public function  update_profile(Request $request)
+    public function update_profile(Request $request)
     {
 
         $user = User::find(auth()->user()->id);
@@ -183,6 +183,36 @@ class RegisteredUserController extends Controller
         $userDetail->epcs_status = $request->epcs_status;
         $userDetail->dea_number = $request->dea_number;
         $userDetail->nadean = $request->nadean;
+        if ($request->media) {
+            $fileData = $request->input('media');
+            if (preg_match('/^data:(\w+)\/(\w+);base64,/', $fileData, $type)) {
+                $fileData = substr($fileData, strpos($fileData, ',') + 1);
+                $fileData = base64_decode($fileData);
+                if ($fileData === false) {
+                    return response()->json(['error' => 'Base64 decode failed'], 400);
+                }
+                $mimeType = strtolower($type[1]);
+                $extension = strtolower($type[2]);
+                $fileName = uniqid().'.'.$extension;
+                Log::info('File Mime: '.$mimeType);
+                Log::info('File Extension: '.$extension);
+
+                // Ensure the 'public/uploads' directory exists
+                $directory = public_path('uploads');
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0777, true);
+                }
+
+                // Save the file to the public/uploads directory
+                $filePath = $directory.'/'.$fileName;
+                file_put_contents($filePath, $fileData);
+
+                $publicPath = asset('uploads/'.$fileName);
+            } else {
+                return response()->json(['error' => 'Invalid media data'], 400);
+            }
+        }
+        $userDetail->image = $fileName;
         $userDetail->save();
 
 

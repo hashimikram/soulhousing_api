@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 
-
 use Carbon\Carbon;
 use App\Models\Contact;
 use App\Models\patient;
@@ -16,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Http\Requests\MedicationRequest;
 use App\Models\Allergy;
+use App\Models\PatientEncounter;
 
 class PatientController extends BaseController
 {
@@ -36,11 +36,16 @@ class PatientController extends BaseController
             ->get();
 
         foreach ($patients as $data) {
-            $data->patient_full_name=$data->first_name.' '.$data->last_name;
-            $data->provider_full_name=auth()->user()->name;
+            $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
+            $data->provider_full_name = auth()->user()->name;
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
-            $data->problems = Problem::where('patient_id', $data->id)->get();
+            $data->problems = Problem::where('patient_id', $data->id)
+                ->get()
+                ->map(function ($problem) {
+                    $problem->diagnosis = $problem->diagnosis;
+                    return $problem;
+                });
             $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
         }
 
@@ -71,8 +76,8 @@ class PatientController extends BaseController
             ->where('patients.provider_id', auth()->user()->id)
             ->get();
         foreach ($patients as $data) {
-            $data->patient_full_name=$data->first_name.' '.$data->last_name;
-            $data->provider_full_name=auth()->user()->name;
+            $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
+            $data->provider_full_name = auth()->user()->name;
             $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
             $data->patient_full_name = $data->first_name . ' ' . $data->last_name;
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
@@ -290,11 +295,37 @@ class PatientController extends BaseController
             return response()->json(['message' => 'Patient not found'], 404);
         }
 
+        $allergies = Allergy::with('allergy_type:id,list_id,title')
+            ->where('patient_id', $id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($allergy) {
+                $allergy->allergy = $allergy->allergy;
+                return $allergy;
+            });
+
+        $problems = Problem::where('patient_id', $id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($problem) {
+                $problem->diagnosis = $problem->diagnosis;
+                return $problem;
+            });
+
         $data = [
             'patient' => $patient,
-            'problems' => Problem::where('patient_id', $id)->orderBy('created_at', 'DESC')->get(),
+            'problems' => $problems,
             'contacts' => Contact::where('patient_id', $id)->orderBy('created_at', 'DESC')->get(),
-            'medications' => Medication::where('patient_id', $id)->get()
+            'medications' => Medication::where('patient_id', $id)->get(),
+            'encounters' => PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=', 'patient_encounters.encounter_type')
+                ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
+                ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
+                ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+                ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make')->where('patient_encounters.patient_id', $id)
+                ->latest()->first(),
+            'allergies' => $allergies,
         ];
 
         return response()->json($data, 200);

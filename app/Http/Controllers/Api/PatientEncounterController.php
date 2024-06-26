@@ -479,6 +479,7 @@ class PatientEncounterController extends BaseController
             ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
             ->select('patient_encounters.id', 'patient_encounters.provider_id', 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id', 'patient_encounters.signed_by', 'patient_encounters.encounter_date', 'patient_encounters.parent_encounter', 'patient_encounters.location', 'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at', 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no', DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"), 'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make')
             ->where('patient_id', $patient_id)
+            ->orderBy('patient_encounters.created_at','DESC')
             ->get();
         foreach ($data as $reason) {
             if ($reason->status == '0') {
@@ -700,9 +701,29 @@ class PatientEncounterController extends BaseController
 
     public function patient_encounter_information($patient_id)
     {
+        // Retrieve the 'initial-visit' option
+        $initial_visit = ListOption::where('option_id', 'initial-visit')->first();
+
+        // Check for patient encounters of type 'initial-visit'
+        $check_patient_encounters = PatientEncounter::where('patient_id', $patient_id)
+            ->where('encounter_type', $initial_visit->id)
+            ->get();
+
+        // Retrieve encounter types, excluding 'initial-visit' if needed
+        if ($check_patient_encounters->isNotEmpty()) {
+            $encounter_type = ListOption::where('list_id', 'Encounter Type')
+                ->where('id', '!=', $initial_visit->id)
+                ->select('id', 'title')
+                ->get();
+        } else {
+            $encounter_type = ListOption::where('list_id', 'Encounter Type')
+                ->select('id', 'title')
+                ->get();
+        }
+
         $existing_encounters = PatientEncounter::where('patient_id', $patient_id)->get();
-        $providers = User::where('user_type', 'provider')->get();
-        $encounter_type = ListOption::where('list_id', 'Encounter Type')->select('id', 'title')->get();
+        $providers = User::where('id', auth()->user()->id)->get();
+
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
         $facilities = DB::table('facilities')->where('user_id', auth()->user()->id)->select('id', 'address')->get();
         // Prepare fields' names from PatientEncounter table
