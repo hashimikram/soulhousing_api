@@ -39,12 +39,17 @@ class MedicationController extends BaseController
             $medication->favourite_medication = $request->favourite_medication;
             $medication->provider_id = auth()->user()->id;
             $medication->patient_id = $request->patient_id;
-            $medication->title=$request->title;
-            $medication->strength=$request->strength;
+            $medication->title = $request->title;
+            $medication->strength = $request->strength;
             $medication->user_free_text = $request->user_free_text;
             $medication->prescribe_date = $request->prescribe_date;
             $medication->action = $request->action;
             $medication->quantity = $request->quantity;
+            $medication->unit = $request->unit;
+            $medication->begin_date = $request->begin_date;
+            $medication->end_date = $request->end_date;
+            $medication->referred_by = $request->referred_by;
+            $medication->medication_dosage_instruction = $request->medication_dosage_instruction;
             $medication->dosage_unit = $request->dosage_unit;
             $medication->route = $request->route;
             $medication->frequency = $request->frequency;
@@ -62,7 +67,7 @@ class MedicationController extends BaseController
             $medication->patient_directions = $request->patient_directions;
             $medication->additional_sig = $request->additional_sig;
             $medication->save();
-            return $base->sendResponse(Null, 'Medication Added');
+            return $base->sendResponse(null, 'Medication Added');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $base->sendError('Internal Server Error');
@@ -104,14 +109,19 @@ class MedicationController extends BaseController
         $base = new BaseController();
         try {
             $medication = medication::find($request->id);
-            if ($medication != NULL) {
+            if ($medication != null) {
                 $medication->favourite_medication = $request->favourite_medication;
-                $medication->title=$request->title;
-                $medication->strength=$request->strength;
+                $medication->title = $request->title;
+                $medication->strength = $request->strength;
                 $medication->user_free_text = $request->user_free_text;
                 $medication->prescribe_date = $request->prescribe_date;
                 $medication->action = $request->action;
                 $medication->quantity = $request->quantity;
+                $medication->unit = $request->unit;
+                $medication->begin_date = $request->begin_date;
+                $medication->end_date = $request->end_date;
+                $medication->referred_by = $request->referred_by;
+                $medication->medication_dosage_instruction = $request->medication_dosage_instruction;
                 $medication->dosage_unit = $request->dosage_unit;
                 $medication->route = $request->route;
                 $medication->frequency = $request->frequency;
@@ -129,7 +139,7 @@ class MedicationController extends BaseController
                 $medication->patient_directions = $request->patient_directions;
                 $medication->additional_sig = $request->additional_sig;
                 $medication->save();
-                return $base->sendResponse(Null, 'Medication Updated');
+                return $base->sendResponse(null, 'Medication Updated');
             } else {
                 return $base->sendError('Medication Not Found');
             }

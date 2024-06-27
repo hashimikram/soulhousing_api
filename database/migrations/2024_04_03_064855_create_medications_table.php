@@ -23,6 +23,11 @@ return new class extends Migration {
             $table->string('prescribe_date');
             $table->string('action')->nullable();
             $table->string('quantity')->nullable();
+            $table->string('unit')->nullable();
+            $table->dateTime('begin_date')->nullable();
+            $table->dateTime('end_date')->nullable();
+            $table->string('referred_by')->nullable();
+            $table->longText('medication_dosage_instruction')->nullable();
             $table->string('dosage_unit')->nullable();
             $table->string('route')->nullable();
             $table->string('frequency')->nullable();
