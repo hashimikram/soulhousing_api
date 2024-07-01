@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -59,15 +58,10 @@ return new class extends Migration
             $table->string('oxygenation_time_2')->nullable();
             $table->string('peak_flow')->nullable();
             $table->string('oxygenation_time_3')->nullable();
-            $table->string('office_test_oxygen_source_1')->nullable();
-            $table->string('office_test_date_1')->nullable();
-            $table->string('office_test_oxygen_source_2')->nullable();
-            $table->string('office_test_date_2')->nullable();
-            $table->string('pulse_beats_in')->nullable();
-            $table->string('resp_rate')->nullable();
-            $table->string('head_in')->nullable();
-            $table->string('waist_in')->nullable();
-            $table->string('glucose')->nullable();
+            $table->string('office_test_blood_group')->nullable();
+            $table->dateTime('blood_group_date')->nullable();
+            $table->string('office_test_pain_scale')->nullable();
+            $table->dateTime('pain_scale_date')->nullable();
             $table->timestamps();
         });
     }

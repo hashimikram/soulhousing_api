@@ -15,9 +15,13 @@ class MedicationController extends BaseController
      */
     public function index($id)
     {
-        $medication = medication::with('patients')->where('patient_id', $id)->get();
-        $base = new BaseController();
-        return $base->sendResponse($medication, 'Medication Data');
+        $active_medications = medication::with('patients')->where('status', 'active')->where('patient_id', $id)->get();
+        $inactive_medications = medication::with('patients')->where('status', 'inactive')->where('patient_id',
+            $id)->get();
+        return response()->json([
+            'active_medications' => $active_medications,
+            'inactive_medications' => $inactive_medications
+        ], 200);
     }
 
     /**
@@ -69,8 +73,7 @@ class MedicationController extends BaseController
             $medication->save();
             return $base->sendResponse(null, 'Medication Added');
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return $base->sendError('Internal Server Error');
+            return $base->$e->getMessage();
         }
     }
 
@@ -97,14 +100,7 @@ class MedicationController extends BaseController
     public function update(Request $request)
     {
         $request->validate([
-            'prescribe_date' => 'required|date',
-            'days_supply' => 'required',
-            'refills' => 'required',
-            'dispense' => 'required',
-            'dispense_unit' => 'required',
-            'primary_diagnosis' => 'required',
-            'secondary_diagnosis' => 'required',
-            'patient_directions' => 'required',
+            'id' => 'required',
         ]);
         $base = new BaseController();
         try {
@@ -146,6 +142,36 @@ class MedicationController extends BaseController
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $base->sendError('Internal Server Error');
+        }
+    }
+
+    public function change_status(Request $request)
+    {
+        $request->validate([
+            'medication_id' => 'required|exists:medications,id',
+        ]);
+        $id = $request->medication_id;
+        $record = medication::FindOrFail($id);
+        if ($record != null) {
+            if ($record->status == 'active') {
+                $record->status = 'inactive';
+                $record->discontinue_date = $request->discontinue_date;
+                $record->discontinue_reason = $request->discontinue_reason;
+            } else {
+                $record->status = 'active';
+                $record->discontinue_date = null;
+                $record->discontinue_reason = null;
+            }
+            $record->save();
+            return response()->json([
+                'code' => 200,
+                'message' => 'Status Changed'
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Record Not Found'
+            ], 404);
         }
     }
 

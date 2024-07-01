@@ -1,42 +1,40 @@
 <?php
 
-use App\Http\Controllers\MedicalLetterController;
-use App\Http\Controllers\WarningController;
-use App\Models\ProblemQuote;
-use App\Models\EncounterTemplate;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\TweetController;
+use App\Http\Controllers\AcknowledgeController;
+use App\Http\Controllers\AdmissionDischargeController;
+use App\Http\Controllers\Api\AllergyController;
 use App\Http\Controllers\Api\BedController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\EncounterNoteSectionController;
+use App\Http\Controllers\Api\FloorController;
+use App\Http\Controllers\Api\InsuranceController;
+use App\Http\Controllers\Api\MedicationController;
+use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\PinController;
+use App\Http\Controllers\Api\ProblemController;
+use App\Http\Controllers\Api\ReviewOfSystemController;
+use App\Http\Controllers\Api\VitalController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CptCodeController;
-use App\Http\Controllers\Api\NoteController;
-use App\Http\Controllers\Api\FloorController;
-use App\Http\Controllers\Api\VitalController;
-use App\Http\Controllers\OperationController;
-use App\Http\Controllers\ListOptionController;
-use App\Http\Controllers\AcknowledgeController;
-use App\Http\Controllers\Api\AllergyController;
-use App\Http\Controllers\Api\ContactController;
-use App\Http\Controllers\Api\PatientController;
-use App\Http\Controllers\Api\ProblemController;
-use App\Http\Controllers\Api\DocumentController;
-use App\Http\Controllers\PhysicalExamController;
-use App\Http\Controllers\ProblemQuoteController;
-use App\Http\Controllers\Api\InsuranceController;
-use App\Http\Controllers\OperationLikeController;
-use App\Http\Controllers\Api\MedicationController;
-use App\Http\Controllers\OperationCommentController;
 use App\Http\Controllers\EncounterTemplateController;
-use App\Http\Controllers\Api\ReviewOfSystemController;
-use App\Http\Controllers\PhysicalExamDetailController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Api\PatientEncounterController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\ListOptionController;
+use App\Http\Controllers\MedicalLetterController;
 use App\Http\Controllers\OperationAcknowledgeController;
+use App\Http\Controllers\OperationCommentController;
+use App\Http\Controllers\OperationController;
+use App\Http\Controllers\OperationLikeController;
+use App\Http\Controllers\PhysicalExamDetailController;
+use App\Http\Controllers\ProblemQuoteController;
 use App\Http\Controllers\ReviewOfSystemDetailController;
-use App\Http\Controllers\Api\EncounterNoteSectionController;
+use App\Http\Controllers\TweetController;
+use App\Http\Controllers\WarningController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
 // Forgot Password
@@ -59,7 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/search-patient/{search_text}', [PatientController::class, 'search']);
 
     Route::get('/us-states', [PatientController::class, 'states']);
-
 
     // Insurance CRUD
     Route::post('/add-insurance', [InsuranceController::class, 'store']);
@@ -101,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-medication', [MedicationController::class, 'update']);
     Route::get('/get-medication/{id}', [MedicationController::class, 'index']);
     Route::get('/delete-medication/{medication}', [MedicationController::class, ' destroy']);
-
+    Route::post('/change-status-medication', [MedicationController::class, 'change_status']);
     // Encounter CRUD
     Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);
     Route::post('/add-patient-encounter-notes', [PatientEncounterController::class, 'encounter_notes_store']);
@@ -110,13 +107,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('delete-patient-encounter/{id}', [PatientEncounterController::class, 'destroy']);
     Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
     Route::post('/update-patient-encounter-notes', [EncounterNoteSectionController::class, 'update']);
-    Route::get('patient-encounter-information/{patient_id}', [PatientEncounterController::class, 'patient_encounter_information']);
+    Route::get('patient-encounter-information/{patient_id}',
+        [PatientEncounterController::class, 'patient_encounter_information']);
     Route::post('/encounter-status-update', [PatientEncounterController::class, 'status_update']);
     Route::get('/get-details-review/{section_id}/{patient_id}', [ReviewOfSystemDetailController::class, 'show']);
     Route::get('/get-details-physical/{section_id}/{patient_id}', [PhysicalExamDetailController::class, 'show']);
     Route::post('/update-details-review', [ReviewOfSystemDetailController::class, 'update']);
     Route::post('/update-details-physical', [PhysicalExamDetailController::class, 'update']);
-
+    Route::get('/check-encounter-type/{patient_id}/{specialty_id}',
+        [PatientEncounterController::class, 'check_patient_encounter']);
 
     // ReviewOfSystem CRUD
     Route::post('/add-review-of-system', [ReviewOfSystemController::class, 'store']);
@@ -184,6 +183,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/medical-letter-store', [MedicalLetterController::class, 'store']);
     Route::get('/get-medical-letter/{patient_id}', [MedicalLetterController::class, 'index']);
 
+    // AdmissionDischargeController
+    Route::post('/store-admission-discharge', [AdmissionDischargeController::class, 'store']);
+    Route::get('/get-admission-discharge/{patient_id}', [AdmissionDischargeController::class, 'index']);
+    Route::get('/get-admission-types', [AdmissionDischargeController::class, 'create']);
+    Route::get('/delete-admission-discharge/{id}', [AdmissionDischargeController::class, 'destroy']);
+
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
     Route::get('/operation-get-tweets', [OperationController::class, 'index']);
     Route::get('/operation-tweets', [OperationController::class, 'index']);
@@ -195,4 +200,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operation-comments', [OperationCommentController::class, 'getComments']);
     Route::post('/operation-likes', [OperationLikeController::class, 'getLikes']);
     Route::get('/search-code/{search_text}', [CptCodeController::class, 'search']);
+
+    Route::get('/all-providers', [PatientController::class, 'all_providers']);
 });

@@ -19,14 +19,6 @@ class MedicationRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|exists:patients,id',
-            'prescribe_date'=>'required|date',
-            'days_supply'=>'required',
-            'refills'=>'required',
-            'dispense'=>'required',
-            'dispense_unit'=>'required',
-            'primary_diagnosis'=>'required',
-            'secondary_diagnosis'=>'required',
-            'patient_directions'=>'required',
         ];
     }
 }

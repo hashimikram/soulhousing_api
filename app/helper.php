@@ -25,7 +25,7 @@ function formatFileSize($bytes, $decimals = 2)
 
     $factor = floor((strlen($bytes) - 1) / 3);
 
-    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ' ' . @$size[$factor];
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)).' '.@$size[$factor];
 }
 
 if (!function_exists('getUserTimeWithTimezone')) {
@@ -54,3 +54,42 @@ if (!function_exists('getUserTimeWithTimezone')) {
         return $currentTimestamp->format('Y-m-d h:i:s A');
     }
 }
+
+function Unauthorized()
+{
+    if (!auth()->check()) {
+        return redirect()->back()->with('error', 'Unauthorized');
+    }
+}
+
+if (!function_exists('formatDate')) {
+    /**
+     * Format a date.
+     *
+     * @param  string  $date
+     * @param  string  $format
+     * @return string
+     */
+    function formatDate($date, $format = 'Y-M-d')
+    {
+        return \Carbon\Carbon::parse($date)->format($format);
+    }
+}
+
+if (!function_exists('image_url')) {
+
+    function image_url($imagePath)
+    {
+        return env('APP_URL').'public/uploads/'.$imagePath;
+    }
+}
+
+if (!function_exists('check_id')) {
+    function check_id($id)
+    {
+        if (!is_numeric($id) || $id <= 0) {
+            return redirect()->back()->with('error', 'Id Invalid');
+        }
+    }
+}
+
