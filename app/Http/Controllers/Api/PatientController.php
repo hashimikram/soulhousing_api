@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Models\AdmissionDischarge;
 use App\Models\Allergy;
 use App\Models\Contact;
 use App\Models\medication;
@@ -39,7 +40,9 @@ class PatientController extends BaseController
             $data->patient_full_name = $data->first_name.' '.$data->last_name;
             $data->provider_full_name = auth()->user()->name;
             $data->profile_pic = image_url($data->profile_pic);
-            $data->admission_date = Carbon::now()->format('Y-m-d H:i A');
+            $admission_date = AdmissionDischarge::where('patient_id', $data->id)->where('status', '1')->first();
+            $data->admission_date = $admission_date ? $admission_date->admission_date : '';
+            $data->room_no = $admission_date ? $admission_date->room_no : '';
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
             $data->problems = Problem::where('patient_id', $data->id)
                 ->get()
@@ -48,6 +51,7 @@ class PatientController extends BaseController
                     return $problem;
                 });
             $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
+
         }
 
         return response()->json([
@@ -143,7 +147,7 @@ class PatientController extends BaseController
             'doctor_name' => 'required|string',
             'auth' => 'nullable|string',
             'account_no' => 'nullable|string',
-            'admit_date' => 'required|date',
+            'admit_date' => 'nullable|date',
             'disch_date' => 'nullable|date',
             'adm_dx' => 'nullable|string',
             'resid_military' => 'nullable|string',

@@ -149,7 +149,6 @@ class PatientEncounterController extends BaseController
             'specialty' => 'required|exists:list_options,id',
             'blood_pressure' => 'required',
             'pulse_beats_in' => 'required',
-            'bmi_in' => 'required',
             'resp_rate' => 'required',
         ]);
     }
@@ -194,8 +193,10 @@ class PatientEncounterController extends BaseController
 
     private function handleVitalSigns(Request $request, $encounter)
     {
+        ;
         if ($request->skip != 'true') {
             $vital = new Vital();
+            $vital->date = $request->signed_at;
             $vital->patient_id = $request->patient_id;
             $vital->provider_id = auth()->user()->id;
             $vital->pulse_beats_in = $request->pulse_beats_in;
