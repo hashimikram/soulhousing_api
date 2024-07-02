@@ -188,6 +188,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-admission-discharge/{patient_id}', [AdmissionDischargeController::class, 'index']);
     Route::get('/get-admission-types', [AdmissionDischargeController::class, 'create']);
     Route::get('/delete-admission-discharge/{id}', [AdmissionDischargeController::class, 'destroy']);
+    Route::post('/update-admission-discharge', [AdmissionDischargeController::class, 'update']);
+
 
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
     Route::get('/operation-get-tweets', [OperationController::class, 'index']);

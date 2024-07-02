@@ -59,11 +59,11 @@ class VitalController extends BaseController
     {
         $validatedData = $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            'date' => 'nullable|date',
-            'weight_lbs' => 'required|string',
+            'date' => 'required|date',
+            'weight_lbs' => 'nullable|string',
             'weight_oz' => 'nullable|string',
             'weight_kg' => 'nullable|string',
-            'height_ft' => 'required|string',
+            'height_ft' => 'nullable|string',
             'height_in' => 'nullable|string',
             'height_cm' => 'nullable|string',
             'bmi_kg' => 'nullable|string',
@@ -158,11 +158,11 @@ class VitalController extends BaseController
     {
         $validatedData = $request->validate([
             'id' => 'required|exists:vitals,id',
-            'date' => 'nullable|date',
-            'weight_lbs' => 'required|string',
+            'date' => 'required|date',
+            'weight_lbs' => 'nullable|string',
             'weight_oz' => 'nullable|string',
             'weight_kg' => 'nullable|string',
-            'height_ft' => 'required|string',
+            'height_ft' => 'nullable|string',
             'height_in' => 'nullable|string',
             'height_cm' => 'nullable|string',
             'bmi_kg' => 'nullable|string',
