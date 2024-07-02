@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Allergy;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Api\BaseController as BaseController;
 
 class AllergyController extends BaseController
 {
@@ -18,7 +17,8 @@ class AllergyController extends BaseController
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title', 'reaction:id,list_id,title')->where('patient_id', $patient_id)->get();
+        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title',
+            'reaction:id,list_id,title')->where('patient_id', $patient_id)->get();
         return apiSuccess($allergy);
     }
 
@@ -32,18 +32,19 @@ class AllergyController extends BaseController
         }
         $searchTerm = $request->search_text;
         $patient_id = $request->patient_id;
-        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title', 'reaction:id,list_id,title')
+        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title',
+            'reaction:id,list_id,title')
             ->where('patient_id', $patient_id)
             ->where(function ($query) use ($searchTerm) {
-                $query->where('allergy', 'like', '%' . $searchTerm . '%')
+                $query->where('allergy', 'like', '%'.$searchTerm.'%')
                     ->orWhereHas('allergy_type', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     })
                     ->orWhereHas('severity', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     })
                     ->orWhereHas('reaction', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     });
             })
             ->get();
@@ -62,9 +63,9 @@ class AllergyController extends BaseController
         $validate = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'allergy_type' => 'required|exists:list_options,id',
-            'allergy' => 'required',
-            'reaction_id' => 'nullable|exists:list_options,id',
-            'severity_id' => 'nullable|exists:list_options,id',
+            'allergy' => 'nullable',
+            'reaction_id' => 'required|exists:list_options,id',
+            'severity_id' => 'required|exists:list_options,id',
             'onset_date' => 'date|nullable',
             'comments' => 'nullable',
         ]);
@@ -96,9 +97,10 @@ class AllergyController extends BaseController
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title', 'reaction:id,list_id,title')->where('id', $id)->first();
+        $allergy = Allergy::with('allergy_type:id,list_id,title', 'severity:id,list_id,title',
+            'reaction:id,list_id,title')->where('id', $id)->first();
 
-        if ($allergy != NULL) {
+        if ($allergy != null) {
             if (auth()->user()->id != $allergy->provider_id) {
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
@@ -124,9 +126,9 @@ class AllergyController extends BaseController
         $validate = $request->validate([
             'id' => 'required|exists:allergies,id',
             'allergy_type' => 'required|exists:list_options,id',
-            'allergy' => 'required',
-            'reaction_id' => 'nullable|exists:list_options,id',
-            'severity_id' => 'nullable|exists:list_options,id',
+            'allergy' => 'nullable',
+            'reaction_id' => 'required|exists:list_options,id',
+            'severity_id' => 'required|exists:list_options,id',
             'onset_date' => 'date|nullable',
             'comments' => 'nullable',
         ]);
@@ -187,7 +189,7 @@ class AllergyController extends BaseController
         try {
             $allergy->delete();
         } catch (\Exception $e) {
-            return response()->json(['error' =>  $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
 
         // 5. Return success response

@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->string('cuff_time')->nullable();
             $table->string('fasting')->nullable();
             $table->string('postprandial')->nullable();
+            $table->string('blood_pressure')->nullable();
             $table->string('fasting_blood_sugar')->nullable();
             $table->string('blood_sugar_time')->nullable();
             $table->string('pulse_result')->nullable();
@@ -62,6 +63,11 @@ return new class extends Migration {
             $table->dateTime('blood_group_date')->nullable();
             $table->string('office_test_pain_scale')->nullable();
             $table->dateTime('pain_scale_date')->nullable();
+            $table->string('glucose')->nullable();
+            $table->string('waist_in')->nullable();
+            $table->string('head_in')->nullable();
+            $table->string('resp_rate')->nullable();
+            $table->string('pulse_beats_in')->nullable();
             $table->timestamps();
         });
     }

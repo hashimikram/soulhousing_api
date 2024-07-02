@@ -29,7 +29,7 @@ class PatientController extends BaseController
             ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
             ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
             ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name',
-                'beds.bed_no', 'insurances.insurance_name')
+                'beds.bed_no', 'insurances.group_name')
             ->where('patients.provider_id', auth()->user()->id)
             ->orderBy('patients.created_at', 'DESC')
             ->groupBy('patients.id') // Ensure the group by clause is appropriate for your use case
@@ -67,7 +67,7 @@ class PatientController extends BaseController
             ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
             ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
             ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name',
-                'beds.bed_no', 'insurances.insurance_name')
+                'beds.bed_no', 'insurances.group_name')
             ->where(function ($query) use ($search_text) {
                 $query->where('first_name', 'LIKE', '%'.$search_text.'%')
                     ->orWhere('last_name', 'LIKE', '%'.$search_text.'%')
@@ -131,19 +131,19 @@ class PatientController extends BaseController
             'social_security_no' => 'nullable|string',
             'medical_no' => 'nullable|string',
             'age' => 'nullable|string',
-            'gender' => 'nullable|string',
-            'date_of_birth' => 'nullable|date',
+            'gender' => 'required|string',
+            'date_of_birth' => 'required|date',
             'race' => 'nullable|string',
             'ethnicity' => 'nullable|string',
-            'marital_status' => 'nullable|string',
+            'marital_status' => 'required|string',
             'referral_source_1' => 'nullable|string',
             'referral_source_2' => 'nullable|string',
             'financial_class' => 'nullable|string',
             'fin_class_name' => 'nullable|string',
-            'doctor_name' => 'nullable|string',
+            'doctor_name' => 'required|string',
             'auth' => 'nullable|string',
             'account_no' => 'nullable|string',
-            'admit_date' => 'nullable|date',
+            'admit_date' => 'required|date',
             'disch_date' => 'nullable|date',
             'adm_dx' => 'nullable|string',
             'resid_military' => 'nullable|string',
@@ -161,10 +161,10 @@ class PatientController extends BaseController
             'other_contact_phone_no' => 'nullable|string',
             'other_contact_cell' => 'nullable|string',
             'relationship' => 'nullable|string',
-            'medical_dependency' => 'nullable|string',
-            'city' => 'nullable|string',
-            'state' => 'nullable|string',
-            'language' => 'nullable|string',
+            'medical_dependency' => 'required|string',
+            'city' => 'required|string',
+            'state' => 'required|string',
+            'language' => 'required|string',
             'phone_no' => 'nullable|string',
             'zip_code' => 'nullable|string',
             'country' => 'nullable|string',
@@ -436,6 +436,7 @@ class PatientController extends BaseController
         if (!$patient) {
             return response()->json(['message' => 'Patient not found'], 404);
         }
+        $patient->patient_full_name = $patient->first_name.' '.$patient->last_name;
 
         $allergies = Allergy::with('allergy_type:id,list_id,title')
             ->where('patient_id', $id)

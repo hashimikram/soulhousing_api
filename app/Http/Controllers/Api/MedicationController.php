@@ -101,6 +101,13 @@ class MedicationController extends BaseController
     {
         $request->validate([
             'id' => 'required',
+            'title' => 'required',
+            'strength' => 'required',
+            'begin_date' => 'required|date',
+            'end_date' => 'required|date',
+            'referred_by' => 'required',
+            'dosage_unit' => 'required',
+            'dose' => 'required',
         ]);
         $base = new BaseController();
         try {

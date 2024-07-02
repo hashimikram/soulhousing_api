@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReviewOfSystemDetail;
 use App\Http\Requests\StoreReviewOfSystemDetailRequest;
 use App\Http\Requests\UpdateReviewOfSystemDetailRequest;
-use App\Models\ReviewOfSystem;
+use App\Models\ReviewOfSystemDetail;
 
 class ReviewOfSystemDetailController extends Controller
 {
@@ -39,6 +38,7 @@ class ReviewOfSystemDetailController extends Controller
     public function show($section_id, $patient_id)
     {
         $data = ReviewOfSystemDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->first();
+        return $data;
         return response()->json([
             'code' => 'success',
             'data' => $data

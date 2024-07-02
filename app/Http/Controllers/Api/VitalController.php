@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Api\BaseController as BaseController;
-use Termwind\Components\Raw;
 
 class VitalController extends BaseController
 {
@@ -20,8 +18,8 @@ class VitalController extends BaseController
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $vitals = Vital::orderBy('id', 'DESC')->where('patient_id', $patient_id)->get();
-        foreach($vitals as $data){
-            $data->create_date=date('d-m-Y h:i A', strtotime($data->created_at));
+        foreach ($vitals as $data) {
+            $data->create_date = date('d-m-Y h:i A', strtotime($data->created_at));
         }
         return response()->json([
             'success' => true,
@@ -46,7 +44,8 @@ class VitalController extends BaseController
         $fromDate = $validatedData['from_date'];
         $toDate = $validatedData['to_date'];
         $patientId = $validatedData['patient_id'];
-        $vitals = Vital::orderBy('id', 'DESC')->whereBetween('date', [$fromDate, $toDate])->where('patient_id', $patientId)->get();
+        $vitals = Vital::orderBy('id', 'DESC')->whereBetween('date', [$fromDate, $toDate])->where('patient_id',
+            $patientId)->get();
         return response()->json([
             'success' => true,
             'data' => $vitals,
@@ -61,10 +60,10 @@ class VitalController extends BaseController
         $validatedData = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'date' => 'nullable|date',
-            'weight_lbs' => 'nullable|string',
+            'weight_lbs' => 'required|string',
             'weight_oz' => 'nullable|string',
             'weight_kg' => 'nullable|string',
-            'height_ft' => 'nullable|string',
+            'height_ft' => 'required|string',
             'height_in' => 'nullable|string',
             'height_cm' => 'nullable|string',
             'bmi_kg' => 'nullable|string',
@@ -160,10 +159,10 @@ class VitalController extends BaseController
         $validatedData = $request->validate([
             'id' => 'required|exists:vitals,id',
             'date' => 'nullable|date',
-            'weight_lbs' => 'nullable|string',
+            'weight_lbs' => 'required|string',
             'weight_oz' => 'nullable|string',
             'weight_kg' => 'nullable|string',
-            'height_ft' => 'nullable|string',
+            'height_ft' => 'required|string',
             'height_in' => 'nullable|string',
             'height_cm' => 'nullable|string',
             'bmi_kg' => 'nullable|string',
@@ -253,7 +252,7 @@ class VitalController extends BaseController
         try {
             $vital->delete();
         } catch (\Exception $e) {
-            return response()->json(['error' =>  $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
 
         // 5. Return success response

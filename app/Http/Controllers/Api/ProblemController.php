@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Problem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Api\BaseController as BaseController;
 
 class ProblemController extends BaseController
 {
@@ -16,8 +15,10 @@ class ProblemController extends BaseController
     public function index($patient_id)
     {
 
-        $problem = Problem::where('add_page','problem_page')->with(['type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title'])
-
+        $problem = Problem::where('add_page', 'problem_page')->with([
+            'type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title',
+            'status:id,list_id,title'
+        ])
             ->where('patient_id', $patient_id)
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -25,7 +26,7 @@ class ProblemController extends BaseController
         if (count($problem) > 0) {
             return $base->sendResponse($problem, 'Problems Data');
         } else {
-            $contact = NULL;
+            $contact = null;
             return $base->sendError('No Record Found');
         }
     }
@@ -40,22 +41,23 @@ class ProblemController extends BaseController
         }
         $searchTerm = $request->search_text;
         $patient_id = $request->patient_id;
-        $problem = Problem::with('type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title', 'status:id,list_id,title')
+        $problem = Problem::with('type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title',
+            'status:id,list_id,title')
             ->where('patient_id', $patient_id)
             ->where(function ($query) use ($searchTerm) {
-                $query->where('diagnosis', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('name', 'like', '%' . $searchTerm . '%')
+                $query->where('diagnosis', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('name', 'like', '%'.$searchTerm.'%')
                     ->orWhereHas('type', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     })
                     ->orWhereHas('chronicity', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     })
                     ->orWhereHas('severity', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     })
                     ->orWhereHas('status', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('title', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('title', 'like', '%'.$searchTerm.'%');
                     });
             })
             ->get();
@@ -74,18 +76,18 @@ class ProblemController extends BaseController
             'patient_id' => 'required|exists:patients,id',
             'diagnosis' => 'required',
             'name' => 'required',
-            'type_id' => 'required|exists:list_options,id',
-            'chronicity_id' => 'exists:list_options,id',
-            'severity_id' => 'exists:list_options,id',
-            'status_id' => 'exists:list_options,id',
+            'type_id' => 'nullable|exists:list_options,id',
+            'chronicity_id' => 'nullable|exists:list_options,id',
+            'severity_id' => 'nullable|exists:list_options,id',
+            'status_id' => 'nullable|exists:list_options,id',
             'onset' => 'nullable|date',
-            'comments' => 'required|nullable',
+            'comments' => 'nullable',
         ]);
         $base = new BaseController();
         try {
             DB::beginTransaction();
             $problem = new Problem();
-            $problem->add_page="problem_page";
+            $problem->add_page = "problem_page";
             $problem->provider_id = auth()->user()->id;
             $problem->patient_id = $validatedData['patient_id'];
             $problem->diagnosis = $validatedData['diagnosis'];
@@ -101,12 +103,13 @@ class ProblemController extends BaseController
             return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $base->sendError( $e->getMessage());
+            return $base->sendError($e->getMessage());
         }
     }
 
-    public function store_note_section(Request $request){
-         if (!auth()->check()) {
+    public function store_note_section(Request $request)
+    {
+        if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $validatedData = $request->validate([
@@ -118,18 +121,18 @@ class ProblemController extends BaseController
         try {
             DB::beginTransaction();
             $problem = new Problem();
-            $problem->add_page="encounter_note";
+            $problem->add_page = "encounter_note";
             $problem->provider_id = auth()->user()->id;
             $problem->patient_id = $validatedData['patient_id'];
             $problem->diagnosis = $validatedData['diagnosis'];
-                        $problem->name = $validatedData['name'];
+            $problem->name = $validatedData['name'];
             $problem->save();
             DB::commit();
-            $problem->assessment_section_id=$request->assessment_section_id;
+            $problem->assessment_section_id = $request->assessment_section_id;
             return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $base->sendError( $e->getMessage());
+            return $base->sendError($e->getMessage());
         }
     }
 
@@ -159,12 +162,12 @@ class ProblemController extends BaseController
             'problem_id' => 'required|exists:problems,id',
             'diagnosis' => 'required',
             'name' => 'required',
-            'type_id' => 'required|exists:list_options,id',
-            'chronicity_id' => 'exists:list_options,id',
-            'severity_id' => 'exists:list_options,id',
-            'status_id' => 'exists:list_options,id',
+            'type_id' => 'nullable|exists:list_options,id',
+            'chronicity_id' => 'nullable|exists:list_options,id',
+            'severity_id' => 'nullable|exists:list_options,id',
+            'status_id' => 'nullable|exists:list_options,id',
             'onset' => 'nullable|date',
-            'comments' => 'required|nullable',
+            'comments' => 'nullable',
         ]);
         $base = new BaseController();
 

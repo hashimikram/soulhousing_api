@@ -19,6 +19,13 @@ class MedicationRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|exists:patients,id',
+            'title' => 'required',
+            'strength' => 'required',
+            'begin_date' => 'required|date',
+            'end_date' => 'required|date',
+            'referred_by' => 'required',
+            'dosage_unit' => 'required',
+            'dose' => 'required',
         ];
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Http\Requests\InsuranceRequest;
+use App\Http\Requests\InsuranceUpdate;
 use App\Models\Insurance;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\InsuranceUpdate;
-use App\Http\Requests\InsuranceRequest;
-use App\Http\Controllers\Api\BaseController as BaseController;
 
 class InsuranceController extends BaseController
 {
@@ -30,17 +29,9 @@ class InsuranceController extends BaseController
             }
             return $base->sendResponse($insurance, 'Insurance Data');
         } else {
-            $insurance = NULL;
+            $insurance = null;
             return $base->sendError('No Record Found');
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -55,37 +46,29 @@ class InsuranceController extends BaseController
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
         $base = new BaseController();
         DB::beginTransaction();
         try {
-            $checkInsurance = Insurance::where([
-                'provider_id' => $user->id,
-                'patient_id' => $validatedData['patient_id'],
-                'insurance_type' => $validatedData['insurance_type']
-            ])->first();
-
-            if ($checkInsurance) {
-                DB::rollBack();
-                return $base->sendResponse(null, 'Insurance Already Exists');
-            } else {
-                $validatedData['provider_id'] = $user->id;
-                $insurance = Insurance::create($validatedData);
-                DB::commit();
-                return $base->sendResponse($insurance, 'Insurance created successfully');
-            }
+            $validatedData['provider_id'] = $user->id;
+            $insurance = Insurance::create($validatedData);
+            DB::commit();
+            return $base->sendResponse($insurance, 'Insurance created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Insurance creation failed', [
-                'user_id' => $user->id,
+            return response()->json([
+                'success' => false,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return $base->sendError([], 'Internal Server Error');
+            ], 500);
         }
     }
 
-
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
     /**
      * Display the specified resource.
@@ -112,7 +95,7 @@ class InsuranceController extends BaseController
         $base = new BaseController();
         try {
             $insurance = Insurance::find($request->insurance_id);
-            if ($insurance != NULL) {
+            if ($insurance != null) {
                 $insurance->update($validatedData);
                 return $base->sendResponse($insurance, 'Insurance updated successfully');
             } else {
@@ -120,9 +103,8 @@ class InsuranceController extends BaseController
                 return $base->sendError($insurance, 'No Record Found');
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
             $insurance = [];
-            return $base->sendError($insurance, 'Internal Server Error');
+            return $base->sendError($insurance, $e->getMessage());
         }
     }
 

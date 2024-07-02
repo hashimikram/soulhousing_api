@@ -19,11 +19,17 @@ class InsuranceRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|exists:patients,id',
-            'insurance_name'=>'required',
-            'policy_no'=>'required',
-            'subscriber'=>'required',
-            'subscriber_relation'   => 'required',
-            'insurance_type' => 'required|in:1,2,3',
+            'group_name' => 'required',
+            'policy_no' => 'required',
+            'policy_holder' => 'required',
+            'ins_phone' => 'required',
+            'policy' => 'required',
+            'age' => 'nullable',
+            'policy_holder_dob' => 'nullable|date',
+            'zip_code' => 'nullable',
+            'city' => 'nullable',
+            'state' => 'nullable',
+            'address' => 'nullable',
         ];
     }
 }

@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Vital extends Model
 {
     protected $fillable = [
+        'glucose',
+        'waist_in',
+        'head_in',
+        'resp_rate',
+        'pulse_beats_in',
         'provider_id',
         'patient_id',
         'date',
@@ -44,6 +49,7 @@ class Vital extends Model
         'saturation',
         'oxygenation_method',
         'device',
+        'blood_pressure',
         'oxygen_source_1',
         'oxygenation_time_1',
         'inhaled_o2_concentration',

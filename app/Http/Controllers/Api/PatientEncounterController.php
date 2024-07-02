@@ -79,7 +79,7 @@ class PatientEncounterController extends BaseController
                 if ($section->section_title == 'Review of Systems') {
                     $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
                     foreach ($reviewOfSystemDetails as $data) {
-                        $sectionText = "General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Breasts: {$data->breasts}\n"."Respiratory: {$data->respiratory}\n"."cardiovascular: {$data->cardiovascular}\n"."gastrointestinal: {$data->gastrointestinal}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                        $sectionText = "Constitutional: {$data->constitutional}\n"."Heent: {$data->heent}\n"."General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Respiratory: {$data->respiratory}\n"."Cardiovascular: {$data->cardiovascular}\n"."Gastrointestinal: {$data->gastrointestinal}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n"."Integumentry: {$data->Integumentry}\n";
                     }
                 } elseif ($section->section_title == 'Physical Exam') {
                     $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
@@ -97,6 +97,7 @@ class PatientEncounterController extends BaseController
                         $sectionText .= "Code: {$data->diagnosis}\n"."Description: {$data->name}\n";
                     }
                 }
+
 
                 $encounter_details = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
                     'patient_encounters.encounter_type')
@@ -146,8 +147,10 @@ class PatientEncounterController extends BaseController
             'patient_id' => 'required|exists:patients,id',
             'encounter_type' => 'required|exists:list_options,id',
             'specialty' => 'required|exists:list_options,id',
-            'parent_encounter' => 'nullable|exists:patient_encounters,id',
-            'reason' => 'required',
+            'blood_pressure' => 'required',
+            'pulse_beats_in' => 'required',
+            'bmi_in' => 'required',
+            'resp_rate' => 'required',
         ]);
     }
 
@@ -241,75 +244,75 @@ class PatientEncounterController extends BaseController
             // Call specific methods for Review of Systems and Physical Exam
             if ($sectionTitle == 'Review of Systems') {
                 $this->createReviewOfSystemDetail($request, $section);
-                $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
-                    ->where('section_id', $section->id)
-                    ->where('provider_id', auth()->user()->id)
-                    ->first();
-
-                if ($rosDetails) {
-                    $sectionData = $rosDetails->toArray();
-
-                    $sectionText =
-                        'Constitutional: '.
-                        $sectionData['general'].
-                        "\n".
-                        'Skin: '.
-                        $sectionData['skin'].
-                        "\n".
-                        'Head: '.
-                        $sectionData['head'].
-                        "\n".
-                        'Eyes: '.
-                        $sectionData['eyes'].
-                        "\n".
-                        'Ears: '.
-                        $sectionData['ears'].
-                        "\n".
-                        'Nose: '.
-                        $sectionData['nose'].
-                        "\n".
-                        'Mouth/Throat: '.
-                        $sectionData['mouth_throat'].
-                        "\n".
-                        'Neck: '.
-                        $sectionData['neck'].
-                        "\n".
-                        'Breasts: '.
-                        $sectionData['breasts'].
-                        "\n".
-                        'Respiratory: '.
-                        $sectionData['respiratory'].
-                        "\n".
-                        'Cardiovascular: '.
-                        $sectionData['cardiovascular'].
-                        "\n".
-                        'Gastrointestinal: '.
-                        $sectionData['gastrointestinal'].
-                        "\n".
-                        'Genitourinary: '.
-                        $sectionData['genitourinary'].
-                        "\n".
-                        'Musculoskeletal: '.
-                        $sectionData['musculoskeletal'].
-                        "\n".
-                        'Neurological: '.
-                        $sectionData['neurological'].
-                        "\n".
-                        'Psychiatric: '.
-                        $sectionData['psychiatric'].
-                        "\n".
-                        'Endocrine: '.
-                        $sectionData['endocrine'].
-                        "\n".
-                        'Hematologic/Lymphatic: '.
-                        $sectionData['hematologic_lymphatic'].
-                        "\n".
-                        'Allergic/Immunologic: '.
-                        $sectionData['allergic_immunologic'].
-                        "\n";
-
-                    $sectionData['section_text'] = $sectionText;
-                }
+//                $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
+//                    ->where('section_id', $section->id)
+//                    ->where('provider_id', auth()->user()->id)
+//                    ->first();
+//
+//                if ($rosDetails) {
+//                    $sectionData = $rosDetails->toArray();
+//
+//                    $sectionText =
+//                        'Constitutional: '.
+//                        $sectionData['general'].
+//                        "\n".
+//                        'Skin: '.
+//                        $sectionData['skin'].
+//                        "\n".
+//                        'Head: '.
+//                        $sectionData['head'].
+//                        "\n".
+//                        'Eyes: '.
+//                        $sectionData['eyes'].
+//                        "\n".
+//                        'Ears: '.
+//                        $sectionData['ears'].
+//                        "\n".
+//                        'Nose: '.
+//                        $sectionData['nose'].
+//                        "\n".
+//                        'Mouth/Throat: '.
+//                        $sectionData['mouth_throat'].
+//                        "\n".
+//                        'Neck: '.
+//                        $sectionData['neck'].
+//                        "\n".
+//                        'Breasts: '.
+//                        $sectionData['breasts'].
+//                        "\n".
+//                        'Respiratory: '.
+//                        $sectionData['respiratory'].
+//                        "\n".
+//                        'Cardiovascular: '.
+//                        $sectionData['cardiovascular'].
+//                        "\n".
+//                        'Gastrointestinal: '.
+//                        $sectionData['gastrointestinal'].
+//                        "\n".
+//                        'Genitourinary: '.
+//                        $sectionData['genitourinary'].
+//                        "\n".
+//                        'Musculoskeletal: '.
+//                        $sectionData['musculoskeletal'].
+//                        "\n".
+//                        'Neurological: '.
+//                        $sectionData['neurological'].
+//                        "\n".
+//                        'Psychiatric: '.
+//                        $sectionData['psychiatric'].
+//                        "\n".
+//                        'Endocrine: '.
+//                        $sectionData['endocrine'].
+//                        "\n".
+//                        'Hematologic/Lymphatic: '.
+//                        $sectionData['hematologic_lymphatic'].
+//                        "\n".
+//                        'Allergic/Immunologic: '.
+//                        $sectionData['allergic_immunologic'].
+//                        "\n";
+//
+//                    $sectionData['section_text'] = $sectionText;
+//                }
             } elseif ($sectionTitle == 'Physical Exam') {
                 $this->createPhysicalExamDetail($request, $section);
                 $rosDetails = PhysicalExamDetail::where('patient_id', $request->patient_id)
@@ -336,7 +339,27 @@ class PatientEncounterController extends BaseController
     private function getSectionText($sectionTitle)
     {
         $templates = [
-            'Review of Systems' => "Constitutional:  \n HEENT: \n CV: \n GI: \n GU: \n Musculoskeletal: \n Skin: \n Psychiatric: \n Endocrine: \n Physical exam: \n",
+            'Review of Systems' => "Constitutional: \n
+                            Heent: \n
+                            General: Weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats. \n
+                            Skin: Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor. \n
+                            Head: Denies headaches, trauma, or dizziness. Scalp and skull are normal upon. \n
+                            Eyes: Denies vision changes, redness, or discharge. Pupils are equal, round, and reactive to light and accommodation. Extraocular movements are intact. \n
+                            Ears: Denies hearing loss, tinnitus, or ear pain. Tympanic membranes are clear with normal landmarks. \n
+                            Nose: Denies nasal congestion, discharge, or nosebleeds. Nasal passages are clear. \n
+                            Mouth & Throat: Denies sore throat, difficulty swallowing, or mouth sores. Oral mucosa is moist, and oropharynx is clear without erythema or exudates. \n
+                            Neck: Denies lumps, swelling, or stiffness. Neck is supple with full range of motion. No lymphadenopathy. \n
+                            Respiratory: Denies cough, shortness of breath, or wheezing. Breath sounds are clear to auscultation bilaterally. No rales, rhonchi, or wheezes. \n
+                            Cardiovascular: Denies chest pain, palpitations, or edema. Heart rate and rhythm are regular. No murmurs, rubs, or gallops. Peripheral pulses are intact. \n
+                            Gastrointestinal: Denies abdominal pain, nausea, vomiting, diarrhea, or constipation. Abdomen is soft, non-tender, and non-distended. Bowel sounds are normal. \n
+                            Genitourinary: Denies dysuria, hematuria, or urinary frequency. Denies genital lesions or discharge. Normal urination. \n
+                            Musculoskeletal: Denies joint pain, swelling, or stiffness. Full range of motion in all extremities. No deformities or tenderness. \n
+                            Neurological: Denies weakness, numbness, or seizures. Cranial nerves II-XII are intact. Strength and sensation are normal. Reflexes are 2+ and symmetrical. \n
+                            Psychiatric: Denies anxiety, depression, or mood changes. Normal affect and behavior. Oriented to person, place, and time. \n
+                            Endocrine: Denies polyuria, polydipsia, or heat/cold intolerance. Thyroid is not enlarged. \n
+                            Hematologic/Lymphatic: Denies easy bruising, bleeding, or lymph node enlargement. No pallor or cyanosis. \n
+                            Allergic/Immunologic: Denies known allergies. Denies history of frequent infections. \n
+                            Integumentry: ",
             'Physical Exam' => "General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:",
         ];
 
@@ -355,25 +378,24 @@ class PatientEncounterController extends BaseController
             $reviewOfSystemDetail->provider_id = auth()->user()->id;
             $reviewOfSystemDetail->patient_id = $request->patient_id;
             $reviewOfSystemDetail->section_id = $section->id;
-            $reviewOfSystemDetail->general = 'No fever, chills, or weight changes. No fatigue, malaise, or weakness.';
-            $reviewOfSystemDetail->skin = 'No rashes, lumps, itching, dryness, color changes, or lesions.';
-            $reviewOfSystemDetail->head = 'No headaches, dizziness, or head injury.';
-            $reviewOfSystemDetail->eyes = 'Vision is normal without blurring or double vision. No pain, redness, discharge, or recent changes in vision.';
-            $reviewOfSystemDetail->ears = 'No hearing loss, ringing, or pain. No discharge.';
-            $reviewOfSystemDetail->nose = 'No nasal congestion, discharge, nosebleeds, or sinus pain.';
-            $reviewOfSystemDetail->mouth_throat = 'No sore throat, bleeding gums, or hoarseness. No dental issues.';
-            $reviewOfSystemDetail->neck = 'No lumps, pain, or stiffness.';
-            $reviewOfSystemDetail->breasts = 'No lumps, pain, or nipple discharge.';
-            $reviewOfSystemDetail->respiratory = 'No cough, shortness of breath, wheezing, or chest pain.';
-            $reviewOfSystemDetail->cardiovascular = 'No chest pain, palpitations, or irregular heartbeat. No swelling in extremities.';
-            $reviewOfSystemDetail->gastrointestinal = 'No nausea, vomiting, diarrhea, or constipation. No abdominal pain, heartburn, or blood in stool.';
-            $reviewOfSystemDetail->genitourinary = 'No difficulty urinating, frequency, urgency, or incontinence. No blood in urine or pain during urination.';
-            $reviewOfSystemDetail->musculoskeletal = 'No muscle or joint pain, stiffness, swelling, or weakness.';
-            $reviewOfSystemDetail->neurological = 'No seizures, fainting, or dizziness. No weakness, numbness, or tingling.';
-            $reviewOfSystemDetail->psychiatric = 'No anxiety, depression, mood changes, or sleep disturbances.';
-            $reviewOfSystemDetail->endocrine = 'No excessive thirst or urination. No heat or cold intolerance.';
-            $reviewOfSystemDetail->hematologic_lymphatic = 'No easy bruising or bleeding. No enlarged lymph nodes.';
-            $reviewOfSystemDetail->allergic_immunologic = 'No known allergies. No recurrent infections.';
+            $reviewOfSystemDetail->general = 'Weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats.';
+            $reviewOfSystemDetail->skin = 'Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor.';
+            $reviewOfSystemDetail->head = 'Denies headaches, trauma, or dizziness. Scalp and skull are normal upon';
+            $reviewOfSystemDetail->eyes = 'Denies vision changes, redness, or discharge. Pupils are equal, round, and reactive to light and accommodation. Extraocular movements are intact.';
+            $reviewOfSystemDetail->ears = 'Denies hearing loss, tinnitus, or ear pain. Tympanic membranes are clear with normal landmarks.';
+            $reviewOfSystemDetail->ears = 'Denies nasal congestion, discharge, or nosebleeds. Nasal passages are clear.';
+            $reviewOfSystemDetail->mouth_throat = 'Denies sore throat, difficulty swallowing, or mouth sores. Oral mucosa is moist, and oropharynx is clear without erythema or exudates.';
+            $reviewOfSystemDetail->neck = 'Denies lumps, swelling, or stiffness. Neck is supple with full range of motion. No lymphadenopathy.';
+            $reviewOfSystemDetail->respiratory = 'Denies cough, shortness of breath, or wheezing. Breath sounds are clear to auscultation bilaterally. No rales, rhonchi, or wheezes.';
+            $reviewOfSystemDetail->cardiovascular = 'Denies chest pain, palpitations, or edema. Heart rate and rhythm are regular. No murmurs, rubs, or gallops. Peripheral pulses are intact.';
+            $reviewOfSystemDetail->gastrointestinal = 'Denies abdominal pain, nausea, vomiting, diarrhea, or constipation. Abdomen is soft, non-tender, and non-distended. Bowel sounds are normal.';
+            $reviewOfSystemDetail->genitourinary = 'Denies dysuria, hematuria, or urinary frequency. Denies genital lesions or discharge. Normal urination.';
+            $reviewOfSystemDetail->musculoskeletal = 'Denies joint pain, swelling, or stiffness. Full range of motion in all extremities. No deformities or tenderness.';
+            $reviewOfSystemDetail->neurological = 'Denies weakness, numbness, or seizures. Cranial nerves II-XII are intact. Strength and sensation are normal. Reflexes are 2+ and symmetrical.';
+            $reviewOfSystemDetail->psychiatric = 'Denies anxiety, depression, or mood changes. Normal affect and behavior. Oriented to person, place, and time.';
+            $reviewOfSystemDetail->endocrine = 'Denies polyuria, polydipsia, or heat/cold intolerance. Thyroid is not enlarged.';
+            $reviewOfSystemDetail->hematologic_lymphatic = 'Denies easy bruising, bleeding, or lymph node enlargement. No pallor or cyanosis.';
+            $reviewOfSystemDetail->allergic_immunologic = 'Denies known allergies. Denies history of frequent infections or autoimmune diseases.';
             $reviewOfSystemDetail->save();
         }
     }
@@ -604,7 +626,7 @@ class PatientEncounterController extends BaseController
             if ($section->section_title == 'Review of Systems') {
                 $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
                 foreach ($reviewOfSystemDetails as $data) {
-                    $sectionText = "General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Breasts: {$data->breasts}\n"."Respiratory: {$data->respiratory}\n"."cardiovascular: {$data->cardiovascular}\n"."gastrointestinal: {$data->gastrointestinal}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                    $sectionText = "Constitutional: {$data->constitutional}\n"."Heent: {$data->heent}\n"."General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Respiratory: {$data->respiratory}\n"."Cardiovascular: {$data->cardiovascular}\n"."Gastrointestinal: {$data->gastrointestinal}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n"."Integumentry: {$data->Integumentry}\n";
                 }
             } elseif ($section->section_title == 'Physical Exam') {
                 $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
@@ -627,6 +649,7 @@ class PatientEncounterController extends BaseController
                     ->where('provider_id', auth()->user()->id)
                     ->orderBy('created_at', 'desc')
                     ->select(
+                        'date',
                         'weight_lbs',
                         'weight_oz',
                         'weight_kg',
@@ -668,15 +691,10 @@ class PatientEncounterController extends BaseController
                         'oxygenation_time_2',
                         'peak_flow',
                         'oxygenation_time_3',
-                        'office_test_oxygen_source_1',
-                        'office_test_date_1',
-                        'office_test_oxygen_source_2',
-                        'office_test_date_2',
-                        'pulse_beats_in',
-                        'resp_rate',
-                        'head_in',
-                        'waist_in',
-                        'glucose'
+                        'office_test_blood_group',
+                        'blood_group_date',
+                        'office_test_pain_scale',
+                        'pain_scale_date'
                     )
                     ->first();
 

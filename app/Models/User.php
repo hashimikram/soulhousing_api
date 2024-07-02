@@ -33,19 +33,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
     public function details()
     {
         return $this->hasOne(userDetail::class, 'user_id');
@@ -60,7 +47,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tweet::class);
     }
-       public function operation()
+
+    public function operation()
     {
         return $this->hasMany(Operation::class);
     }
@@ -73,5 +61,23 @@ class User extends Authenticatable
     public function likes()
     {
         return $this->hasMany(Like::class);
+    }
+
+    public function userDetail()
+    {
+        return $this->hasOne(userDetail::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

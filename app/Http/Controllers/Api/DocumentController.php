@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Api\BaseController as BaseController;
 
 class DocumentController extends BaseController
 {
@@ -43,12 +42,12 @@ class DocumentController extends BaseController
         $allergy = Document::with('patient:id,first_name,last_name')
             ->where('patient_id', $patient_id)
             ->where(function ($query) use ($searchTerm) {
-                $query->where('title', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('type', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                $query->where('title', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('type', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('description', 'like', '%'.$searchTerm.'%')
                     ->orWhereHas('patient', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
-                            ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                        $subQuery->where('first_name', 'like', '%'.$searchTerm.'%')
+                            ->orWhere('last_name', 'like', '%'.$searchTerm.'%');
                     });
             })
             ->get();
@@ -64,8 +63,8 @@ class DocumentController extends BaseController
         $validatedData = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'title' => 'required',
-            'type' => 'required',
-            'date' => 'required|date',
+            'type' => 'nullable',
+            'date' => 'nullable|date',
             // 'file' => 'file|mimes:png,jpeg,pdf,doc,docx|max:2048',
             'description' => 'nullable|string',
         ]);
@@ -74,14 +73,14 @@ class DocumentController extends BaseController
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $formattedFileSize = NULL;
-        $fileName = NULL;
+        $formattedFileSize = null;
+        $fileName = null;
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $fileSize = $file->getSize();
             $formattedFileSize = formatFileSize($fileSize);
-            $fileName = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHi').'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $file->storeAs('uploads', $fileName, 'public');
         }
 
@@ -108,7 +107,6 @@ class DocumentController extends BaseController
     }
 
 
-
     /**
      * Display the specified resource.
      */
@@ -133,8 +131,8 @@ class DocumentController extends BaseController
         $validatedData = $request->validate([
             'document_id' => 'required',
             'title' => 'required',
-            'type' => 'required',
-            'date' => 'required|date',
+            'type' => 'nullable',
+            'date' => 'nullable|date',
             'file' => 'file|mimes:png,jpeg,pdf,doc,docx|max:2048',
             'description' => 'nullable|string',
         ]);
@@ -153,14 +151,14 @@ class DocumentController extends BaseController
         $formattedFileSize = $document->file_size;
 
         if ($request->hasFile('file')) {
-            $imagePath = public_path('storage/uploads/' . $document->file);
-            if ($document->file != NULL) {
+            $imagePath = public_path('storage/uploads/'.$document->file);
+            if ($document->file != null) {
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
             }
             $file = $request->file('file');
-            $fileName = date('YmdHi') . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHi').'_'.uniqid().'.'.$file->getClientOriginalExtension();
             $fileSize = $file->getSize();
             $formattedFileSize = formatFileSize($fileSize);
             $file->storeAs('uploads', $fileName, 'public');
@@ -204,7 +202,7 @@ class DocumentController extends BaseController
         try {
             $document->delete();
         } catch (\Exception $e) {
-            return response()->json(['error' =>  $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
 
         return response()->json(['message' => 'Document deleted successfully'], 200);

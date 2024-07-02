@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,11 +16,17 @@ return new class extends Migration
             $table->foreign('provider_id')->references('id')->on('users')->onDelete('Cascade');
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('Cascade');
-            $table->string('insurance_name');
-            $table->string('policy_no');
-            $table->string('subscriber');
-            $table->string('subscriber_relation');
-            $table->enum('insurance_type', ['1', '2', '3']); // 1 is Primary, 2 is Secondary, 3 is Teartiary
+            $table->string('group_name')->nullable();
+            $table->string('policy_no')->nullable();
+            $table->string('policy')->nullable();
+            $table->string('policy_holder')->nullable();
+            $table->string('address')->nullable();
+            $table->string('state')->nullable();
+            $table->string('city')->nullable();
+            $table->string('zip_code')->nullable();
+            $table->string('ins_phone')->nullable();
+            $table->string('policy_holder_dob')->nullable();
+            $table->string('age')->nullable();
             $table->timestamps();
         });
     }

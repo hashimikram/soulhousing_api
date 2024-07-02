@@ -58,127 +58,125 @@
 
 <body>
 @php
-   $sections = App\Models\EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get();
+    $sections = App\Models\EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get();
 
-         $formattedData = [];
-         foreach ($sections as $section) {
-             $sectionText = null;
-             if ($section->section_text !== null) {
-                 $decodedText = json_decode($section->section_text, true);
-                 if ($decodedText !== null) {
-                     $sectionText = $decodedText;
-                 } else {
-                     $sectionText = $section->section_text;
-                 }
-             }
+          $formattedData = [];
+          foreach ($sections as $section) {
+              $sectionText = null;
+              if ($section->section_text !== null) {
+                  $decodedText = json_decode($section->section_text, true);
+                  if ($decodedText !== null) {
+                      $sectionText = $decodedText;
+                  } else {
+                      $sectionText = $section->section_text;
+                  }
+              }
 
-             // Initialize dataSection
-             $dataSection = [];
+              // Initialize dataSection
+              $dataSection = [];
 
-             if ($section->section_title == 'Review of Systems') {
-                 $reviewOfSystemDetails = App\Models\ReviewOfSystemDetail::where('section_id', $section->id)->get();
-                 foreach ($reviewOfSystemDetails as $data) {
-                     $sectionText = "General: {$data->general}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Breasts: {$data->breasts}\n" . "Respiratory: {$data->respiratory}\n" . "cardiovascular: {$data->cardiovascular}\n" . "gastrointestinal: {$data->gastrointestinal}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
-                 }
-             } elseif ($section->section_title == 'Physical Exam') {
-                 $physicalExamDetails = App\Models\PhysicalExamDetail::where('section_id', $section->id)->get();
-                 foreach ($physicalExamDetails as $data) {
-                     $sectionText = "General Appearance: {$data->general_appearance}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Chest/Lungs: {$data->chest_lungs}\n" . "Cardiovascular: {$data->cardiovascular}\n" . "Abdomen: {$data->abdomen}\n" . "Genitourinary: {$data->genitourinary}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
-                 }
-             } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
-                 $problems = App\Models\Problem::where('patient_id', $section->patient_id)
-                     ->where('provider_id', auth()->user()->id)
-                     ->get();
+//              if ($section->section_title == 'Review of Systems') {
+//                  $reviewOfSystemDetails = App\Models\ReviewOfSystemDetail::where('section_id', $section->id)->get();
+//                  foreach ($reviewOfSystemDetails as $data) {
+//                                     $sectionText = "General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Breasts: {$data->breasts}\n"."Respiratory: {$data->respiratory}\n"."cardiovascular: {$data->cardiovascular}\n"."gastrointestinal: {$data->gastrointestinal}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
+//
+//                  }
+//              } else
+                  if ($section->section_title == 'Physical Exam') {
+                  $physicalExamDetails = App\Models\PhysicalExamDetail::where('section_id', $section->id)->get();
+                  foreach ($physicalExamDetails as $data) {
+                      $sectionText = "General Appearance: {$data->general_appearance}\n" . "Skin: {$data->skin}\n" . "Head: {$data->head}\n" . "Eyes: {$data->eyes}\n" . "Ears: {$data->ears}\n" . "Nose: {$data->nose}\n" . "Mouth/Throat: {$data->mouth_throat}\n" . "Neck: {$data->neck}\n" . "Chest/Lungs: {$data->chest_lungs}\n" . "Cardiovascular: {$data->cardiovascular}\n" . "Abdomen: {$data->abdomen}\n" . "Genitourinary: {$data->genitourinary}\n" . "Musculoskeletal: {$data->musculoskeletal}\n" . "Neurological: {$data->neurological}\n" . "Psychiatric: {$data->psychiatric}\n" . "Endocrine: {$data->endocrine}\n" . "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n" . "Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                  }
+              } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
+                  $problems = App\Models\Problem::where('patient_id', $section->patient_id)
+                      ->where('provider_id', auth()->user()->id)
+                      ->get();
 
-                 $sectionText = ''; // Initialize an empty string to accumulate all section text
+                  $sectionText = ''; // Initialize an empty string to accumulate all section text
 
-                 foreach ($problems as $data) {
-                     $sectionText .= "Code: {$data->diagnosis}\n" . "Description: {$data->name}\n";
-                 }
-             } elseif ($section->section_title == 'Vital Sign') {
-                 // Retrieve the latest vital record for the patient and provider
-                 $latestVital = App\Models\Vital::where('patient_id', $section->patient_id)
-                 ->where('provider_id', auth()->user()->id)
-                 ->orderBy('created_at', 'desc')
-                 ->select(
-                     'weight_lbs',
-                     'weight_oz',
-                     'weight_kg',
-                     'height_ft',
-                     'height_in',
-                     'height_cm',
-                     'bmi_kg',
-                     'bmi_in',
-                     'bsa_cm2',
-                     'waist_cm',
-                     'systolic',
-                     'diastolic',
-                     'position',
-                     'cuff_size',
-                     'cuff_location',
-                     'cuff_time',
-                     'fasting',
-                     'postprandial',
-                     'fasting_blood_sugar',
-                     'blood_sugar_time',
-                     'pulse_result',
-                     'pulse_rhythm',
-                     'pulse_time',
-                     'body_temp_result_f',
-                     'body_temp_result_c',
-                     'body_temp_method',
-                     'body_temp_time',
-                     'respiration_result',
-                     'respiration_pattern',
-                     'respiration_time',
-                     'saturation',
-                     'oxygenation_method',
-                     'device',
-                     'oxygen_source_1',
-                     'oxygenation_time_1',
-                     'inhaled_o2_concentration',
-                     'oxygen_flow',
-                     'oxygen_source_2',
-                     'oxygenation_time_2',
-                     'peak_flow',
-                     'oxygenation_time_3',
-                     'office_test_oxygen_source_1',
-                     'office_test_date_1',
-                     'office_test_oxygen_source_2',
-                     'office_test_date_2',
-                     'pulse_beats_in',
-                     'resp_rate',
-                     'head_in',
-                     'waist_in',
-                     'glucose'
-                 )
-                 ->first();
+                  foreach ($problems as $data) {
+                      $sectionText .= "Code: {$data->diagnosis}\n" . "Description: {$data->name}\n";
+                  }
+              } elseif ($section->section_title == 'Vital Sign') {
+                  // Retrieve the latest vital record for the patient and provider
+                  $latestVital = App\Models\Vital::where('patient_id', $section->patient_id)
+                  ->where('provider_id', auth()->user()->id)
+                  ->orderBy('created_at', 'desc')
+                  ->select(
+                                     'date',
+                         'weight_lbs',
+                         'weight_oz',
+                         'weight_kg',
+                         'height_ft',
+                         'height_in',
+                         'height_cm',
+                         'bmi_kg',
+                         'bmi_in',
+                         'bsa_cm2',
+                         'waist_cm',
+                         'systolic',
+                         'diastolic',
+                         'position',
+                         'cuff_size',
+                         'cuff_location',
+                         'cuff_time',
+                         'fasting',
+                         'postprandial',
+                         'fasting_blood_sugar',
+                         'blood_sugar_time',
+                         'pulse_result',
+                         'pulse_rhythm',
+                         'pulse_time',
+                         'body_temp_result_f',
+                         'body_temp_result_c',
+                         'body_temp_method',
+                         'body_temp_time',
+                         'respiration_result',
+                         'respiration_pattern',
+                         'respiration_time',
+                         'saturation',
+                         'oxygenation_method',
+                         'device',
+                         'oxygen_source_1',
+                         'oxygenation_time_1',
+                         'inhaled_o2_concentration',
+                         'oxygen_flow',
+                         'oxygen_source_2',
+                         'oxygenation_time_2',
+                         'peak_flow',
+                         'oxygenation_time_3',
+                         'office_test_blood_group',
+                         'blood_group_date',
+                         'office_test_pain_scale',
+                         'pain_scale_date'
+                  )
+                  ->first();
 
 
-                 $sectionText = ''; // Initialize an empty string to accumulate the section text
+                  $sectionText = ''; // Initialize an empty string to accumulate the section text
 
-                 if ($latestVital) {
-                     // Get all column names from the 'vitals' table
-                     $columns = Schema::getColumnListing('vitals');
+                  if ($latestVital) {
+                      // Get all column names from the 'vitals' table
+                      $columns = Schema::getColumnListing('vitals');
 
-                     foreach ($columns as $column) {
-                         if (!is_null($latestVital->$column)) {
-                             $label = ucwords(str_replace('_', ' ', $column));
-                             $sectionText .= "{$label}: {$latestVital->$column}\n";
-                         }
-                     }
-                 }
+                      foreach ($columns as $column) {
+                          if (!is_null($latestVital->$column)) {
+                              $label = ucwords(str_replace('_', ' ', $column));
+                              $sectionText .= "{$label}: {$latestVital->$column}\n";
+                          }
+                      }
+                  }
 
-                 // Output or use the $sectionText as needed
-             }
-             $formattedData[] = [
-                 'section_id' => $section->id,
-                 'section_title' => $section->section_title,
-                 'section_slug' => $section->section_slug,
-                 'section_text' => $sectionText,
-                 'id_default' => (int) $section->id_default,
-             ];
-         }
+                  // Output or use the $sectionText as needed
+              }
+              $formattedData[] = [
+                  'section_id' => $section->id,
+                  'section_title' => $section->section_title,
+                  'section_slug' => $section->section_slug,
+                  'section_text' => $sectionText,
+                  'id_default' => (int) $section->id_default,
+              ];
+          }
 
 @endphp
 <div class="container mt-5">
