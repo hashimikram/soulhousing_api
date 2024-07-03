@@ -45,15 +45,39 @@ class PatientController extends BaseController
                 ->where('status', '1')
                 ->first();
 
+            $data->latest_encounter = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
+                'patient_encounters.encounter_type')
+                ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
+                ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
+                ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+                ->select('patient_encounters.id', 'patient_encounters.provider_id',
+                    'patient_encounters.provider_id_patient', 'patient_encounters.patient_id',
+                    'patient_encounters.signed_by', 'patient_encounters.encounter_date',
+                    'patient_encounters.parent_encounter', 'patient_encounters.location',
+                    'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status',
+                    'patient_encounters.created_at', 'patient_encounters.updated_at',
+                    'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
+                    'provider.name as provider_name', 'patients.mrn_no',
+                    DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
+                    'patients.date_of_birth', 'patients.gender',
+                    'patient_encounters.pdf_make')->where('patient_encounters.patient_id', $data->id)
+                ->latest()->first() ?? [];
+
             if ($admission_date) {
                 $admission_date_format = Carbon::parse($admission_date->admission_date);
-                $data->admission_date = $admission_date_format->format('Y-m-d');
+                $data->admission_date = $admission_date_format->format('d-m-Y');
             } else {
                 $data->admission_date = '';
             }
 
             $data->room_no = $admission_date ? $admission_date->room_no : '';
-
+            $formattedResult = [
+                'color' => '',
+                'exceeded_days' => '',
+                'remaining_days' => '',
+                'message' => ""
+            ];
+            $data->admission_date_result = $formattedResult;
             if ($admission_date) {
                 Log::info('Patient Found '.$data->id);
 

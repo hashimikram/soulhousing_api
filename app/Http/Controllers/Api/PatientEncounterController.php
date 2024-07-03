@@ -340,8 +340,8 @@ class PatientEncounterController extends BaseController
     private function getSectionText($sectionTitle)
     {
         $templates = [
-            'Review of Systems' => "Constitutional: \n
-                            Heent: \n
+            'Review of Systems' => "Constitutional:Denies weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats. \n
+                            Heent: Denies headaches, vision changes, hearing loss, nasal congestion, and sore throat. Normal examination findings as described above for head, eyes, ears, nose, and throat. \n
                             General: Weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats. \n
                             Skin: Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor. \n
                             Head: Denies headaches, trauma, or dizziness. Scalp and skull are normal upon. \n
@@ -360,7 +360,7 @@ class PatientEncounterController extends BaseController
                             Endocrine: Denies polyuria, polydipsia, or heat/cold intolerance. Thyroid is not enlarged. \n
                             Hematologic/Lymphatic: Denies easy bruising, bleeding, or lymph node enlargement. No pallor or cyanosis. \n
                             Allergic/Immunologic: Denies known allergies. Denies history of frequent infections. \n
-                            Integumentry: ",
+                            Integumentry: Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor.",
             'Physical Exam' => "General Appearance: \n Head and Neck: \n Eyes: \n Ears: \n Nose: \n Mouth & Throat: \n Cardiovascular: \n Respiratory System: \n Abdomen: \n Musculoskeletal System: \n Neurological System: \n Genitourinary System: \n Psychosocial Assessment:",
         ];
 

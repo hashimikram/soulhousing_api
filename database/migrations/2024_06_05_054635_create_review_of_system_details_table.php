@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
             $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('encounter_note_sections')->onDelete('cascade');
-            $table->string('constitutional')->nullable();
-            $table->string('heent')->nullable();
+            $table->string('constitutional')->default('Denies weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats.');
+            $table->string('heent')->default('Denies headaches, vision changes, hearing loss, nasal congestion, and sore throat. Normal examination findings as described above for head, eyes, ears, nose, and throat.');
             $table->text('general')->default('Weight loss, weight gain, or fatigue. Denies fever, chills, or night sweats.');
             $table->text('skin')->default('Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor.');
             $table->text('head')->default('Denies headaches, trauma, or dizziness. Scalp and skull are normal upon');
@@ -38,7 +38,7 @@ return new class extends Migration {
             $table->text('endocrine')->default('Denies polyuria, polydipsia, or heat/cold intolerance. Thyroid is not enlarged.');
             $table->text('hematologic_lymphatic')->default('Denies easy bruising, bleeding, or lymph node enlargement. No pallor or cyanosis.');
             $table->text('allergic_immunologic')->default('Denies known allergies. Denies history of frequent infections or autoimmune diseases.');
-            $table->string('Integumentry')->nullable();
+            $table->string('Integumentry')->default('Denies rashes, itching, or bruising. Skin is warm and dry with normal turgor.');
             $table->timestamps();
         });
     }
