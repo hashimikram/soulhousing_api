@@ -15,5 +15,7 @@ class PatientEncounter extends Model
         'encounter_type',
         'encounter_template',
         'reason',
+        'location',
+        'specialty',
     ];
 }

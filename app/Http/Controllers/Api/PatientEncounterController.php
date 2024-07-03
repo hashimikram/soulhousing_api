@@ -519,48 +519,48 @@ class PatientEncounterController extends BaseController
             $data = $request->json()->all();
             $encounter = PatientEncounter::findOrFail($request->encounter_id);
             $encounter->update([
-                'patient_id' => $data['patient_id'],
                 'signed_at' => $data['signed_at'],
                 'encounter_type' => $data['encounter_type'],
-                'encounter_template' => $data['encounter_template'],
+                'location' => $data['location'],
+                'specialty' => $data['specialty'],
                 'reason' => $data['reason'],
             ]);
-            $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
-            foreach ($includeFields as $sectionTitle) {
-                $sectionData = $data[$sectionTitle] ?? null;
-
-                if ($sectionData === null) {
-                    continue;
-                }
-
-                if (is_array($sectionData)) {
-                    if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
-                        $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
-                            ->where('section_title', $sectionTitle)
-                            ->first();
-
-                        if ($subsection) {
-                            $subsection->update([
-                                'section_text' => json_encode($sectionData),
-                            ]);
-                        }
-                    } else {
-                        foreach ($sectionData as $subsectionTitle => $subsectionData) {
-                            $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
-                                ->where('section_title', $subsectionTitle)
-                                ->first();
-
-                            if ($subsection) {
-                                $subsection->update([
-                                    'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
-                                ]);
-                            }
-                        }
-                    }
-                } else {
-                    return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
-                }
-            }
+//            $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
+//            foreach ($includeFields as $sectionTitle) {
+//                $sectionData = $data[$sectionTitle] ?? null;
+//
+//                if ($sectionData === null) {
+//                    continue;
+//                }
+//
+//                if (is_array($sectionData)) {
+//                    if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
+//                        $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
+//                            ->where('section_title', $sectionTitle)
+//                            ->first();
+//
+//                        if ($subsection) {
+//                            $subsection->update([
+//                                'section_text' => json_encode($sectionData),
+//                            ]);
+//                        }
+//                    } else {
+//                        foreach ($sectionData as $subsectionTitle => $subsectionData) {
+//                            $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
+//                                ->where('section_title', $subsectionTitle)
+//                                ->first();
+//
+//                            if ($subsection) {
+//                                $subsection->update([
+//                                    'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
+//                                ]);
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
+//                }
+//            }
             return response()->json(['message' => 'Data updated successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);

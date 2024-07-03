@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PatientController extends BaseController
 {
@@ -40,9 +41,60 @@ class PatientController extends BaseController
             $data->patient_full_name = $data->first_name.' '.$data->last_name;
             $data->provider_full_name = auth()->user()->name;
             $data->profile_pic = image_url($data->profile_pic);
-            $admission_date = AdmissionDischarge::where('patient_id', $data->id)->where('status', '1')->first();
-            $data->admission_date = $admission_date ? $admission_date->admission_date : '';
+            $admission_date = AdmissionDischarge::where('patient_id', $data->id)
+                ->where('status', '1')
+                ->first();
+
+            if ($admission_date) {
+                $admission_date_format = Carbon::parse($admission_date->admission_date);
+                $data->admission_date = $admission_date_format->format('Y-m-d');
+            } else {
+                $data->admission_date = '';
+            }
+
             $data->room_no = $admission_date ? $admission_date->room_no : '';
+
+            if ($admission_date) {
+                Log::info('Patient Found '.$data->id);
+
+                // Parse the admission date
+                $admissionDate = Carbon::parse($data->admission_date);
+                Log::info('Admission Date: '.$admissionDate->toDateString().' for Patient ID '.$data->id);
+
+                // Get the current date
+                $currentDate = Carbon::now();
+
+                // Calculate the difference in days between the current date and the admission date
+                $daysDifference = $admissionDate->diffInDays($currentDate);
+                Log::info('Days Difference: '.$daysDifference);
+
+                // Check if the days difference is greater than 90
+                if ($daysDifference > 90) {
+                    $daysBeyondNinety = $daysDifference - 90;
+                    $formattedResult = [
+                        'color' => 'red',
+                        'exceeded_days' => number_format($daysBeyondNinety, 0),
+                        'remaining_days' => 0,
+                        'message' => "Exceeded by $daysBeyondNinety days"
+                    ];
+                } else {
+                    $remainingDays = 90 - $daysDifference;
+                    $formattedResult = [
+                        'color' => 'green',
+                        'exceeded_days' => 0,
+                        'remaining_days' => number_format($remainingDays, 0),
+                        'message' => "$remainingDays days remaining"
+                    ];
+                }
+
+                // Log the formatted result
+                Log::info(json_encode($formattedResult));
+
+                // Assign the result to the admission_date_result property
+                $data->admission_date_result = $formattedResult;
+            }
+
+
             $data->allergies = Allergy::where('patient_id', $data->id)->get();
             $data->problems = Problem::where('patient_id', $data->id)
                 ->get()
