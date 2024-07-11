@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
+use App\Models\EncounterNoteSection;
 use App\Models\Problem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProblemController extends BaseController
 {
@@ -129,6 +131,14 @@ class ProblemController extends BaseController
             $problem->save();
             DB::commit();
             $problem->assessment_section_id = $request->assessment_section_id;
+            $existingSection = EncounterNoteSection::where('id', $request->assessment_section_id)->first();
+            if ($existingSection) {
+                $newText = "Code: {$request->diagnosis}\nDescription: {$request->name}\n";
+                $existingSection->section_text .= $newText; // Append the new text to the existing text
+                $existingSection->save();
+                Log::info('Section Text Updated');
+            }
+
             return $base->sendResponse($problem, 'Problem created successfully');
         } catch (\Exception $e) {
             DB::rollBack();

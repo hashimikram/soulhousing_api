@@ -74,7 +74,7 @@ if (!function_exists('image_url')) {
 
     function image_url($imagePath)
     {
-        return env('APP_URL').'public/uploads/'.$imagePath;
+        return env('ASSET_URL').'uploads/'.$imagePath;
     }
 }
 

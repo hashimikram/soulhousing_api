@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EncounterTemplate extends Model
 {
+    protected $casts = [
+        'encounter_template' => 'array',
+    ];
     use HasFactory;
 }

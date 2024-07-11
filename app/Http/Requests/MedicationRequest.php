@@ -23,7 +23,7 @@ class MedicationRequest extends FormRequest
             'strength' => 'required',
             'begin_date' => 'required|date',
             'end_date' => 'required|date',
-            'referred_by' => 'required',
+            'referred_by' => 'nullable',
             'dosage_unit' => 'required',
             'dose' => 'required',
         ];

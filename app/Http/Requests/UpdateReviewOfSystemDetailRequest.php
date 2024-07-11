@@ -22,7 +22,7 @@ class UpdateReviewOfSystemDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|exists:review_of_system_details,id'
+            'id' => 'required|exists:encounter_note_sections,id'
         ];
     }
 }

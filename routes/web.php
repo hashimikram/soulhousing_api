@@ -8,18 +8,18 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('admin.auth.login');
+    return view('backend.auth.login');
 });
 
 Route::get('/generate-pdf', [PdfController::class, 'generatePdf']);
 
 Route::get('/testing-form', function () {
-    return view('testing');
+    return view('PDF.wond_pdf');
 });
 Route::post('/save-data', [\App\Http\Controllers\Api\FloorController::class, 'form_data'])->name('save.data');
 
 Route::get('/dashboard', function () {
-    return view('admin.index');
+    return view('backend.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

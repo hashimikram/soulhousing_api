@@ -34,6 +34,7 @@ use App\Http\Controllers\ProblemQuoteController;
 use App\Http\Controllers\ReviewOfSystemDetailController;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\WarningController;
+use App\Http\Controllers\WoundController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [RegisteredUserController::class, 'login']);
@@ -100,7 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delete-medication/{medication}', [MedicationController::class, ' destroy']);
     Route::post('/change-status-medication', [MedicationController::class, 'change_status']);
     // Encounter CRUD
-    Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);
+    Route::post('/add-patient-encounter', [\App\Http\Controllers\Encountertest::class, 'store']);
     Route::post('/add-patient-encounter-notes', [PatientEncounterController::class, 'encounter_notes_store']);
     Route::get('patient-encounter/{patient_id}', [PatientEncounterController::class, 'show']);
     Route::get('patient-encounter-notes/{encounter_id}', [PatientEncounterController::class, 'encounter_notes']);
@@ -111,6 +112,8 @@ Route::middleware('auth:sanctum')->group(function () {
         [PatientEncounterController::class, 'patient_encounter_information']);
     Route::post('/encounter-status-update', [PatientEncounterController::class, 'status_update']);
     Route::get('/get-details-review/{section_id}/{patient_id}', [ReviewOfSystemDetailController::class, 'show']);
+    Route::get('/get-details-mental/{section_id}/{patient_id}',
+        [PatientEncounterController::class, 'mental_section_show']);
     Route::get('/get-details-physical/{section_id}/{patient_id}', [PhysicalExamDetailController::class, 'show']);
     Route::post('/update-details-review', [ReviewOfSystemDetailController::class, 'update']);
     Route::post('/update-details-physical', [PhysicalExamDetailController::class, 'update']);
@@ -189,6 +192,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get-admission-types', [AdmissionDischargeController::class, 'create']);
     Route::get('/delete-admission-discharge/{id}', [AdmissionDischargeController::class, 'destroy']);
     Route::post('/update-admission-discharge', [AdmissionDischargeController::class, 'update']);
+
+//    WoundController
+    Route::post('/store-wound', [WoundController::class, 'store']);
 
 
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);

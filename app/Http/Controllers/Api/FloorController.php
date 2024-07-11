@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\bed;
+use App\Models\Facility;
 use App\Models\floor;
 use App\Models\room;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class FloorController extends BaseController
 {
@@ -18,14 +17,21 @@ class FloorController extends BaseController
     public function index()
     {
         $data = []; // Initialize the data array
-        $floors = Floor::where('provider_id', auth()->user()->id)->get();
+        if (auth()->user()->user_type == 'admin') {
+            $floors = Floor::all();
+        } else {
+            $floors = Floor::where('provider_id', auth()->user()->id)->get();
+        }
+
         foreach ($floors as $floor) {
             $totalBedsCount = 0;
             $occupiedBedsCount = 0;
             $pendingBedsCount = 0;
             $vacantBedsCount = 0; // Reset vacantBedsCount for each floor
+            $totalRoomsCount = $floor->rooms->count(); // Count total rooms for each floor
+
             foreach ($floor->rooms as $room) {
-                $totalBedsCount += count($room->beds);
+                $totalBedsCount += $room->beds->count();
                 foreach ($room->beds as $bed) {
                     if ($bed->status == 'occupied') {
                         $occupiedBedsCount++;
@@ -36,6 +42,7 @@ class FloorController extends BaseController
                     }
                 }
             }
+
             // Add floor data directly to the $data array
             $data[] = [
                 'id' => $floor->id,
@@ -44,6 +51,7 @@ class FloorController extends BaseController
                 'floor_name' => $floor->floor_name,
                 'created_at' => $floor->created_at,
                 'updated_at' => $floor->updated_at,
+                'total_rooms_count' => $totalRoomsCount, // Include total rooms count
                 'total_beds_count' => $totalBedsCount,
                 'occupied_beds_count' => $occupiedBedsCount + $pendingBedsCount,
                 'vacant_beds_count' => $vacantBedsCount, // Use the correct vacantBedsCount for each floor
@@ -52,13 +60,22 @@ class FloorController extends BaseController
 
         $base = new BaseController();
         if (count($data) > 0) {
-            // Return the data directly without the 'data' key
-            return $base->sendResponse($data, 'Floors Data');
+            if (request()->expectsJson()) {
+                // Return the data directly as JSON
+                return $base->sendResponse($data, 'Floors Data');
+            } else {
+                // Return the view with data
+                return view('backend.pages.Floors.index', ['data' => $data]);
+            }
         } else {
-            return $base->sendError('No Data Found');
+            if (request()->expectsJson()) {
+                return $base->sendError('No Data Found');
+            } else {
+                // Return the view for no data
+                return view('backend.pages.Floors.index', ['data' => $data]);
+            }
         }
     }
-
 
     public function form_data(Request $request)
     {
@@ -79,7 +96,8 @@ class FloorController extends BaseController
                 'rooms_count' => $rooms,
                 'beds_count' => $beds,
             ];
-            return $base->sendResponse($response, 'There are Total ' . $rooms . ' Rooms and Total ' . $beds . ' Beds in ' . $floor->id . ' Floor');
+            return $base->sendResponse($response,
+                'There are Total '.$rooms.' Rooms and Total '.$beds.' Beds in '.$floor->id.' Floor');
         } catch (\Exception $e) {
             // Handle the exception
             return $base->sendError('Error', $e->getMessage());
@@ -96,7 +114,8 @@ class FloorController extends BaseController
             $floor = Floor::with([
                 'rooms',
                 'beds' => function ($query) {
-                    $query->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
+                    $query->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id',
+                        'beds.occupied_from')
                         ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
                 }
             ])->where('floors.id', $floor_id)->first();
@@ -148,7 +167,6 @@ class FloorController extends BaseController
                 }
 
 
-
                 $response['floor']['rooms'][] = $roomData;
             }
 
@@ -164,6 +182,7 @@ class FloorController extends BaseController
             return $base->sendError('Error', $e->getMessage());
         }
     }
+
     public function all_floors_by_status($status)
     {
         if ($status == '0') {
@@ -175,10 +194,13 @@ class FloorController extends BaseController
             $status = 'vacant';
             $base = new BaseController();
             try {
-                $rooms = Room::with(['beds' => function ($query) use ($status) {
-                    $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_no', 'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
-                        ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
-                }])->get();
+                $rooms = Room::with([
+                    'beds' => function ($query) use ($status) {
+                        $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_no',
+                            'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
+                            ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
+                    }
+                ])->get();
 
                 $response = [];
 
@@ -212,14 +234,12 @@ class FloorController extends BaseController
                     }
                 }
 
-                return $base->sendResponse($response, 'Beds with status "' . $status . '" retrieved successfully');
+                return $base->sendResponse($response, 'Beds with status "'.$status.'" retrieved successfully');
             } catch (\Exception $e) {
                 return $base->sendError('Error', $e->getMessage());
             }
         }
     }
-
-
 
     /**
      * Store a newly created resource in storage.
@@ -275,11 +295,15 @@ class FloorController extends BaseController
         }
     }
 
+    public function create()
+    {
+        $facilities = Facility::alL();
+        return view('backend.pages.Floors.create', compact('facilities'));
+    }
+
     /**
      * Display the specified resource.
      */
-
-
 
 
     public function update_room(Request $request)
@@ -314,7 +338,7 @@ class FloorController extends BaseController
         ]);
         try {
             $lastBedNumber = Bed::where('room_id', $validatedData['room_id'])->max('bed_no');
-            if ($lastBedNumber == NULL) {
+            if ($lastBedNumber == null) {
                 $bedNumber = 1;
             } else {
                 $bedNumber = $lastBedNumber + 1;
@@ -405,7 +429,6 @@ class FloorController extends BaseController
     {
         //
     }
-
 
 
     /**

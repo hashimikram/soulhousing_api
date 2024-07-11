@@ -38,7 +38,23 @@ class PatientController extends BaseController
             ->get();
 
         foreach ($patients as $data) {
-            $data->patient_full_name = $data->first_name.' '.$data->last_name;
+            $parts = [];
+
+            if (!empty($data->last_name)) {
+                $parts[] = $data->last_name;
+            }
+
+            if (!empty($data->first_name)) {
+                $parts[] = $data->first_name;
+            }
+
+            if (!empty($data->middle_name)) {
+                $parts[] = ucfirst(substr($data->middle_name, 0, 1));
+            }
+
+            $data->patient_full_name = implode(', ', $parts);
+            $data->age = Carbon::parse($data->date_of_birth)->age;
+
             $data->provider_full_name = auth()->user()->name;
             $data->profile_pic = image_url($data->profile_pic);
             $admission_date = AdmissionDischarge::where('patient_id', $data->id)
@@ -64,8 +80,7 @@ class PatientController extends BaseController
                 ->latest()->first() ?? [];
 
             if ($admission_date) {
-                $admission_date_format = Carbon::parse($admission_date->admission_date);
-                $data->admission_date = $admission_date_format->format('d-m-Y');
+                $data->admission_date = $admission_date->admission_date;
             } else {
                 $data->admission_date = '';
             }
@@ -207,7 +222,7 @@ class PatientController extends BaseController
             'title' => 'nullable|string',
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'last_name' => 'required|string',
+            'last_name' => 'nullable|string',
             'social_security_no' => 'nullable|string',
             'medical_no' => 'nullable|string',
             'age' => 'nullable|string',
@@ -220,7 +235,7 @@ class PatientController extends BaseController
             'referral_source_2' => 'nullable|string',
             'financial_class' => 'nullable|string',
             'fin_class_name' => 'nullable|string',
-            'doctor_name' => 'required|string',
+            'doctor_name' => 'nullable|string',
             'auth' => 'nullable|string',
             'account_no' => 'nullable|string',
             'admit_date' => 'nullable|date',
@@ -241,10 +256,10 @@ class PatientController extends BaseController
             'other_contact_phone_no' => 'nullable|string',
             'other_contact_cell' => 'nullable|string',
             'relationship' => 'nullable|string',
-            'medical_dependency' => 'required|string',
-            'city' => 'required|string',
-            'state' => 'required|string',
-            'language' => 'required|string',
+            'medical_dependency' => 'nullable|string',
+            'city' => 'nullable|string',
+            'state' => 'nullable|string',
+            'language' => 'nullable|string',
             'phone_no' => 'nullable|string',
             'zip_code' => 'nullable|string',
             'country' => 'nullable|string',
@@ -306,6 +321,7 @@ class PatientController extends BaseController
                 $patient->country = $request->country;
                 // Check if media is provided
                 if ($request->has('profile_pic')) {
+                    Log::info('Image Found');
                     $fileData = $request->input('profile_pic');
                     if (preg_match('/^data:(\w+)\/(\w+);base64,/', $fileData, $type)) {
                         $fileData = substr($fileData, strpos($fileData, ',') + 1);
@@ -329,6 +345,7 @@ class PatientController extends BaseController
                         $filename = "placeholder.jpg";
                     }
                 } else {
+                    Log::info('Image Not Found');
                     $filename = "placeholder.jpg";
                 }
                 $patient->profile_pic = $filename;
@@ -408,7 +425,6 @@ class PatientController extends BaseController
         $base = new BaseController();
 
         try {
-
             $patient = patient::find($request->id);
             if ($patient != null) {
                 $patient->title = $request->title;
@@ -453,21 +469,15 @@ class PatientController extends BaseController
                 $patient->phone_no = $request->phone_no;
                 $patient->zip_code = $request->zip_code;
                 $patient->country = $request->country;
+                $oldFilePath = null;
                 // Check if media is provided
-                if ($request->has('profile_pic')) {
-                    if ($patient->profile_pic != 'placeholder.jpg') {
-                        $oldFilePath = public_path('uploads/'.$patient->profile_pic);
-                        if (file_exists($oldFilePath)) {
-                            unlink($oldFilePath);
-                        }
-                    }
+                if ($request->input('profile_pic')) {
+                    Log::info('Image Found');
                     $fileData = $request->input('profile_pic');
                     if (preg_match('/^data:(\w+)\/(\w+);base64,/', $fileData, $type)) {
+                        Log::info('64 Match');
                         $fileData = substr($fileData, strpos($fileData, ',') + 1);
                         $fileData = base64_decode($fileData);
-                        if ($fileData === false) {
-                            $filename = "placeholder.jpg";
-                        }
                         $mimeType = strtolower($type[1]);
                         $extension = strtolower($type[2]);
                         $filename = uniqid().'.'.$extension;
@@ -480,15 +490,13 @@ class PatientController extends BaseController
                         $filePath = $directory.'/'.$filename;
                         file_put_contents($filePath, $fileData);
                         $publicPath = asset('uploads/'.$filename);
+                        Log::info($filename);
+                        $patient->profile_pic = $filename;
                     } else {
-                        $filename = "placeholder.jpg";
+                        Log::info('64 Not Match');
                     }
-                } else {
-                    $filename = "placeholder.jpg";
                 }
 
-
-                $patient->profile_pic = $filename;
                 $patient->save();
                 $data['patient_id'] = $patient->id;
                 return $base->sendResponse($data, 'Patient Updated Successfully');
@@ -499,6 +507,7 @@ class PatientController extends BaseController
             return $base->sendError($e->getMessage());
         }
     }
+
 
     /**
      * Remove the specified resource from storage.

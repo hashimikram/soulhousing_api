@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\EncounterNoteSection;
+use App\Models\EncounterTemplate;
 use App\Models\ListOption;
 use App\Models\patient;
 use App\Models\PatientEncounter;
@@ -11,7 +12,8 @@ use App\Models\PhysicalExamDetail;
 use App\Models\Problem;
 use App\Models\ReviewOfSystemDetail;
 use App\Models\Vital;
-use Carbon\Carbon;
+use App\Models\Wound;
+use App\Models\WoundDetails;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,55 +52,209 @@ class PatientEncounterController extends BaseController
         try {
             $encounter = $this->createPatientEncounter($request);
             $this->handleVitalSigns($request, $encounter);
-
             $sections = $this->getSections();
             $newSections = $this->createEncounterSections($request, $encounter, $sections);
-
             DB::commit();
-
             $data = $this->getEncounterData($encounter);
-
-            // Get encounter note sections
-            $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id', 'ASC')->get();
-
+            $check_speciality = ListOption::where('id', $encounter->specialty)->first();
             $formattedData = [];
-            foreach ($sections as $section) {
-                $sectionText = null;
-                if ($section->section_text !== null) {
-                    $decodedText = json_decode($section->section_text, true);
-                    if ($decodedText !== null) {
-                        $sectionText = $decodedText;
+            $encounter_details = null;
+
+
+            if (isset($check_speciality)) {
+                if ($check_speciality->option_id == 'psychiatrist') {
+                    $this->encounter_note_template_psychiatrist($request, $encounter);
+                    $psychiatrist_template = EncounterTemplate::where('patient_id',
+                        $encounter->patient_id)->where('encounter_id', $encounter->id)->where('template_name',
+                        'psychatric_template')->first();
+                    $encounterTemplateData = $psychiatrist_template->encounter_template;
+
+                    if (!is_array($encounterTemplateData)) {
+                        $decodedText = json_decode($encounterTemplateData, true);
                     } else {
-                        $sectionText = $section->section_text;
+                        $decodedText = $encounterTemplateData;
+                    }
+
+// Define the section structure
+                    $sections = [
+                        [
+                            'section_title' => 'Chief Complaint', 'section_slug' => 'chief_complaint',
+                            'sorting_order' => '1'
+                        ],
+                        [
+                            'section_title' => 'History Of Present Illness',
+                            'section_slug' => 'history_of_present_illness', 'sorting_order' => '2'
+                        ],
+                        ['section_title' => 'Allergies', 'section_slug' => 'allergies', 'sorting_order' => '3'],
+                        ['section_title' => 'Diagnosis', 'section_slug' => 'diagnosis', 'sorting_order' => '4'],
+                        [
+                            'section_title' => 'Assessments', 'section_slug' => 'assessments', 'sorting_order' => '5'
+                        ],
+                        ['section_title' => 'Procedures', 'section_slug' => 'procedures', 'sorting_order' => '6'],
+                        ['section_title' => 'Medications', 'section_slug' => 'medications', 'sorting_order' => '7'],
+                        ['section_title' => 'Care Plan', 'section_slug' => 'care_plan', 'sorting_order' => '8']
+                    ];
+
+                    return $sections;
+
+// Format the response
+                    $formattedData = [];
+
+                    foreach ($sections as $key => $section) {
+                        if ($section == 'Assessments') {
+                            $data = $this->create_psychatric_section($encounter);
+                        } else {
+                            $data = $decodedText['section_text'];
+                        }
+                        $formattedSection = [
+                            'section_id' => $psychiatrist_template->id + $key,  // Unique ID for each section
+                            'section_title' => $section['section_title'],
+                            'section_slug' => $section['section_slug'],
+                            'section_text' => $data ?? '',
+                            'section_type_2' => 'psychiatrist',
+                            // Default to empty if not set
+                            'id_default' => $key + 1
+                        ];
+
+                        $formattedData[] = $formattedSection;
+                    }
+                } elseif ($check_speciality->option_id == 'wound') {
+                    $this->encounter_note_template_wound($request, $encounter);
+                    // Fetch the wound template data
+                    $wound_template = EncounterTemplate::where('patient_id', $encounter->patient_id)
+                        ->where('encounter_id', $encounter->id)
+                        ->where('template_name', 'wound')
+                        ->first();
+
+                    $encounterTemplateData = $wound_template->encounter_template;
+
+                    if (!is_array($encounterTemplateData)) {
+                        $decodedText = json_decode($encounterTemplateData, true);
+                    } else {
+                        $decodedText = $encounterTemplateData;
+                    }
+
+// Define the section structure
+                    $sections = [
+                        [
+                            'section_title' => 'Progress Note', 'section_slug' => 'progress_note',
+                            'sorting_order' => '1'
+                        ],
+                        [
+                            'section_title' => 'Wound Evaluation',
+                            'section_slug' => 'wound_evaluation', 'sorting_order' => '2'
+                        ],
+                        ['section_title' => 'Procedure', 'section_slug' => 'procedure', 'sorting_order' => '3'],
+                        ['section_title' => 'Diagnosis', 'section_slug' => 'diagnosis', 'sorting_order' => '4'],
+                        [
+                            'section_title' => 'Treatment Order', 'section_slug' => 'treatment_order',
+                            'sorting_order' => '5'
+                        ],
+                        [
+                            'section_title' => 'Care Plan/Patient Instructions',
+                            'section_slug' => 'care_plan_patient_instructions',
+                            'sorting_order' => '6'
+                        ],
+
+                    ];
+
+// Format the response
+                    $formattedData = [];
+
+                    foreach ($sections as $key => $section) {
+                        $formattedSection = [
+                            'section_id' => $wound_template->id + $key,  // Unique ID for each section
+                            'section_title' => $section['section_title'],
+                            'section_slug' => $section['section_slug'],
+                            'section_text' => $decodedText['section_text'] ?? '',
+                            'section_type_2' => 'wound',
+                            // Default to empty if not set
+                            'id_default' => $key + 1
+                        ];
+
+                        // Add the 'wounded_type' key if the section_slug is 'wound_evaluation'
+                        if ($section['section_slug'] == 'wound_evaluation') {
+                            $formattedSection['section_type'] = true;
+                        }
+
+                        $formattedData[] = $formattedSection;
+                    }
+
+
+                } else {
+                    // Get encounter note sections
+                    $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id',
+                        'ASC')->get();
+
+                    foreach ($sections as $section) {
+                        $sectionText = null;
+                        if ($section->section_text !== null) {
+                            $decodedText = json_decode($section->section_text, true);
+                            if ($decodedText !== null) {
+                                $sectionText = $decodedText;
+                            } else {
+                                $sectionText = $section->section_text;
+                            }
+                        }
+
+                        // Initialize dataSection
+                        $dataSection = [];
+
+                        if ($section->section_title == 'Review of Systems') {
+                            $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
+
+                            foreach ($reviewOfSystemDetails as $data) {
+                                $sectionText = "Constitutional: {$data->constitutional}\n".
+                                    "Heent: {$data->heent}\n".
+                                    "General: {$data->general}\n".
+                                    "Skin: {$data->skin}\n".
+                                    "Head: {$data->head}\n".
+                                    "Eyes: {$data->eyes}\n".
+                                    "Ears: {$data->ears}\n".
+                                    "Nose: {$data->nose}\n".
+                                    "Mouth/Throat: {$data->mouth_throat}\n".
+                                    "Neck: {$data->neck}\n".
+                                    "Respiratory: {$data->respiratory}\n".
+                                    "Cardiovascular: {$data->cardiovascular}\n".
+                                    "Gastrointestinal: {$data->gastrointestinal}\n".
+                                    "Genitourinary: {$data->genitourinary}\n".
+                                    "Musculoskeletal: {$data->musculoskeletal}\n".
+                                    "Neurological: {$data->neurological}\n".
+                                    "Psychiatric: {$data->psychiatric}\n".
+                                    "Endocrine: {$data->endocrine}\n".
+                                    "Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n".
+                                    "Allergic/Immunologic: {$data->allergic_immunologic}\n".
+                                    "Integumentry: {$data->integumentry}\n";
+                            }
+                        } elseif ($section->section_title == 'Physical Exam') {
+                            $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
+                            foreach ($physicalExamDetails as $data) {
+                                $sectionText = "General Appearance: {$data->general_appearance}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Chest/Lungs: {$data->chest_lungs}\n"."Cardiovascular: {$data->cardiovascular}\n"."Abdomen: {$data->abdomen}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
+                            }
+                        } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
+                            $problems = Problem::where('patient_id', $section->patient_id)
+                                ->where('provider_id', auth()->user()->id)
+                                ->get();
+
+                            $sectionText = ''; // Initialize an empty string to accumulate all section text
+
+                            foreach ($problems as $data) {
+                                $sectionText .= "Code: {$data->diagnosis}\n"."Description: {$data->name}\n";
+                            }
+                        }
+
+                        $formattedData[] = [
+                            'section_id' => $section->id,
+                            'section_title' => $section->section_title,
+                            'section_slug' => $section->section_slug,
+                            'section_text' => $sectionText,
+                            'section_type_2' => 'general',
+                            'id_default' => (int) $section->id_default,
+                        ];
                     }
                 }
 
-                // Initialize dataSection
-                $dataSection = [];
-
-                if ($section->section_title == 'Review of Systems') {
-                    $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
-                    foreach ($reviewOfSystemDetails as $data) {
-                        $sectionText = "Constitutional: {$data->constitutional}\n"."Heent: {$data->heent}\n"."General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Respiratory: {$data->respiratory}\n"."Cardiovascular: {$data->cardiovascular}\n"."Gastrointestinal: {$data->gastrointestinal}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n"."Integumentry: {$data->Integumentry}\n";
-                    }
-                } elseif ($section->section_title == 'Physical Exam') {
-                    $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
-                    foreach ($physicalExamDetails as $data) {
-                        $sectionText = "General Appearance: {$data->general_appearance}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Chest/Lungs: {$data->chest_lungs}\n"."Cardiovascular: {$data->cardiovascular}\n"."Abdomen: {$data->abdomen}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
-                    }
-                } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
-                    $problems = Problem::where('patient_id', $section->patient_id)
-                        ->where('provider_id', auth()->user()->id)
-                        ->get();
-
-                    $sectionText = ''; // Initialize an empty string to accumulate all section text
-
-                    foreach ($problems as $data) {
-                        $sectionText .= "Code: {$data->diagnosis}\n"."Description: {$data->name}\n";
-                    }
-                }
-
-
+                // Fetch encounter details
                 $encounter_details = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
                     'patient_encounters.encounter_type')
                     ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
@@ -112,29 +268,32 @@ class PatientEncounterController extends BaseController
                         'patient_encounters.created_at', 'patient_encounters.updated_at',
                         'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
                         'provider.name as provider_name', 'patients.mrn_no',
-                        DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
+                        'patients.first_name', 'patients.middle_name', 'patients.last_name',
                         'patients.date_of_birth', 'patients.gender')
                     ->where('patient_encounters.id', $encounter->id)
                     ->first();
-
-                $formattedData[] = [
-                    'section_id' => $section->id,
-                    'section_title' => $section->section_title,
-                    'section_slug' => $section->section_slug,
-                    'section_text' => $sectionText,
-                    'id_default' => (int) $section->id_default,
-                ];
             }
 
-            return response()->json(
-                [
-                    'encounter_id' => $encounter->id,
-                    'encounter' => $data,
-                    'encounter_details' => $encounter_details,
-                    'new_sections' => $formattedData,
-                ],
-                201,
-            );
+            if (!empty($encounter_details->last_name)) {
+                $parts[] = $encounter_details->last_name;
+            }
+
+            if (!empty($encounter_details->first_name)) {
+                $parts[] = $encounter_details->first_name;
+            }
+
+            if (!empty($encounter_details->middle_name)) {
+                $parts[] = ucfirst(substr($encounter_details->middle_name, 0, 1));
+            }
+
+            $encounter_details->patient_full_name = implode(', ', $parts);
+
+            return response()->json([
+                'encounter_id' => $encounter->id,
+                'encounter_details' => $encounter_details,
+                'new_sections' => $formattedData,
+            ], 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
@@ -147,9 +306,9 @@ class PatientEncounterController extends BaseController
             'patient_id' => 'required|exists:patients,id',
             'encounter_type' => 'required|exists:list_options,id',
             'specialty' => 'required|exists:list_options,id',
-            'blood_pressure' => 'required',
-            'pulse_beats_in' => 'required',
-            'resp_rate' => 'required',
+            'blood_pressure' => 'nullable',
+            'pulse_beats_in' => 'nullable',
+            'resp_rate' => 'nullable',
         ]);
     }
 
@@ -241,79 +400,10 @@ class PatientEncounterController extends BaseController
 
             $sectionData = $section->toArray();
             $sectionData['section_id'] = $section->id;
-
+            $check_speciality = ListOption::where('id', $encounter->specialty)->first();
             // Call specific methods for Review of Systems and Physical Exam
             if ($sectionTitle == 'Review of Systems') {
                 $this->createReviewOfSystemDetail($request, $section);
-//                $rosDetails = ReviewOfSystemDetail::where('patient_id', $request->patient_id)
-//                    ->where('section_id', $section->id)
-//                    ->where('provider_id', auth()->user()->id)
-//                    ->first();
-//
-//                if ($rosDetails) {
-//                    $sectionData = $rosDetails->toArray();
-//
-//                    $sectionText =
-//                        'Constitutional: '.
-//                        $sectionData['general'].
-//                        "\n".
-//                        'Skin: '.
-//                        $sectionData['skin'].
-//                        "\n".
-//                        'Head: '.
-//                        $sectionData['head'].
-//                        "\n".
-//                        'Eyes: '.
-//                        $sectionData['eyes'].
-//                        "\n".
-//                        'Ears: '.
-//                        $sectionData['ears'].
-//                        "\n".
-//                        'Nose: '.
-//                        $sectionData['nose'].
-//                        "\n".
-//                        'Mouth/Throat: '.
-//                        $sectionData['mouth_throat'].
-//                        "\n".
-//                        'Neck: '.
-//                        $sectionData['neck'].
-//                        "\n".
-//                        'Breasts: '.
-//                        $sectionData['breasts'].
-//                        "\n".
-//                        'Respiratory: '.
-//                        $sectionData['respiratory'].
-//                        "\n".
-//                        'Cardiovascular: '.
-//                        $sectionData['cardiovascular'].
-//                        "\n".
-//                        'Gastrointestinal: '.
-//                        $sectionData['gastrointestinal'].
-//                        "\n".
-//                        'Genitourinary: '.
-//                        $sectionData['genitourinary'].
-//                        "\n".
-//                        'Musculoskeletal: '.
-//                        $sectionData['musculoskeletal'].
-//                        "\n".
-//                        'Neurological: '.
-//                        $sectionData['neurological'].
-//                        "\n".
-//                        'Psychiatric: '.
-//                        $sectionData['psychiatric'].
-//                        "\n".
-//                        'Endocrine: '.
-//                        $sectionData['endocrine'].
-//                        "\n".
-//                        'Hematologic/Lymphatic: '.
-//                        $sectionData['hematologic_lymphatic'].
-//                        "\n".
-//                        'Allergic/Immunologic: '.
-//                        $sectionData['allergic_immunologic'].
-//                        "\n";
-//
-//                    $sectionData['section_text'] = $sectionText;
-//                }
             } elseif ($sectionTitle == 'Physical Exam') {
                 $this->createPhysicalExamDetail($request, $section);
                 $rosDetails = PhysicalExamDetail::where('patient_id', $request->patient_id)
@@ -329,6 +419,8 @@ class PatientEncounterController extends BaseController
 
                     $sectionData['section_text'] = $sectionText;
                 }
+            } elseif ($sectionTitle == 'ASSESSMENTS/CARE PLAN') {
+                $this->create_psychatric_section($encounter);
             }
 
             $newSections[] = $sectionData;
@@ -435,6 +527,28 @@ class PatientEncounterController extends BaseController
         }
     }
 
+    public function create_psychatric_section($encounter)
+    {
+        $template = "APPERANCE: Well-groomed MOTOR. \n
+    BEHAVIOR: Calm. \n
+    ATTITUDE: Cooperative MOOD good. \n
+    AFFECT: Appropriate. \n
+    SPEECH: Normal. \n
+    ORIENTATION: A&Ox3. \n
+    PERCEPTION: normal. \n
+    THOUGHT PROCESS: Spontaneous. \n
+    THOUGHT CONTENT: Appropriate. \n
+    CONCENTRATION: Good. \n
+    MEMORY: no deficit. \n
+    INTELLIGENCE: Good. \n
+    IMPULSE CONTROL: fair. \n
+    INSITE: good. \n
+    JUDGEMENT: good. \n
+    RISK ASSESSMENT: Suicidal Ideation/Homicidal Ideation denied. Access to Firearms denied.";
+
+        return $template;
+    }
+
     private function getEncounterData($encounter)
     {
         return PatientEncounter::where('patient_encounters.id', $encounter->id)
@@ -450,6 +564,118 @@ class PatientEncounterController extends BaseController
             ->first();
     }
 
+    public function encounter_note_template_psychiatrist(Request $request, $encounter)
+    {
+        $data = [
+            [
+                "section_title" => "Chief Complaint",
+                "section_text" => null,
+                "sorting_order" => "1",
+                "section_slug" => "chief_complaint"
+            ],
+            [
+                "section_title" => "History Of Present Illness",
+                "section_text" => null,
+                "sorting_order" => "2",
+                "section_slug" => "history_of_present_illness"
+            ],
+            [
+                "section_title" => "Allergies",
+                "section_text" => null,
+                "sorting_order" => "3",
+                "section_slug" => "allergies"
+            ],
+            [
+                "section_title" => "Diagnosis",
+                "section_text" => null,
+                "sorting_order" => "4",
+                "section_slug" => "diagnosis"
+            ],
+            [
+                "section_title" => "Assessments",
+                "section_text" => null,
+                "sorting_order" => "5",
+                "section_slug" => "assessments"
+            ],
+            [
+                "section_title" => "Procedures",
+                "section_text" => null,
+                "sorting_order" => "6",
+                "section_slug" => "procedures"
+            ],
+            [
+                "section_title" => "Medications",
+                "section_text" => null,
+                "sorting_order" => "7",
+                "section_slug" => "medications"
+            ],
+            [
+                "section_title" => "Care Plan",
+                "section_text" => null,
+                "sorting_order" => "8",
+                "section_slug" => "care_plan"
+            ]
+        ];
+
+        $template = new EncounterTemplate();
+        $template->provider_id = auth()->user()->id;
+        $template->patient_id = $encounter->patient_id;
+        $template->encounter_id = $encounter->id;
+        $template->template_name = 'psychatric_template';
+        $template->encounter_template = json_encode($data);
+        $template->save();
+    }
+
+    public function encounter_note_template_wound(Request $request, $encounter)
+    {
+        $data = [
+            [
+                "section_title" => "Progress Note",
+                "section_text" => "Patient is a 54 year old male seen at Soul Housing Recuperative Home for for follow up on right leg wounds. ",
+                "sorting_order" => "1",
+                "section_slug" => "progress_note"
+            ],
+            [
+                "section_title" => "Wound Evaluation",
+                "section_text" => "wound",
+                "sorting_order" => "2",
+                "section_slug" => "wound_evaluation"
+            ],
+            [
+                "section_title" => "Procedure",
+                "section_text" => "RIGHT KNEE:The pre-procedure area was prepped in the usual aseptic manner. Local anesthesia was achieved with lidocaine spray. The chronic non-healing ulceration was debrided by mechanical methods. Devitalized tissue was removed to the level of healthy bleeding tissue which included biofilm and necrotic tissue. The instruments used included gauze scrub with cleanser. The debridement area extended down to the level of subcutaneous tissue. All surrounding periwound hyperkeratotic skin was also removed as required. Hemostasis was achieved by the usage of compression. The estimated blood loss was less than 3 ccs. The post-debridement measurements were as follows: W:1.2 x L:1.5 x D:0.3. The debridement area was cleansed with wound cleanser then dressed with a non-adherent dressing. The patient tolerated the procedure well and there were no complications. The patient was provided detailed post-procedure instructions. A follow-up appointment will be scheduled for approximately 1 week.",
+                "sorting_order" => "3",
+                "section_slug" => "procedure"
+            ],
+            [
+                "section_title" => "Diagnosis",
+                "section_text" => "L97918 Non-pressure chronic ulcer of unspecified part of right lower leg with other specified severity",
+                "sorting_order" => "4",
+                "section_slug" => "diagnosis"
+            ],
+            [
+                "section_title" => "Treatment Order",
+                "section_text" => "BLE wounds: Cleanse with wound cleanser, pat dry with gauze. Apply therahoney gel and alginate to the wound bed.Cover with bordered gauze dressing and wrap with rolled gauze 3x weekly or as needed for loose or soiled dressing. RX: Vitamin C 500mg PO daily.",
+                "sorting_order" => "5",
+                "section_slug" => "treatment_order"
+            ],
+            [
+                "section_title" => "Care Plan/Patient Instructions",
+                "section_text" => "Encourage balanced diet with adequate protein (if not contraindicated), vitamins C and zinc to support tissue healing. -Monitor for any signs of systemic infection -avoid smoking and excessive alcohol consumption -emphasized importance of keeping skin clean and dry-Instructed on wound dressing change Educated on the potential complications such as cellulitis, osteomyelitis, or gangrene and seeking prompt medical attention if complications arise.-follow up with PCP and surgeon",
+                "sorting_order" => "6",
+                "section_slug" => "care_plan_patient_instructions"
+            ],
+        ];
+
+        $template = new EncounterTemplate();
+        $template->provider_id = auth()->user()->id;
+        $template->patient_id = $encounter->patient_id;
+        $template->encounter_id = $encounter->id;
+        $template->template_name = 'wound';
+        $template->encounter_template = json_encode($data);
+        $template->save();
+    }
+
     public function encounter_notes_store(Request $request)
     {
         $validatedData = $request->validate([
@@ -457,111 +683,47 @@ class PatientEncounterController extends BaseController
         ]);
 
         $patient_id = $request->patient_id;
-        $encounter_id = $request->encounter_id;
 
         // Loop through each section in the request and update it
         foreach ($validatedData['sections'] as $sectionData) {
-            $sectionSlug = Str::slug($sectionData['section_title']);
-            Log::info($sectionSlug);
-            $existingSection = EncounterNoteSection::where('encounter_id', $encounter_id)->where('section_slug',
-                $sectionSlug)
+            $existingSection = EncounterNoteSection::where('id', $sectionData['sorting_order'])
                 ->first();
-            Log::info($existingSection->id);
             if ($existingSection) {
                 $existingSection->section_text = $sectionData['section_text'];
                 $existingSection->save();
                 Log::info('Section Text Updated');
-            } else {
-                // If the section doesn't exist, create a new one
-                $section = new EncounterNoteSection();
-                $section->patient_id = $patient_id;
-                $section->provider_id = auth()->user()->id;
-                $section->encounter_id = $encounter_id;
-                $section->section_title = $sectionData['section_title'];
-                $section->section_slug = $sectionSlug;
-                $section->section_text = $sectionData['section_text'];
-                $section->sorting_order = 1; // Use sorting_order from payload
-                $section->save();
-                // Find the existing section by patient ID, encounter ID, and section slug
-                $existingSection = EncounterNoteSection::where('patient_id', $patient_id)->where('encounter_id',
-                    $encounter_id)->where('section_slug', $sectionSlug)->first();
-
-                if ($existingSection) {
-                    // If the section already exists, update its section_text
-                    $existingSection->update([
-                        'section_text' => $sectionData['section_text'],
-                    ]);
-                } else {
-                    // If the section doesn't exist, create a new one
-                    $section = new EncounterNoteSection();
-                    $section->patient_id = $patient_id;
-                    $section->provider_id = auth()->user()->id;
-                    $section->encounter_id = $encounter_id;
-                    $section->section_title = $sectionData['section_title'];
-                    $section->section_slug = $sectionSlug;
-                    $section->section_text = $sectionData['section_text'];
-                    $section->sorting_order = 1; // Use sorting_order from payload
-                    $section->save();
-                }
             }
         }
 
         return response()->json(['message' => 'Notes Updated Successfully'], 200);
     }
 
+
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request)
     {
+        $request->validate([
+            'encounter_id' => 'required|exists:patient_encounters,id'
+        ]);
         try {
             // Extract JSON data from the request
             $data = $request->json()->all();
             $encounter = PatientEncounter::findOrFail($request->encounter_id);
-            $encounter->update([
-                'signed_at' => $data['signed_at'],
-                'encounter_type' => $data['encounter_type'],
-                'location' => $data['location'],
-                'specialty' => $data['specialty'],
-                'reason' => $data['reason'],
-            ]);
-//            $includeFields = ['section_text', 'review_of_system', 'physical_exam'];
-//            foreach ($includeFields as $sectionTitle) {
-//                $sectionData = $data[$sectionTitle] ?? null;
-//
-//                if ($sectionData === null) {
-//                    continue;
-//                }
-//
-//                if (is_array($sectionData)) {
-//                    if ($sectionTitle === 'review_of_system' || $sectionTitle === 'physical_exam') {
-//                        $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
-//                            ->where('section_title', $sectionTitle)
-//                            ->first();
-//
-//                        if ($subsection) {
-//                            $subsection->update([
-//                                'section_text' => json_encode($sectionData),
-//                            ]);
-//                        }
-//                    } else {
-//                        foreach ($sectionData as $subsectionTitle => $subsectionData) {
-//                            $subsection = EncounterNoteSection::where('encounter_id', $encounter->id)
-//                                ->where('section_title', $subsectionTitle)
-//                                ->first();
-//
-//                            if ($subsection) {
-//                                $subsection->update([
-//                                    'section_text' => is_array($subsectionData) ? json_encode($subsectionData) : $subsectionData,
-//                                ]);
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    return response()->json(['error' => "Unexpected data structure for section {$sectionTitle}"], 400);
-//                }
-//            }
-            return response()->json(['message' => 'Data updated successfully'], 200);
+            if (isset($encounter)) {
+                $encounter->update([
+                    'encounter_date' => $request->signed_at,
+                    'location' => $data['location'],
+                    'reason' => $data['reason'],
+                ]);
+                return response()->json(['message' => 'Data updated successfully'], 200);
+            } else {
+                return response()->json(['message' => 'Record Not Found'], 200);
+
+            }
+
+
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -572,11 +734,12 @@ class PatientEncounterController extends BaseController
      */
     public function show($patient_id)
     {
-        $data = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
+        $data = PatientEncounter::leftjoin('list_options as encounter_type', 'encounter_type.id', '=',
             'patient_encounters.encounter_type')
-            ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
-            ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
-            ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+            ->leftjoin('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
+            ->leftjoin('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
+            ->leftjoin('patients', 'patients.id', '=', 'patient_encounters.patient_id')
+            ->leftjoin('facilities', 'facilities.id', '=', 'patient_encounters.location')
             ->select('patient_encounters.id', 'patient_encounters.provider_id',
                 'patient_encounters.provider_id_patient', 'patient_encounters.patient_id',
                 'patient_encounters.signed_by', 'patient_encounters.encounter_date',
@@ -584,17 +747,31 @@ class PatientEncounterController extends BaseController
                 'patient_encounters.attachment', 'patient_encounters.status', 'patient_encounters.created_at',
                 'patient_encounters.updated_at', 'encounter_type.title as encounter_type_title',
                 'specialty.title as specialty_title', 'provider.name as provider_name', 'patients.mrn_no',
-                DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
-                'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make')
+                'patients.date_of_birth', 'patients.gender', 'patient_encounters.pdf_make', 'patients.first_name',
+                'patients.middle_name', 'patients.last_name', 'facilities.address as location')
             ->where('patient_id', $patient_id)
             ->orderBy('patient_encounters.created_at', 'DESC')
             ->get();
         foreach ($data as $reason) {
+            $parts = [];
             if ($reason->status == '0') {
                 $reason->status = 'draft';
             } else {
                 $reason->status = 'assign';
             }
+            if (!empty($reason->last_name)) {
+                $parts[] = $reason->last_name;
+            }
+
+            if (!empty($reason->first_name)) {
+                $parts[] = $reason->first_name;
+            }
+
+            if (!empty($reason->middle_name)) {
+                $parts[] = ucfirst(substr($reason->middle_name, 0, 1));
+            }
+
+            $reason->patient_full_name = implode(', ', $parts);
         }
 
         $base = new BaseController();
@@ -606,133 +783,121 @@ class PatientEncounterController extends BaseController
      */
     public function encounter_notes($encounter_id)
     {
-        // Get encounter note sections
-        $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get();
-
         $formattedData = [];
-        foreach ($sections as $section) {
-            $sectionText = null;
-            if ($section->section_text !== null) {
-                $decodedText = json_decode($section->section_text, true);
-                if ($decodedText !== null) {
-                    $sectionText = $decodedText;
-                } else {
-                    $sectionText = $section->section_text;
-                }
+        $sections = EncounterNoteSection::where('encounter_id', $encounter_id)->orderBy('id', 'ASC')->get();
+        $wounds = null;
+        $wound_details = null;
+
+        foreach ($sections as $key => $section) {
+            $encounter = PatientEncounter::where('id', $encounter_id)->first();
+            $check_speciality = ListOption::find($encounter->specialty);
+
+            $wounds = Wound::where('encounter_id', $encounter_id)->first();
+            if (isset($wounds)) {
+                $wound_details = WoundDetails::where('wound_id', $wounds->id)->get();
             }
 
-            // Initialize dataSection
-            $dataSection = [];
+            $section_text = $section->section_text ?? '';
 
-            if ($section->section_title == 'Review of Systems') {
-                $reviewOfSystemDetails = ReviewOfSystemDetail::where('section_id', $section->id)->get();
-                foreach ($reviewOfSystemDetails as $data) {
-                    $sectionText = "Constitutional: {$data->constitutional}\n"."Heent: {$data->heent}\n"."General: {$data->general}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Respiratory: {$data->respiratory}\n"."Cardiovascular: {$data->cardiovascular}\n"."Gastrointestinal: {$data->gastrointestinal}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n"."Integumentry: {$data->Integumentry}\n";
-                }
-            } elseif ($section->section_title == 'Physical Exam') {
-                $physicalExamDetails = PhysicalExamDetail::where('section_id', $section->id)->get();
-                foreach ($physicalExamDetails as $data) {
-                    $sectionText = "General Appearance: {$data->general_appearance}\n"."Skin: {$data->skin}\n"."Head: {$data->head}\n"."Eyes: {$data->eyes}\n"."Ears: {$data->ears}\n"."Nose: {$data->nose}\n"."Mouth/Throat: {$data->mouth_throat}\n"."Neck: {$data->neck}\n"."Chest/Lungs: {$data->chest_lungs}\n"."Cardiovascular: {$data->cardiovascular}\n"."Abdomen: {$data->abdomen}\n"."Genitourinary: {$data->genitourinary}\n"."Musculoskeletal: {$data->musculoskeletal}\n"."Neurological: {$data->neurological}\n"."Psychiatric: {$data->psychiatric}\n"."Endocrine: {$data->endocrine}\n"."Hematologic/Lymphatic: {$data->hematologic_lymphatic}\n"."Allergic/Immunologic: {$data->allergic_immunologic}\n";
-                }
-            } elseif ($section->section_title == 'ASSESSMENTS/CARE PLAN') {
-                $problems = Problem::where('patient_id', $section->patient_id)
-                    ->where('provider_id', auth()->user()->id)
-                    ->get();
+            if ($section['section_slug'] == 'review-of-systems') {
+                $section_text = str_replace(
+                    [
+                        'Constitutional:', 'Heent:', 'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:',
+                        'Mouth & Throat:', 'Neck:', 'Respiratory:', 'Cardiovascular:', 'Gastrointestinal:',
+                        'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
+                        'Hematologic/Lymphatic:', 'Allergic/Immunologic:', 'Integumentry:'
+                    ],
+                    [
+                        '<b>Constitutional:</b>', '<b>Heent:</b>', '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>',
+                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Mouth & Throat:</b>', '<b>Neck:</b>',
+                        '<b>Respiratory:</b>', '<b>Cardiovascular:</b>', '<b>Gastrointestinal:</b>',
+                        '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
+                        '<b>Psychiatric:</b>',
+                        '<b>Endocrine:</b>', '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>',
+                        '<b>Integumentry:</b>'
+                    ],
+                    $section_text
+                );
+            }
 
-                $sectionText = ''; // Initialize an empty string to accumulate all section text
+            if ($section['section_slug'] == 'physical-exam') {
+                $section_text = str_replace(
+                    [
+                        'General Appearance:', 'Head and Neck:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
+                        'Cardiovascular:', 'Respiratory System:', 'Abdomen:', 'Musculoskeletal System:',
+                        'Neurological System:', 'Genitourinary System:', 'Psychosocial Assessment:'
+                    ],
+                    [
+                        '<b>General Appearance:</b>', '<b>Head and Neck:</b>', '<b>Eyes:</b>', '<b>Ears:</b>',
+                        '<b>Nose:</b>',
+                        '<b>Mouth & Throat:</b>', '<b>Cardiovascular:</b>', '<b>Respiratory System:</b>',
+                        '<b>Abdomen:</b>',
+                        '<b>Musculoskeletal System:</b>', '<b>Neurological System:</b>', '<b>Genitourinary System:</b>',
+                        '<b>Psychosocial Assessment:</b>'
+                    ],
+                    $section_text
+                );
+            }
 
-                foreach ($problems as $data) {
-                    $sectionText .= "Code: {$data->diagnosis}\n"."Description: {$data->name}\n";
-                }
-            } elseif ($section->section_title == 'Vital Sign') {
-                // Retrieve the latest vital record for the patient and provider
-                $latestVital = Vital::where('patient_id', $section->patient_id)
-                    ->where('provider_id', auth()->user()->id)
-                    ->orderBy('created_at', 'desc')
-                    ->select(
-                        'date',
-                        'weight_lbs',
-                        'weight_oz',
-                        'weight_kg',
-                        'height_ft',
-                        'height_in',
-                        'height_cm',
-                        'bmi_kg',
-                        'bmi_in',
-                        'bsa_cm2',
-                        'waist_cm',
-                        'systolic',
-                        'diastolic',
-                        'position',
-                        'cuff_size',
-                        'cuff_location',
-                        'cuff_time',
-                        'fasting',
-                        'postprandial',
-                        'fasting_blood_sugar',
-                        'blood_sugar_time',
-                        'pulse_result',
-                        'pulse_rhythm',
-                        'pulse_time',
-                        'body_temp_result_f',
-                        'body_temp_result_c',
-                        'body_temp_method',
-                        'body_temp_time',
-                        'respiration_result',
-                        'respiration_pattern',
-                        'respiration_time',
-                        'saturation',
-                        'oxygenation_method',
-                        'device',
-                        'oxygen_source_1',
-                        'oxygenation_time_1',
-                        'inhaled_o2_concentration',
-                        'oxygen_flow',
-                        'oxygen_source_2',
-                        'oxygenation_time_2',
-                        'peak_flow',
-                        'oxygenation_time_3',
-                        'office_test_blood_group',
-                        'blood_group_date',
-                        'office_test_pain_scale',
-                        'pain_scale_date'
-                    )
-                    ->first();
-
-
-                $sectionText = ''; // Initialize an empty string to accumulate the section text
-
-                if ($latestVital) {
-                    // Get all column names from the 'vitals' table
-                    $columns = Schema::getColumnListing('vitals');
-
-                    foreach ($columns as $column) {
-                        if (!is_null($latestVital->$column)) {
-                            $label = ucwords(str_replace('_', ' ', $column));
-                            $sectionText .= "{$label}: {$latestVital->$column}\n";
-                        }
+            if ($section['section_slug'] == 'wound_evaluation') {
+                $wound_details_array = [];
+                if ($wound_details) {
+                    foreach ($wound_details as $detail) {
+                        $images = json_decode($detail->images, true); // Decode JSON string to array
+                        $detail_array = $detail->toArray();
+                        $detail_array['images'] = $images; // Replace JSON string with array
+                        $wound_details_array[] = $detail_array;
                     }
                 }
 
-                // Output or use the $sectionText as needed
+                $formattedData[] = [
+                    'section_id' => $section->id,
+                    'section_title' => $section->section_title,
+                    'section_slug' => $section->section_slug,
+                    'section_text' => $section_text,
+                    'id_default' => (int) $section->sorting_order,
+                    'section_type' => true,
+                    'wound' => $wounds,
+                    'wound_details' => $wound_details_array,
+                ];
+            } elseif ($section['section_slug'] == 'assessments') {
+                $formattedData[] = [
+                    'section_id' => $section->id,
+                    'section_title' => $section->section_title,
+                    'section_slug' => $section->section_slug,
+                    'section_text' => $section_text,
+                    'id_default' => (int) $section->sorting_order,
+                    'fixed_id' => 69,
+                ];
+            } elseif ($section['section_slug'] == 'mental_status_examination') {
+                $formattedData[] = [
+                    'section_id' => $section->id,
+                    'section_title' => $section->section_title,
+                    'section_slug' => $section->section_slug,
+                    'section_text' => $section_text,
+                    'id_default' => 100,
+                    'fixed_id_mental' => 71,
+                ];
+            } else {
+                $formattedSection = [
+                    'section_id' => $section->id,
+                    'section_title' => $section->section_title,
+                    'section_slug' => $section->section_slug,
+                    'section_text' => $section_text,
+                    'id_default' => (int) $section->sorting_order,
+                ];
+
+                $formattedData[] = $formattedSection;
             }
-            $formattedData[] = [
-                'section_id' => $section->id,
-                'section_title' => $section->section_title,
-                'section_slug' => $section->section_slug,
-                'section_text' => $sectionText,
-                'id_default' => (int) $section->id_default,
-            ];
         }
 
-        $response = [
+        return response()->json([
             'success' => true,
             'data' => $formattedData,
-            'message' => 'Encounter note sections fetched successfully',
-        ];
-
-        return response()->json($response, 200);
+            'message' => 'Encounter note sections fetched successfully'
+        ], 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -766,7 +931,10 @@ class PatientEncounterController extends BaseController
                 ->get();
         }
 
-        $existing_encounters = PatientEncounter::where('patient_id', $patient_id)->get();
+        $existing_encounters = PatientEncounter::where('patient_encounters.patient_id',
+            $patient_id)->leftjoin('facilities',
+            'facilities.id', '=', 'patient_encounters.location')->select('patient_encounters.*',
+            'facilities.address as location')->get();
         $providers = User::where('id', auth()->user()->id)->get();
 
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
@@ -794,38 +962,69 @@ class PatientEncounterController extends BaseController
         );
     }
 
+
     public function status_update(Request $request)
     {
         $request->validate([
             'encounter_id' => 'required|exists:patient_encounters,id',
         ]);
-        $encounter = PatientEncounter::FindOrFail($request->encounter_id);
-        if ($encounter != null) {
-            $encounter->status = '1';
-            $patient = patient::where('id', $encounter->patient_id)->first();
-            if ($patient) {
+
+        $encounter = PatientEncounter::findOrFail($request->encounter_id);
+
+        if ($encounter) {
+            $check_speciality = ListOption::find($encounter->specialty);
+
+            $today_date = \Carbon\Carbon::now()->format('d-M-Y');
+            $encounterDate = \Carbon\Carbon::parse($encounter->encounter_date)->format('Y-m-d_H-i-s');
+            $patientId = $encounter->patient_id;
+            $fileName = "encounter_{$encounterDate}_patient_{$patientId}_{$today_date}_.pdf";
+            $directoryPath = public_path('uploads');
+
+            if (!file_exists($directoryPath)) {
+                return '1';
+                mkdir($directoryPath, 0777, true);
+            }
+
+            if ($check_speciality && $check_speciality->option_id == 'wound') {
+                // Generate PDF data
                 $data = [
-                    'name' => $patient->first_name.' '.$patient->last_name,
                     'encounter_id' => $encounter->id,
                     'patient_id' => $encounter->patient_id,
                     'data' => $encounter->encounter_date,
                 ];
 
-                // Generate PDF
-                $pdf = PDF::loadView('PDF.status_change', $data);
-                $encounterDate = \Carbon\Carbon::parse($encounter->encounter_date)->format('Y-m-d_H-i-s');
-                $today_date = Carbon::now()->format('d-M-Y');
-                $patientId = $encounter->patient_id;
-                $fileName = "encounter_{$encounterDate}_patient_{$patientId}_{$today_date}_.pdf";
-                // Ensure the directory exists
-                $directoryPath = public_path('uploads');
-                if (!file_exists($directoryPath)) {
-                    mkdir($directoryPath, 0777, true);
-                }
+                // Generate PDF using Laravel PDF library (example: barryvdh/laravel-dompdf)
+                $pdf = PDF::loadView('PDF.wond_pdf', $data);
+
+                // Define the file path
+                $fileName = "encounter_".now()->format('Y-m-d_H-i-s')."_patient_{$encounter->patient_id}.pdf";
                 $filePath = $directoryPath.'/'.$fileName;
+
+                // Save the PDF file
                 $pdf->save($filePath);
+
+                // Update encounter record with PDF file name
+                $encounter->pdf_make = $fileName;
+
+
+            } else {
+                $patient = patient::find($encounter->patient_id);
+                if ($patient) {
+                    $data = [
+                        'name' => $patient->first_name.' '.$patient->last_name,
+                        'encounter_id' => $encounter->id,
+                        'patient_id' => $encounter->patient_id,
+                        'data' => $encounter->encounter_date,
+                    ];
+
+                    $pdf = PDF::loadView('PDF.status_change', $data);
+                    $filePath = $directoryPath.'/'.$fileName;
+                    $pdf->save($filePath);
+                    $encounter->pdf_make = $fileName;
+                }
             }
-            $encounter->pdf_make = $fileName;
+
+            $encounter->status = '1';
             $encounter->save();
 
             return response()->json([
@@ -833,9 +1032,10 @@ class PatientEncounterController extends BaseController
                 'message' => 'Status Updated',
             ], 200);
         } else {
-            return response()->json(['message' => 'No Encounter Found']);
+            return response()->json(['message' => 'No Encounter Found'], 404);
         }
     }
+
 
     public function check_patient_encounter($patient_id, $specialty_id)
     {
@@ -865,5 +1065,59 @@ class PatientEncounterController extends BaseController
             'data' => $encounter_type
         ], 200);
     }
+
+    public function mental_section_show($section_id, $patient_id)
+    {
+        // Fetch the data from the database
+        $data = EncounterNoteSection::where('patient_id', $patient_id)
+            ->where('id', $section_id)
+            ->first();
+
+        if (!$data) {
+            // Return error response if no data found
+            return response()->json([
+                'code' => 'error',
+                'message' => 'No data found'
+            ], 404);
+        }
+
+        // Remove <br> tags from the text
+        $sectionsText = str_replace(['<br>', '</br>'], '', $data->section_text);
+
+        // Split the sections based on the pattern of section headers
+        $sectionsArray = preg_split('/\s{2,}(?=[A-Z][a-z]+:)/', $sectionsText);
+
+        // Initialize an empty array to hold the formatted sections
+        $formattedSections = [];
+
+        // Iterate over each section and format it
+        foreach ($sectionsArray as $section) {
+            // Extract section title and content
+            if (preg_match('/^([A-Z][a-z]+):\s*(.*)/s', $section, $matches)) {
+                $sectionTitle = lcfirst(trim($matches[1]));
+                $sectionContent = trim($matches[2]);
+
+                // Split the content further if it contains additional details
+                $sectionContent = preg_replace('/\s{2,}/', ' ', $sectionContent);
+                $subsections = preg_split('/\.\s*(?=[A-Z][a-z]+:)/', $sectionContent);
+
+                // Format subsections if found
+                foreach ($subsections as $subsection) {
+                    if (preg_match('/^([A-Z][a-z]+):\s*(.*)/s', $subsection, $submatches)) {
+                        $subsectionTitle = lcfirst(trim($submatches[1]));
+                        $subsectionContent = trim($submatches[2]);
+                        $formattedSections[$sectionTitle][$subsectionTitle] = $subsectionContent;
+                    }
+                }
+            }
+        }
+
+        // Return success response with the formatted sections
+        return response()->json([
+            'code' => 'success',
+            'data' => $formattedSections
+        ], 200);
+    }
+
 
 }

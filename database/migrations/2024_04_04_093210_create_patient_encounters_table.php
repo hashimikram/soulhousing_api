@@ -30,7 +30,6 @@ return new class extends Migration {
             $table->string('location')->nullable();
             $table->longText('reason')->nullable();
             $table->longText('attachment')->nullable();
-
             $table->enum('status', ['1', '0'])->default('1');
             $table->timestamps();
         });

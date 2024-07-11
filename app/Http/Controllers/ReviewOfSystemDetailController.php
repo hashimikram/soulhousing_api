@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReviewOfSystemDetailRequest;
 use App\Http\Requests\UpdateReviewOfSystemDetailRequest;
+use App\Models\EncounterNoteSection;
 use App\Models\ReviewOfSystemDetail;
 
 class ReviewOfSystemDetailController extends Controller
@@ -37,13 +38,40 @@ class ReviewOfSystemDetailController extends Controller
      */
     public function show($section_id, $patient_id)
     {
-        $data = ReviewOfSystemDetail::where('patient_id', $patient_id)->where('section_id', $section_id)->first();
-        return $data;
+        // Fetch the data from the database
+        $data = EncounterNoteSection::where('patient_id', $patient_id)
+            ->where('id', $section_id)
+            ->first();
+
+        if (!$data) {
+            // Return error response if no data found
+            return response()->json([
+                'code' => 'error',
+                'message' => 'No data found'
+            ], 404);
+        }
+
+        $sectionsText = str_replace(['<br>', '</br>'], '', $data->section_text);
+        // Split the sections using regex, ensuring to match sections correctly
+        $sectionsArray = preg_split('/(?=[A-Z][a-z]+(?:\/[A-Z][a-z]+)?:(?=\s))/s', $sectionsText, -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $formattedSections = [];
+
+        foreach ($sectionsArray as $section) {
+            if (preg_match('/^([A-Z][a-z]+(?:\/[A-Z][a-z]+)?):\s*(.*)/s', $section, $matches)) {
+                // Convert the section title to camelCase
+                $sectionTitle = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($matches[1])))));
+                $sectionContent = trim(str_replace(['<br>', '</br>'], '', $matches[2]));
+                $formattedSections[$sectionTitle] = $sectionContent;
+            }
+        }
+
         return response()->json([
             'code' => 'success',
-            'data' => $data
+            'data' => $formattedSections
         ], 200);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -56,42 +84,49 @@ class ReviewOfSystemDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // Assuming this is inside a controller method and $reviewOfSystemDetail is your model instance
+
+
     public function update(UpdateReviewOfSystemDetailRequest $request)
     {
-        $reviewOfSystemDetail = ReviewOfSystemDetail::FindOrFail($request->id);
-        if (!isset($reviewOfSystemDetail)) {
+        // Fetch the data from the database
+        $data = EncounterNoteSection::where('id', $request->id)
+            ->first();
+
+        if (!$data) {
+            // Return error response if no data found
             return response()->json([
-                'code' => 'success',
-                'message' => 'Data Not Found',
-            ]);
-        }
-        if (!$reviewOfSystemDetail) {
-            return response()->json(['error' => 'Review of system detail not found.'], 404);
+                'code' => 'error',
+                'essage' => 'No data found'
+            ], 404);
         }
 
-        $reviewOfSystemDetail->general = $request->input('general');
-        $reviewOfSystemDetail->skin = $request->input('skin');
-        $reviewOfSystemDetail->head = $request->input('head');
-        $reviewOfSystemDetail->eyes = $request->input('eyes');
-        $reviewOfSystemDetail->ears = $request->input('ears');
-        $reviewOfSystemDetail->nose = $request->input('nose');
-        $reviewOfSystemDetail->mouth_throat = $request->input('mouth_throat');
-        $reviewOfSystemDetail->neck = $request->input('neck');
-        $reviewOfSystemDetail->breasts = $request->input('breasts');
-        $reviewOfSystemDetail->respiratory = $request->input('respiratory');
-        $reviewOfSystemDetail->cardiovascular = $request->input('cardiovascular');
-        $reviewOfSystemDetail->gastrointestinal = $request->input('gastrointestinal');
-        $reviewOfSystemDetail->genitourinary = $request->input('genitourinary');
-        $reviewOfSystemDetail->musculoskeletal = $request->input('musculoskeletal');
-        $reviewOfSystemDetail->neurological = $request->input('neurological');
-        $reviewOfSystemDetail->psychiatric = $request->input('psychiatric');
-        $reviewOfSystemDetail->endocrine = $request->input('endocrine');
-        $reviewOfSystemDetail->hematologic_lymphatic = $request->input('hematologic_lymphatic');
-        $reviewOfSystemDetail->allergic_immunologic = $request->input('allergic_immunologic');
-        $reviewOfSystemDetail->save();
+        // Get the payload data
+        $payload = $request->all();
 
-        return response()->json(['message' => 'Review of system detail updated successfully.']);
+        // Initialize an empty string to hold the formatted section text
+        $sectionText = '';
+
+        // Iterate over each section and format it
+        foreach ($payload as $key => $value) {
+            if ($key !== 'id') {
+                $sectionText .= ucfirst($key).': '.$value.'<br><br>';
+            }
+        }
+
+        // Update the section text
+        $data->section_text = $sectionText;
+
+        // Save the changes
+        $data->save();
+
+        // Return success response
+        return response()->json([
+            'code' => 'uccess',
+            'essage' => 'Data updated successfully'
+        ], 200);
     }
+
 
     /**
      * Remove the specified resource from storage.

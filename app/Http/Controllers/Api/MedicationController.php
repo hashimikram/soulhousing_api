@@ -105,7 +105,6 @@ class MedicationController extends BaseController
             'strength' => 'required',
             'begin_date' => 'required|date',
             'end_date' => 'required|date',
-            'referred_by' => 'required',
             'dosage_unit' => 'required',
             'dose' => 'required',
         ]);
