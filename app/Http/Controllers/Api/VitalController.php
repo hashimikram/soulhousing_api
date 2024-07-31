@@ -19,7 +19,7 @@ class VitalController extends BaseController
         }
         $vitals = Vital::orderBy('id', 'DESC')->where('patient_id', $patient_id)->get();
         foreach ($vitals as $data) {
-            $data->create_date = date('d-m-Y h:i A', strtotime($data->created_at));
+            $data->date = $data->date;
         }
         return response()->json([
             'success' => true,
@@ -142,6 +142,28 @@ class VitalController extends BaseController
             'data' => $vital,
         ], 200);
     }
+
+    public function get_latest_vital($patient_id)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $vital = Vital::where('patient_id', $patient_id)->latest()->first();
+
+        if (!$vital) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No vital records found for this patient.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $vital,
+        ], 200);
+    }
+
 
     /**
      * Show the form for editing the specified resource.

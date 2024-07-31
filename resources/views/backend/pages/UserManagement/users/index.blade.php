@@ -66,7 +66,6 @@
                         class="d-flex justify-content-end"
                         data-kt-user-table-toolbar="base"
                     >
-
                         <!--begin::Add user-->
                         <button
                             type="button"
@@ -110,6 +109,7 @@
                     <!--end::Toolbar-->
                     <!--begin::Modal - Add User-->
                     @include('backend.pages.UserManagement.users.modals.add')
+
                     <!--end::Modal - Add User-->
                 </div>
                 <!--end::Card toolbar-->
@@ -142,6 +142,7 @@
                             </div>
                         </th>
                         <th class="min-w-125px">Name</th>
+                        <th class="min-w-125px">User Type</th>
                         <th class="min-w-125px">Gender</th>
                         <th class="min-w-125px">Date of Birth</th>
                         <th class="min-w-125px">Joined Date</th>
@@ -175,7 +176,7 @@
                                     class="symbol symbol-circle symbol-50px overflow-hidden me-3"
                                 >
                                     <a
-                                        href="../../demo1/dist/apps/user-management/users/view.html"
+                                        href="{{route('user.show',$data->id)}}"
                                     >
                                         <div class="symbol-label">
                                             <img
@@ -187,12 +188,17 @@
                                     </a>
                                 </div>
                                 <!--end::Avatar-->
+
                                 <!--begin::User details-->
                                 <div class="d-flex flex-column">
                                     <a
-                                        href="../../demo1/dist/apps/user-management/users/view.html"
+                                        href="{{route('user.show',$data->id)}}"
                                         class="text-gray-800 text-hover-primary mb-1"
-                                    > {{ $data->name }}</a
+                                    > {{ $data->name }} {{ $data->userDetail->middle_name }} {{ $data->userDetail->last_name }}
+                                        @if($data->userDetail->user_name)
+                                            ({{$data->userDetail->user_name}})
+                                        @endif
+                                    </a
                                     >
                                     <span>{{ $data->email }}</span>
                                 </div>
@@ -200,6 +206,7 @@
                             </td>
                             <!--end::User=-->
                             <!--begin::Role=-->
+                            <td>{{ ucfirst($data->user_type) }}</td>
                             <td>{{ $data->userDetail->gender }}</td>
                             <!--end::Role=-->
                             <!--begin::Last login=-->
@@ -238,7 +245,8 @@
                                         data-kt-menu="true" style="">
                                         <!--begin::Menu item-->
                                         <div class="menu-item px-3">
-                                            <a href="#" class="menu-link px-3">Edit</a>
+                                            <a href="{{ route('user.edit', $data->id) }}"
+                                               class="menu-link px-3">Edit</a>
                                         </div>
                                         <!--end::Menu item-->
                                         <!--begin::Menu item-->
@@ -274,7 +282,7 @@
             $('#kt_modal_add_user').modal('show');
             @endif
         });
-        
+
         document.addEventListener('DOMContentLoaded', function () {
             // Add event listener to all delete buttons
             document.querySelectorAll('.delete-button').forEach(function (button) {
@@ -319,6 +327,7 @@
                     });
                 });
             });
+
         });
 
     </script>

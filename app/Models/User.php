@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->hasOne(userDetail::class, 'user_id', 'id');
     }
 
+    public function roles()
+    {
+        return $this->hasMany(Role::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

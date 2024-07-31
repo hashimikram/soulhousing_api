@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CptCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 class CptCodeController extends Controller
 {
     /**
@@ -22,24 +23,22 @@ class CptCodeController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-
         $searchTerm = $search_text;
         // Base query
-        $query = DB::table('problem_quotes');
+        $query = DB::table('cpt_codes');
 
         // Apply search filter if search term is provided
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                $query->where('code', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
             });
         }
-        $cptCodes = $query->get();
+        $cptCodes = $query->limit(5)->get();
 
         // Return the paginated results
         return apiSuccess($cptCodes);
     }
-
 
 
     /**

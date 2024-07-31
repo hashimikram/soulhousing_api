@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Http\Requests\MedicationRequest;
 use App\Models\medication;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -18,11 +19,68 @@ class MedicationController extends BaseController
         $active_medications = medication::with('patients')->where('status', 'active')->where('patient_id', $id)->get();
         $inactive_medications = medication::with('patients')->where('status', 'inactive')->where('patient_id',
             $id)->get();
+
+        foreach ($active_medications as $result) {
+            if (isset($result->end_date)) {
+                $enddate = Carbon::parse($result->end_date);
+                if (Carbon::now()->isAfter($enddate)) {
+                    $result->status = 'inactive';
+                }
+            } else {
+                $result->end_date = '';
+            }
+
+            $formatted_data = $result->title;
+
+            if (!empty($result->dose) && !empty($result->dosage_unit)) {
+                $formatted_data .= ' - '.$result->dose.' '.$result->dosage_unit;
+            }
+
+            if (!empty($result->quantity)) {
+                $formatted_data .= ', '.$result->quantity;
+            }
+
+            if (!empty($result->frequency)) {
+                $formatted_data .= ' ('.$result->frequency.')';
+            }
+
+            $result->formatted_data = $formatted_data;
+
+
+        }
+
+
+        foreach ($inactive_medications as $result_inactive) {
+            if (isset($result_inactive->end_date)) {
+                $result_inactive->end_date = $result_inactive->end_date;
+            } else {
+                $result_inactive->end_date = '';
+            }
+
+            $formatted_data = $result_inactive->title;
+
+            if (!empty($result_inactive->dose) && !empty($result_inactive->dosage_unit)) {
+                $formatted_data .= ' - '.$result_inactive->dose.' '.$result_inactive->dosage_unit;
+            }
+
+            if (!empty($result_inactive->quantity)) {
+                $formatted_data .= ', '.$result_inactive->quantity;
+            }
+
+            if (!empty($result_inactive->frequency)) {
+                $formatted_data .= ' ('.$result_inactive->frequency.')';
+            }
+
+            $result_inactive->formatted_data = $formatted_data;
+        }
+
+
         return response()->json([
             'active_medications' => $active_medications,
             'inactive_medications' => $inactive_medications
         ], 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -44,6 +102,7 @@ class MedicationController extends BaseController
             $medication->provider_id = auth()->user()->id;
             $medication->patient_id = $request->patient_id;
             $medication->title = $request->title;
+            $medication->dose = $request->dose;
             $medication->strength = $request->strength;
             $medication->user_free_text = $request->user_free_text;
             $medication->prescribe_date = $request->prescribe_date;
@@ -70,6 +129,14 @@ class MedicationController extends BaseController
             $medication->prn_options = $request->prn_options;
             $medication->patient_directions = $request->patient_directions;
             $medication->additional_sig = $request->additional_sig;
+            $medication->quantity_left = $request->quantity_left;
+            if (isset($request->end_date)) {
+                $enddate = Carbon::parse($request->end_date);
+                if (Carbon::now()->isAfter($enddate)) {
+                    $medication->status = 'inactive';
+                }
+            }
+
             $medication->save();
             return $base->sendResponse(null, 'Medication Added');
         } catch (\Exception $e) {
@@ -102,9 +169,9 @@ class MedicationController extends BaseController
         $request->validate([
             'id' => 'required',
             'title' => 'required',
-            'strength' => 'required',
+            'strength' => 'nullable',
             'begin_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => 'nullable|date',
             'dosage_unit' => 'required',
             'dose' => 'required',
         ]);
@@ -117,6 +184,7 @@ class MedicationController extends BaseController
                 $medication->strength = $request->strength;
                 $medication->user_free_text = $request->user_free_text;
                 $medication->prescribe_date = $request->prescribe_date;
+                $medication->dose = $request->dose;
                 $medication->action = $request->action;
                 $medication->quantity = $request->quantity;
                 $medication->unit = $request->unit;
@@ -140,6 +208,7 @@ class MedicationController extends BaseController
                 $medication->prn_options = $request->prn_options;
                 $medication->patient_directions = $request->patient_directions;
                 $medication->additional_sig = $request->additional_sig;
+                $medication->quantity_left = $request->quantity_left;
                 $medication->save();
                 return $base->sendResponse(null, 'Medication Updated');
             } else {

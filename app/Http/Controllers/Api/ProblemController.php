@@ -116,7 +116,7 @@ class ProblemController extends BaseController
         }
         $validatedData = $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            'diagnosis' => 'required',
+            'diagnosis' => 'nullable',
             'name' => 'required',
         ]);
         $base = new BaseController();
@@ -133,8 +133,18 @@ class ProblemController extends BaseController
             $problem->assessment_section_id = $request->assessment_section_id;
             $existingSection = EncounterNoteSection::where('id', $request->assessment_section_id)->first();
             if ($existingSection) {
-                $newText = "Code: {$request->diagnosis}\nDescription: {$request->name}\n";
-                $existingSection->section_text .= $newText; // Append the new text to the existing text
+                $existingSectionText = json_decode($existingSection->section_text, true);
+
+                $newData = [
+                    'Code' => $request->diagnosis,
+                    'Description' => $request->name,
+                    'assessment_input' => "",
+                    'value_id' => rand(123456, 999999),
+                ];
+
+                $existingSectionText[] = $newData;
+
+                $existingSection->assessment_note = json_encode($existingSectionText);
                 $existingSection->save();
                 Log::info('Section Text Updated');
             }
@@ -143,6 +153,45 @@ class ProblemController extends BaseController
         } catch (\Exception $e) {
             DB::rollBack();
             return $base->sendError($e->getMessage());
+        }
+    }
+
+    public function store_cpt_section(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized access. Please log in to continue.'], 401);
+        }
+
+        $validatedData = $request->validate([
+            'procedure_id' => 'required|exists:encounter_note_sections,id',
+            'code' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+        ]);
+        $base = new BaseController();
+
+        DB::beginTransaction();
+        try {
+            // Retrieve the existing section
+            $existingSection = EncounterNoteSection::find($validatedData['procedure_id']);
+            if ($existingSection) {
+                $code = e($request->code);
+                $description = e($request->description);
+                $newText = "Code: {$code}\nDescription: {$description}\n";
+                $existingSection->section_text .= $newText;
+                $existingSection->save();
+
+                DB::commit();
+
+                Log::info('Section text successfully updated for procedure ID: '.$validatedData['procedure_id']);
+                return $base->sendResponse($newText, 'Section text successfully updated.');
+            } else {
+                return response()->json(['message' => 'Procedure not found.'], 404);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update section text: '.$e->getMessage());
+            return $base->sendError('An error occurred while updating the section text. Please try again later.');
         }
     }
 
@@ -170,7 +219,7 @@ class ProblemController extends BaseController
 
         $validatedData = $request->validate([
             'problem_id' => 'required|exists:problems,id',
-            'diagnosis' => 'required',
+            'diagnosis' => 'nullable',
             'name' => 'required',
             'type_id' => 'nullable|exists:list_options,id',
             'chronicity_id' => 'nullable|exists:list_options,id',

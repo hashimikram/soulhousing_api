@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
-
 use App\Models\bed;
 use App\Models\patient;
 use Illuminate\Http\Request;
@@ -20,7 +19,7 @@ class BedController extends BaseController
             'patient_id' => 'required|exists:patients,id',
         ]);
         $beds = Bed::where('id', $request->bed_id)->first();
-        if ($beds != NULL) {
+        if ($beds != null) {
             try {
                 date_default_timezone_set('Asia/Karachi');
                 $checkAssignBed = Bed::where(['patient_id' => $request->patient_id])->first();
@@ -28,7 +27,7 @@ class BedController extends BaseController
                     return response()->json([
                         'code' => false,
                         'status' => '1',
-                        'message' => 'Patient Already Assigned',
+                        'message' => 'patients Already Assigned',
                     ], 200);
                 } else {
                     $occupied_at = date('Y-m-d h:i:s', strtotime($request->occupied_at));
@@ -40,7 +39,7 @@ class BedController extends BaseController
                     $beds->save();
                     return response()->json([
                         'code' => true,
-                        'message' => 'Patient Added',
+                        'message' => 'patients Added',
                     ], 200);
                 }
             } catch (\Exception $e) {
@@ -68,11 +67,11 @@ class BedController extends BaseController
         ]);
         $bed = Bed::where(['patient_id' => $request->patient_id])->first();
         if (isset($bed)) {
-            // remove old Patient and make Bed Empty
-            $bed->patient_id = NULL;
+            // remove old patients and make Bed Empty
+            $bed->patient_id = null;
             $bed->status = 'vacant';
-            $bed->occupied_from = NULL;
-            $bed->booked_till = NULL;
+            $bed->occupied_from = null;
+            $bed->booked_till = null;
             $bed->save();
 
             // add to new bed
@@ -82,14 +81,14 @@ class BedController extends BaseController
             $newBed->save();
             return response()->json([
                 'code' => true,
-                'message' => 'Patient Added',
+                'message' => 'patients Added',
             ], 200);
 
             $bed->patient_id = $request->patient_id;
             $bed->save();
             return response()->json([
                 'code' => true,
-                'message' => 'Patient Added',
+                'message' => 'patients Added',
             ], 200);
 
         } else {
@@ -105,7 +104,26 @@ class BedController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'bed_title' => 'required',
+        ]);
+        try {
+            $bed = new bed();
+            $bed->room_id = $request->room_id;
+            $bed->bed_title = $request->bed_title;
+            $bed->status = 'vacent';
+            $bed->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Bed Added Successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -114,8 +132,9 @@ class BedController extends BaseController
     public function show($id)
     {
         $bed = bed::where('id', $id)->first();
-        if ($bed != NULL) {
-            $patient = patient::where('id', $bed->patient_id)->select('first_name', 'last_name', 'gender', 'date_of_birth', 'mrn_no')->first();
+        if ($bed != null) {
+            $patient = patient::where('id', $bed->patient_id)->select('first_name', 'last_name', 'gender',
+                'date_of_birth', 'mrn_no')->first();
             return response()->json([
                 'code' => true,
                 'data' => $patient,
@@ -134,16 +153,46 @@ class BedController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, bed $bed)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'bed_id' => 'required|exists:beds,id',
+            'bed_title' => 'required',
+        ]);
+        try {
+            $bed = bed::FindOrFail($request->bed_id);
+            if (isset($bed)) {
+                $bed->bed_title = $request->bed_title;
+                $bed->save();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Bed Title Updated Successfully'
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data Not Found'
+                ], 404);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(bed $bed)
+    public function delete_bed($bed_id)
     {
-        //
+        $bed = bed::FindOrFail($bed_id);
+        $bed->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Bed Deleted'
+        ], 200);
     }
 }

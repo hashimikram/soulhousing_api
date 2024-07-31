@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\bed;
-use App\Models\Facility;
 use App\Models\floor;
 use App\Models\room;
 use Illuminate\Http\Request;
@@ -149,6 +148,7 @@ class FloorController extends BaseController
                         'id' => $bed->id,
                         'status' => $bed->status,
                         'bed_no' => $bed->bed_no,
+                        'bed_title' => $bed->bed_title ?? null,
                         'room_id' => $bed->room_id,
                         'patient_id' => $bed->patient_id,
                         'occupied_from' => $bed->occupied_from,
@@ -282,6 +282,7 @@ class FloorController extends BaseController
                             'room_id' => $room->id,
                             'bed_no' => $bedCounter, // Set the bed number
                             'comments' => $bedData['comments'],
+                            'bed_title' => $bedData['bed_title'] ?? '',
                             'status' => 'vacant',
                         ]);
                     }
@@ -295,11 +296,6 @@ class FloorController extends BaseController
         }
     }
 
-    public function create()
-    {
-        $facilities = Facility::alL();
-        return view('backend.pages.Floors.create', compact('facilities'));
-    }
 
     /**
      * Display the specified resource.
@@ -335,6 +331,7 @@ class FloorController extends BaseController
             'room_id' => 'required|exists:rooms,id',
             'comments' => 'nullable|string',
             'booked_at' => 'nullable|date',
+            'bed_title' => 'nullable',
         ]);
         try {
             $lastBedNumber = Bed::where('room_id', $validatedData['room_id'])->max('bed_no');
@@ -348,6 +345,7 @@ class FloorController extends BaseController
                 'bed_no' => $bedNumber,
                 'room_id' => $validatedData['room_id'],
                 'comments' => $validatedData['comments'] ?? null,
+                'bed_title' => $validatedData['bed_title'] ?? null,
                 'status' => 'vacant', // assuming this is a default status
             ]);
             // $floorId = isset($data['floor_id']) ? $data['floor_id'] : null;

@@ -3,11 +3,11 @@
      data-kt-drawer-direction="start" data-kt-drawer-name="app-sidebar"
      data-kt-drawer-overlay="true" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle"
      data-kt-drawer-width="225px"
-     id="kt_app_sidebar">
+     id="kt_app_sidebar" style="background-color: #14457b;">
     <!--begin::Logo-->
     <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
         <!--begin::Logo image-->
-        <a href="../../demo1/dist/index.html">
+        <a href="{{route('dashboard')}}">
             <img alt="Logo" class="h-45px app-sidebar-logo-default"
                  src="{{asset('backend/assets/media/auth/logo-center-white.png')}}"/>
             <img alt="Logo" class="h-20px app-sidebar-logo-minimize"
@@ -107,10 +107,19 @@
                     <!--end:Menu content-->
                 </div>
                 <!--end:Menu item-->
-                <!--begin:Menu item-->
-                <div class="menu-item @yield('user_management_li') menu-accordion" data-kt-menu-trigger="click">
-                    <!--begin:Menu link-->
-                    <span class="menu-link">
+                @php
+                    $user=\App\Models\Staff::where('user_id',auth()->user()->id)->first();
+                    $permission = [];
+                    if(isset($user)){
+                        $role=\App\Models\Role::where('id',$user->role_id)->first();
+                        $permission=\App\Models\Permission::where('role_id',$role->id)->first();
+                    }
+                @endphp
+                    <!--begin:Menu item-->
+                @if(Auth::user()->user_type == 'super_admin' || in_array('1', json_decode($permission->permissions)))
+                    <div class="menu-item @yield('user_management_li') menu-accordion" data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
 											<span class="menu-icon">
 												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
 												<span class="svg-icon svg-icon-2">
@@ -130,29 +139,75 @@
 											<span class="menu-title">User Management</span>
 											<span class="menu-arrow"></span>
 										</span>
-                    <!--end:Menu link-->
-                    <!--begin:Menu sub-->
-                    <div class="menu-sub menu-sub-accordion">
-                        <!--begin:Menu item-->
-                        <div class="menu-item">
-                            <!--begin:Menu link-->
-                            <a class="menu-link  @yield('users_a')" href="{{route('user.index')}}">
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('users_a')" href="{{route('user.index')}}">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
-                                <span class="menu-title">Users</span>
-                            </a>
-                            <!--end:Menu link-->
+                                    <span class="menu-title">Users</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
                         </div>
-                        <!--end:Menu item-->
+                        <!--end:Menu sub-->
                     </div>
-                    <!--end:Menu sub-->
-                </div>
+                @endif
                 <!--end:Menu item-->
                 <!--begin:Menu item-->
-                <div class="menu-item @yield('facility_management_li') menu-accordion" data-kt-menu-trigger="click">
-                    <!--begin:Menu link-->
-                    <span class="menu-link">
+                @if(Auth::user()->user_type == 'super_admin' || in_array('5', json_decode($permission->permissions)))
+                    <div class="menu-item @yield('patients_management_li') menu-accordion" data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg fill="none" height="24" viewBox="0 0 24 24" width="24"
+                                                         xmlns="http://www.w3.org/2000/svg">
+														<path
+                                                            d="M6.5 11C8.98528 11 11 8.98528 11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11Z"
+                                                            fill="currentColor"/>
+														<path
+                                                            d="M13 6.5C13 4 15 2 17.5 2C20 2 22 4 22 6.5C22 9 20 11 17.5 11C15 11 13 9 13 6.5ZM6.5 22C9 22 11 20 11 17.5C11 15 9 13 6.5 13C4 13 2 15 2 17.5C2 20 4 22 6.5 22ZM17.5 22C20 22 22 20 22 17.5C22 15 20 13 17.5 13C15 13 13 15 13 17.5C13 20 15 22 17.5 22Z"
+                                                            fill="currentColor"
+                                                            opacity="0.3"/>
+													</svg>
+												</span>
+                                                <!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Patient Management</span>
+											<span class="menu-arrow"></span>
+										</span>
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('patients_a')" href="{{route('patients.index')}}">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+                                    <span class="menu-title">Patients</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                        </div>
+                        <!--end:Menu sub-->
+                    </div>
+                @endif
+                <!--end:Menu item-->
+                <!--begin:Menu item-->
+                @if(Auth::user()->user_type == 'super_admin' || in_array('2', json_decode($permission->permissions)))
+                    <div class="menu-item @yield('facility_management_li') menu-accordion" data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
 											<span class="menu-icon">
 												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
 												<span class="svg-icon svg-icon-2">
@@ -172,29 +227,31 @@
 											<span class="menu-title">Facility</span>
 											<span class="menu-arrow"></span>
 										</span>
-                    <!--end:Menu link-->
-                    <!--begin:Menu sub-->
-                    <div class="menu-sub menu-sub-accordion">
-                        <!--begin:Menu item-->
-                        <div class="menu-item">
-                            <!--begin:Menu link-->
-                            <a class="menu-link  @yield('facility_a')" href="{{route('facility.index')}}">
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('facility_a')" href="{{route('facility.index')}}">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
-                                <span class="menu-title">Manage</span>
-                            </a>
-                            <!--end:Menu link-->
+                                    <span class="menu-title">Manage</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
                         </div>
-                        <!--end:Menu item-->
+                        <!--end:Menu sub-->
                     </div>
-                    <!--end:Menu sub-->
-                </div>
+                @endif
                 <!--end:Menu item-->
                 <!--begin:Menu item-->
-                <div class="menu-item @yield('floors_management_li') menu-accordion" data-kt-menu-trigger="click">
-                    <!--begin:Menu link-->
-                    <span class="menu-link">
+                @if(Auth::user()->user_type == 'super_admin' || in_array('3', json_decode($permission->permissions)))
+                    <div class="menu-item @yield('floors_management_li') menu-accordion" data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
 											<span class="menu-icon">
 												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
 												<span class="svg-icon svg-icon-2">
@@ -214,24 +271,127 @@
 											<span class="menu-title">Floors Management</span>
 											<span class="menu-arrow"></span>
 										</span>
-                    <!--end:Menu link-->
-                    <!--begin:Menu sub-->
-                    <div class="menu-sub menu-sub-accordion">
-                        <!--begin:Menu item-->
-                        <div class="menu-item">
-                            <!--begin:Menu link-->
-                            <a class="menu-link  @yield('floors_a')" href="{{route('floors.index')}}">
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('floors_a')" href="{{route('floors.index')}}">
 													<span class="menu-bullet">
 														<span class="bullet bullet-dot"></span>
 													</span>
-                                <span class="menu-title">Manage</span>
-                            </a>
-                            <!--end:Menu link-->
+                                    <span class="menu-title">Manage</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
                         </div>
-                        <!--end:Menu item-->
+                        <!--end:Menu sub-->
                     </div>
-                    <!--end:Menu sub-->
-                </div>
+                @endif
+                <!--end:Menu item-->
+                <!--begin:Menu item-->
+                @if(Auth::user()->user_type == 'super_admin')
+                    <div class="menu-item @yield('roles_management_li') menu-accordion" data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg fill="none" height="24" viewBox="0 0 24 24" width="24"
+                                                         xmlns="http://www.w3.org/2000/svg">
+														<path
+                                                            d="M6.5 11C8.98528 11 11 8.98528 11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11Z"
+                                                            fill="currentColor"/>
+														<path
+                                                            d="M13 6.5C13 4 15 2 17.5 2C20 2 22 4 22 6.5C22 9 20 11 17.5 11C15 11 13 9 13 6.5ZM6.5 22C9 22 11 20 11 17.5C11 15 9 13 6.5 13C4 13 2 15 2 17.5C2 20 4 22 6.5 22ZM17.5 22C20 22 22 20 22 17.5C22 15 20 13 17.5 13C15 13 13 15 13 17.5C13 20 15 22 17.5 22Z"
+                                                            fill="currentColor"
+                                                            opacity="0.3"/>
+													</svg>
+												</span>
+                                                <!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Roles</span>
+											<span class="menu-arrow"></span>
+										</span>
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('roles_a')" href="{{route('roles.index')}}">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+                                    <span class="menu-title">Manage</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                            <!--begin:Menu item-->
+                            {{--                            <div class="menu-item">--}}
+                            {{--                                <!--begin:Menu link-->--}}
+                            {{--                                <a class="menu-link  @yield('staff_a')" href="{{route('staff.index')}}">--}}
+                            {{--													<span class="menu-bullet">--}}
+                            {{--														<span class="bullet bullet-dot"></span>--}}
+                            {{--													</span>--}}
+                            {{--                                    <span class="menu-title">Sub Admins</span>--}}
+                            {{--                                </a>--}}
+                            {{--                                <!--end:Menu link-->--}}
+                            {{--                            </div>--}}
+                            <!--end:Menu item-->
+                        </div>
+                        <!--end:Menu sub-->
+                    </div>
+                @endif
+                <!--end:Menu item-->
+                <!--begin:Menu item-->
+                @if(Auth::user()->user_type == 'super_admin' || in_array('4', json_decode($permission->permissions)))
+                    <div class="menu-item @yield('additional_management_li') menu-accordion"
+                         data-kt-menu-trigger="click">
+                        <!--begin:Menu link-->
+                        <span class="menu-link">
+											<span class="menu-icon">
+												<!--begin::Svg Icon | path: icons/duotune/abstract/abs029.svg-->
+												<span class="svg-icon svg-icon-2">
+													<svg fill="none" height="24" viewBox="0 0 24 24" width="24"
+                                                         xmlns="http://www.w3.org/2000/svg">
+														<path
+                                                            d="M6.5 11C8.98528 11 11 8.98528 11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11Z"
+                                                            fill="currentColor"/>
+														<path
+                                                            d="M13 6.5C13 4 15 2 17.5 2C20 2 22 4 22 6.5C22 9 20 11 17.5 11C15 11 13 9 13 6.5ZM6.5 22C9 22 11 20 11 17.5C11 15 9 13 6.5 13C4 13 2 15 2 17.5C2 20 4 22 6.5 22ZM17.5 22C20 22 22 20 22 17.5C22 15 20 13 17.5 13C15 13 13 15 13 17.5C13 20 15 22 17.5 22Z"
+                                                            fill="currentColor"
+                                                            opacity="0.3"/>
+													</svg>
+												</span>
+                                                <!--end::Svg Icon-->
+											</span>
+											<span class="menu-title">Maintenance</span>
+											<span class="menu-arrow"></span>
+										</span>
+                        <!--end:Menu link-->
+                        <!--begin:Menu sub-->
+                        <div class="menu-sub menu-sub-accordion">
+                            <!--begin:Menu item-->
+                            <div class="menu-item">
+                                <!--begin:Menu link-->
+                                <a class="menu-link  @yield('maintenance_a')"
+                                   href="{{route('maintenance.admin_index')}}">
+													<span class="menu-bullet">
+														<span class="bullet bullet-dot"></span>
+													</span>
+                                    <span class="menu-title">Manage</span>
+                                </a>
+                                <!--end:Menu link-->
+                            </div>
+                            <!--end:Menu item-->
+                        </div>
+                        <!--end:Menu sub-->
+                    </div>
+                @endif
                 <!--end:Menu item-->
             </div>
             <!--end::Menu-->

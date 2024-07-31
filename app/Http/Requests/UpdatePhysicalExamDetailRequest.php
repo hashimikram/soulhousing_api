@@ -22,7 +22,7 @@ class UpdatePhysicalExamDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|exists:physical_exam_details,id'
+            'id' => 'required|exists:encounter_note_sections,id'
         ];
     }
 }

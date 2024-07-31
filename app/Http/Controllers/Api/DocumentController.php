@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DocumentController extends BaseController
 {
@@ -74,19 +75,31 @@ class DocumentController extends BaseController
         }
 
         $formattedFileSize = null;
-        $fileName = null;
+        $filename = null;
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $fileSize = $file->getSize();
-            $formattedFileSize = formatFileSize($fileSize);
-            $fileName = date('YmdHi').'_'.uniqid().'.'.$file->getClientOriginalExtension();
-            $file->storeAs('uploads', $fileName, 'public');
+        if ($request->input('file')) {
+            $fileData = $request->input('file');
+            if (preg_match('/^data:(\w+)\/(\w+);base64,/', $fileData, $type)) {
+                $fileData = substr($fileData, strpos($fileData, ',') + 1);
+                $fileData = base64_decode($fileData);
+                $mimeType = strtolower($type[1]);
+                $extension = strtolower($type[2]);
+                $filename = uniqid().'.'.$extension;
+                // Ensure the 'public/uploads' directory exists
+                $directory = public_path('uploads');
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0777, true);
+                }
+                // Save the file to the public/uploads directory
+                $filePath = $directory.'/'.$filename;
+                file_put_contents($filePath, $fileData);
+                $publicPath = asset('uploads/'.$filename);
+            }
         }
 
         try {
+            Log::info('Document Save Processing Start');
             DB::beginTransaction();
-
             $document = new Document();
             $document->provider_id = auth()->user()->id;
             $document->patient_id = $validatedData['patient_id'];
@@ -94,14 +107,14 @@ class DocumentController extends BaseController
             $document->type = $validatedData['type'];
             $document->description = $validatedData['description'];
             $document->date = $validatedData['date'];
-            $document->file_size = $formattedFileSize;
-            $document->file = $fileName;
+            $document->file = $filename;
             $document->save();
-
             DB::commit();
+            Log::info('Document Saved Successfully');
             return response()->json(['message' => 'Document Added'], 200);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::info('Error While Saving Document: '.' '.$e->getMessage());
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
@@ -146,24 +159,6 @@ class DocumentController extends BaseController
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Document not found'], 404);
         }
-
-        $fileName = $document->file;
-        $formattedFileSize = $document->file_size;
-
-        if ($request->hasFile('file')) {
-            $imagePath = public_path('storage/uploads/'.$document->file);
-            if ($document->file != null) {
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
-            $file = $request->file('file');
-            $fileName = date('YmdHi').'_'.uniqid().'.'.$file->getClientOriginalExtension();
-            $fileSize = $file->getSize();
-            $formattedFileSize = formatFileSize($fileSize);
-            $file->storeAs('uploads', $fileName, 'public');
-        }
-
         try {
             DB::beginTransaction();
 
@@ -171,8 +166,6 @@ class DocumentController extends BaseController
             $document->type = $validatedData['type'];
             $document->description = $validatedData['description'];
             $document->date = $validatedData['date'];
-            $document->file_size = $formattedFileSize;
-            $document->file = $fileName;
             $document->save();
 
             DB::commit();

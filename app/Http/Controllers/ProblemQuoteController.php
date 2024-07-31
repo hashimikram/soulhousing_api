@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProblemQuote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProblemQuoteController extends Controller
 {
@@ -35,8 +36,34 @@ class ProblemQuoteController extends Controller
         // Apply search filter if search term is provided
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('code', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                $query->where('code', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
+            });
+        }
+        $cptCodes = $query->get();
+
+        // Return the paginated results
+        return apiSuccess($cptCodes);
+    }
+
+    public function search_problem($search_text)
+    {
+        // Ensure the user is authenticated
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+
+        $searchTerm = $search_text;
+
+        // Base query
+        $query = DB::table('problem_quotes');
+
+        // Apply search filter if search term is provided
+        if ($searchTerm) {
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('code', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
             });
         }
         $cptCodes = $query->get();

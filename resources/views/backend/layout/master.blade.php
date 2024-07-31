@@ -34,6 +34,37 @@
     <link href="{{asset('backend/assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('backend/assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css"/>
     <!--end::Global Stylesheets Bundle-->
+    <style>
+        /* Basic button styling */
+        #load-more-button {
+            position: relative;
+            transition: width 0.3s;
+        }
+
+        /* Loading animation styling */
+        #load-more-button.loading::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 35%;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top: 2px solid #000;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
     @yield('custom_css')
 </head>
 <!--end::Head-->
@@ -153,6 +184,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{asset('backend/assets/js/custom/apps/ecommerce/catalog/save-product.js')}}"></script>
 <script src="{{asset('backend/assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!--end::Custom Javascript-->
 <!--end::Javascript-->
 <script>
@@ -176,6 +208,28 @@
     };
     toastr.success("Success", "{{Session::get('success')}}");
     @endif
+
+        @if(Session::has('error'))
+        toastr.options = {
+        "closeButton": true,
+        "debug": true,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toastr-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+    toastr.error("Error", "{{Session::get('error')}}");
+    @endif
+
 </script>
 @yield('custom_js')
 </body>

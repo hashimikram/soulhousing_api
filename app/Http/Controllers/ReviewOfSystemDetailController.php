@@ -97,7 +97,7 @@ class ReviewOfSystemDetailController extends Controller
             // Return error response if no data found
             return response()->json([
                 'code' => 'error',
-                'essage' => 'No data found'
+                'message' => 'No data found'
             ], 404);
         }
 
@@ -122,8 +122,8 @@ class ReviewOfSystemDetailController extends Controller
 
         // Return success response
         return response()->json([
-            'code' => 'uccess',
-            'essage' => 'Data updated successfully'
+            'code' => 'success',
+            'message' => 'Data updated successfully'
         ], 200);
     }
 

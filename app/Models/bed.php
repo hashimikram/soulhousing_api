@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class bed extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'room_id',
         'patient_id',
@@ -15,6 +16,7 @@ class bed extends Model
         'bed_no',
         'occupied_at',
         'booked_till',
+        'bed_title',
         'status'
     ];
 

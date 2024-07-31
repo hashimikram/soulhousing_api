@@ -20,9 +20,9 @@ class MedicationRequest extends FormRequest
         return [
             'patient_id' => 'required|exists:patients,id',
             'title' => 'required',
-            'strength' => 'required',
+            'strength' => 'nullable',
             'begin_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => 'nullable|date',
             'referred_by' => 'nullable',
             'dosage_unit' => 'required',
             'dose' => 'required',

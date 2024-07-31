@@ -47,7 +47,7 @@ return new class extends Migration {
             $table->longText('additional_sig')->nullable();
             $table->string('discontinue_date')->nullable();
             $table->text('discontinue_reason')->nullable();
-
+            $table->text('quantity_left')->nullable();
             $table->enum('status', ['inactive', 'active'])->default('active');
             $table->timestamps();
         });
