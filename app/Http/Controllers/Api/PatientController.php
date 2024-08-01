@@ -289,7 +289,7 @@ class PatientController extends BaseController
             'profile_pic' => 'nullable|string',
             'status' => 'nullable|string',
         ]);
-
+        Log::info($request->all());
         $base = new BaseController();
         $checkUnique = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
@@ -347,11 +347,9 @@ class PatientController extends BaseController
                     Log::info('Image Found');
                     $fileData = $request->input('profile_pic');
                     if (preg_match('/^data:(\w+)\/(\w+);base64,/', $fileData, $type)) {
+                        Log::info('64 Match');
                         $fileData = substr($fileData, strpos($fileData, ',') + 1);
                         $fileData = base64_decode($fileData);
-                        if ($fileData === false) {
-                            $filename = "placeholder.jpg";
-                        }
                         $mimeType = strtolower($type[1]);
                         $extension = strtolower($type[2]);
                         $filename = uniqid().'.'.$extension;
@@ -364,14 +362,18 @@ class PatientController extends BaseController
                         $filePath = $directory.'/'.$filename;
                         file_put_contents($filePath, $fileData);
                         $publicPath = asset('uploads/'.$filename);
+                        Log::info($filename);
+                        $patient->profile_pic = $filename;
                     } else {
                         $filename = "placeholder.jpg";
+                        $patient->profile_pic = $filename;
                     }
                 } else {
                     Log::info('Image Not Found');
                     $filename = "placeholder.jpg";
+                    $patient->profile_pic = $filename;
                 }
-                $patient->profile_pic = $filename;
+
                 $patient->save();
                 $recentAdd = patient::find($patient->id);
                 $countPatient = 'sk-'.str_pad($patient->id, 4, '0', STR_PAD_LEFT);

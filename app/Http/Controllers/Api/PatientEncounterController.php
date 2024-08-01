@@ -933,8 +933,8 @@ class PatientEncounterController extends BaseController
                     'section_id' => $section->id,
                     'section_title' => $section->section_title,
                     'section_slug' => $section->section_slug,
-                    'section_text_2' => $section_text_2,
-                    'section_text' => "",
+                    'assessment_notes' => $section_text_2,
+                    'section_text' => $section_text,
                     'id_default' => (int) $section->sorting_order,
                     'fixed_id' => 69,
                 ];

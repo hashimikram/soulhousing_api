@@ -135,6 +135,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/check-encounter-type/{patient_id}/{specialty_id}',
         [PatientEncounterController::class, 'check_patient_encounter']);
     Route::post('/assessment-notes', [AssessmentNoteController::class, 'store']);
+    Route::get('/delete-assessment-note/{id}/{value_id}', [AssessmentNoteController::class, 'destroy']);
+
 
     // ReviewOfSystem CRUD
     Route::post('/add-review-of-system', [ReviewOfSystemController::class, 'store']);

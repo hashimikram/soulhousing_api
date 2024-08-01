@@ -184,6 +184,22 @@
                                                 <div class="form-check form-check-inline form-switch mb-5">
                                                     <input class="form-check-input" type="checkbox" role="switch"
                                                            id="flexSwitchCheckDefault3"
+                                                           name="permissions[]" value="insurance"
+                                                        {{ in_array('insurance', old('permissions', [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="flexSwitchCheckDefault3">Isurance
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline form-switch mb-5">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                           id="flexSwitchCheckDefault3"
+                                                           name="permissions[]" value="contact"
+                                                        {{ in_array('contact', old('permissions', [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="flexSwitchCheckDefault3">Contact
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline form-switch mb-5">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                           id="flexSwitchCheckDefault3"
                                                            name="permissions[]" value="admission"
                                                         {{ in_array('admission', old('permissions', [])) ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="flexSwitchCheckDefault3">Admission
@@ -260,16 +276,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="user_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="bed_mapping_view"
+                                                        {{ in_array('bed_mapping_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="user_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="insurance"
+                                                        {{ in_array('assign_patient', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Assign Patients</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -291,16 +309,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="content_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="demographics"
+                                                        {{ in_array('demographics', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="content_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="update_demographics"
+                                                        {{ in_array('insurance', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Update</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -322,24 +342,27 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="financial_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="insurance"
+                                                        {{ in_array('insurance', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="financial_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="create_insurance"
+                                                        {{ in_array('insurance', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="financial_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="update_insurance"
+                                                        {{ in_array('insurance', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Update</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -361,24 +384,27 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="reporting_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="contact"
+                                                        {{ in_array('contact', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="reporting_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="create_contact"
+                                                        {{ in_array('contact', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="reporting_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="update_contact"
+                                                        {{ in_array('contact', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Update</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -400,24 +426,27 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="payroll_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="admission_view"
+                                                        {{ in_array('admission_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="payroll_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="admission_add"
+                                                        {{ in_array('admission_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="payroll_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="admission_discharge"
+                                                        {{ in_array('admission_discharge', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Discharge Patient</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -439,24 +468,27 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="disputes_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="problem_view"
+                                                        {{ in_array('problem_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="disputes_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="problem_add"
+                                                        {{ in_array('problem_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="disputes_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="problem_edit"
+                                                        {{ in_array('problem_edit', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Update</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -478,16 +510,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="api_controls_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="allergies_view"
+                                                        {{ in_array('allergies_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="api_controls_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="allergies_add"
+                                                        {{ in_array('allergies_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -509,16 +543,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="medication_view"
+                                                        {{ in_array('medication_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="medication_add"
+                                                        {{ in_array('medication_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -540,48 +576,45 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_read">
-                                                    <span class="form-check-label">View</span>
-                                                </label>
-                                                <!--end::Checkbox-->
-                                                <!--begin::Checkbox-->
-                                                <label
-                                                    class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="encounter_add"
+                                                        {{ in_array('encounter_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="encounter_edit"
+                                                        {{ in_array('encounter_edit', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Update</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="encounter_details"
+                                                        {{ in_array('encounter_details', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Details</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="view_pdf_file"
+                                                        {{ in_array('view_pdf_file', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View PDF</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="repository_management_create">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="sign_encounter"
+                                                        {{ in_array('sign_encounter', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Sign Encounter</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -603,24 +636,27 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="document_view"
+                                                        {{ in_array('document_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="document_add"
+                                                        {{ in_array('document_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="document_preview"
+                                                        {{ in_array('document_preview', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Preview File</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -643,16 +679,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="vital_view"
+                                                        {{ in_array('vital_view', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="vital_add"
+                                                        {{ in_array('vital_add', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -675,16 +713,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="view_medical_incident"
+                                                        {{ in_array('view_medical_incident', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="create_medical_incident"
+                                                        {{ in_array('create_medical_incident', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
@@ -707,16 +747,18 @@
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_read">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="view_warning_letter"
+                                                        {{ in_array('view_warning_letter', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">View</span>
                                                 </label>
                                                 <!--end::Checkbox-->
                                                 <!--begin::Checkbox-->
                                                 <label
                                                     class="form-check form-check-sm form-check-custom form-check-solid me-5 me-lg-20">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                           name="database_management_write">
+                                                    <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                           value="create_warning_letter"
+                                                        {{ in_array('create_warning_letter', old('permissions', [])) ? 'checked' : '' }}>
                                                     <span class="form-check-label">Create</span>
                                                 </label>
                                                 <!--end::Checkbox-->
