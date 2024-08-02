@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('floors', FloorController::class);
     Route::get('/mapping/{id}', [FloorController::class, 'mapping'])->name('floors.mapping');
 
-    Route::resource('staff', StaffController::class);
+    Route::resource('sub-admin', StaffController::class);
     Route::get('/maintenance', [TweetController::class, 'admin_index'])->name('maintenance.admin_index');
     Route::get('/tweets/load-more', [TweetController::class, 'loadMore'])->name('tweets.loadMore');
     Route::get('/likes', [LikeController::class, 'getLikes_admin']);

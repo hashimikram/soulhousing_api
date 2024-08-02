@@ -14,7 +14,9 @@
             <!--begin::Card body-->
             <div class="card-body py-4">
                 <!--begin::Form-->
-                <form id="kt_modal_add_role_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#">
+                <form id="kt_modal_add_role_form" class="form fv-plugins-bootstrap5 fv-plugins-framework"
+                      action="{{route('roles.store')}}" method="POST">
+                    @csrf
                     <!--begin::Scroll-->
                     <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_role_scroll"
                     >
@@ -50,7 +52,7 @@
                                         <td>
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-custom form-check-solid me-9">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
                                                        value="1" {{ in_array('1', old('permissions', [])) ? 'checked' : '' }}
                                                 >
                                             </label>
@@ -65,7 +67,7 @@
                                         <td>
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-custom form-check-solid me-9">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
                                                        value="2" {{ in_array('2', old('permissions', [])) ? 'checked' : '' }}
                                                 >
                                             </label>
@@ -80,7 +82,7 @@
                                         <td>
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-custom form-check-solid me-9">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
                                                        value="3" {{ in_array('3', old('permissions', [])) ? 'checked' : '' }}
                                                 >
                                             </label>
@@ -95,7 +97,7 @@
                                         <td>
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-custom form-check-solid me-9">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
                                                        value="4" {{ in_array('4', old('permissions', [])) ? 'checked' : '' }}
                                                 >
                                             </label>
@@ -110,8 +112,23 @@
                                         <td>
                                             <!--begin::Checkbox-->
                                             <label class="form-check form-check-custom form-check-solid me-9">
-                                                <input class="form-check-input" type="checkbox"
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
                                                        value="5" {{ in_array('5', old('permissions', [])) ? 'checked' : '' }}
+                                                >
+                                            </label>
+                                            <!--end::Checkbox-->
+                                        </td>
+                                    </tr>
+                                    <!--end::Table row-->
+                                    <!--begin::Table row-->
+                                    <tr>
+                                        <td class="text-gray-800">Staff Management
+                                        </td>
+                                        <td>
+                                            <!--begin::Checkbox-->
+                                            <label class="form-check form-check-custom form-check-solid me-9">
+                                                <input class="form-check-input" type="checkbox" name="permissions[]"
+                                                       value="5" {{ in_array('6', old('permissions', [])) ? 'checked' : '' }}
                                                 >
                                             </label>
                                             <!--end::Checkbox-->
@@ -800,11 +817,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#kt_modal_add_user_form').on('submit', function (e) {
+            $('#kt_modal_add_role_form').on('submit', function (e) {
                 var isChecked = $('input[name="permissions[]"]:checked').length > 0;
                 if (!isChecked) {
                     e.preventDefault();
-                    $('#permissions-error').show();
+                    alert('Atleast Check One Permission');
                 } else {
                     $('#permissions-error').hide();
                 }

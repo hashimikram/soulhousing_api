@@ -45,7 +45,7 @@ return new class extends Migration {
             $table->foreign('speciality_id')->references('id')->on('list_options')->onDelete('cascade');
 
             // Additional Details
-            $table->json('facilities')->nullable();
+            $table->text('facilities')->nullable();
             $table->longText('image')->nullable();
 
             // Status & Audit Information

@@ -392,63 +392,6 @@
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
                                     <label
-                                        class="required fw-semibold fs-6 mb-2"
-                                    >Speciality</label
-                                    >
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="speciality_id"
-                                            required>
-                                        <option>Select Speciality</option>
-                                        @foreach(\App\Models\ListOption::where('list_id', 'Specialty')->get() as $speciality_details)
-                                            <option
-                                                value="{{ $speciality_details->id }}" {{ old('specialty_id') == $speciality_details->id ? 'selected' : '' }}>
-                                                {{ $speciality_details->title }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('speciality_id')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="email" data-validator="notEmpty">{{$message}}</div>
-                                    </div>
-                                    @enderror
-                                    <!--end::Input-->
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <!--begin::Label-->
-                                    <label
-                                        class="required fw-semibold fs-6 mb-2"
-                                    >Facilities</label
-                                    >
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="facilities"
-                                            required>
-                                        <option value="">Select Facilities</option>
-                                        @foreach(\App\Models\Facility::all() as $data)
-                                            <option value="{{$data->id}}">{{$data->address}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('gender')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="email" data-validator="notEmpty">{{$message}}</div>
-                                    </div>
-                                    @enderror
-                                    <!--end::Input-->
-                                </div>
-                            </div>
-                        </div>
-                        <!--end::Input group-->
-
-
-                        <!--begin::Input group-->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <!--begin::Label-->
-                                    <label
                                         class=" fw-semibold fs-6 mb-2"
                                     >Country</label
                                     >
@@ -496,6 +439,86 @@
                                         </option>
                                     </select>
                                     @error('user_type')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{$message}}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Input group-->
+
+                        <!--begin::Input group-->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label
+                                        class="required fw-semibold fs-6 mb-2"
+                                    >Speciality</label
+                                    >
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="speciality_id"
+                                            required>
+                                        <option>Select Speciality</option>
+                                        @foreach(\App\Models\ListOption::where('list_id', 'Specialty')->get() as $speciality_details)
+                                            <option
+                                                value="{{ $speciality_details->id }}" {{ old('specialty_id') == $speciality_details->id ? 'selected' : '' }}>
+                                                {{ $speciality_details->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('speciality_id')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{$message}}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label
+                                        class="required fw-semibold fs-6 mb-2"
+                                    >Facilities</label
+                                    >
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="facilities"
+                                            required>
+                                        <option value="">Select Facilities</option>
+                                        @foreach(\App\Models\Facility::all() as $data)
+                                            <option value="{{$data->id}}">{{$data->address}}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('gender')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{$message}}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label
+                                        class="fw-semibold fs-6 mb-2"
+                                    >Role</label
+                                    >
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="role_id"
+                                    >
+                                        <option value="">Select Role</option>
+                                        @foreach(\App\Models\Role::all() as $data)
+                                            <option value="{{$data->id}}">{{$data->role_name}}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('role_id')
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="email" data-validator="notEmpty">{{$message}}</div>
                                     </div>
