@@ -194,45 +194,49 @@ class FloorController extends BaseController
             $status = 'vacant';
             $base = new BaseController();
             try {
-                $rooms = Room::with([
-                    'beds' => function ($query) use ($status) {
-                        $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_no',
-                            'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
-                            ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
-                    }
-                ])->get();
+                $floors = floor::where('provider_id', auth()->user()->id)->get();
+                foreach ($floors as $details) {
+                    $rooms = Room::where('floor_id', $details->id)->with([
+                        'beds' => function ($query) use ($status) {
+                            $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_no',
+                                'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
+                                ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
+                        }
+                    ])->get();
 
-                $response = [];
+                    $response = [];
 
-                foreach ($rooms as $room) {
-                    $floor = floor::where('id', $room->floor_id)->first();
-                    foreach ($room->beds as $bed) {
-                        if ($bed->status == 'vacant') {
-                            $bedData = [
-                                'id' => $bed->id,
-                                'status' => $bed->status,
-                                'bed_no' => $bed->bed_no,
-                                'room_id' => $bed->room_id,
-                                'patient_id' => $bed->patient_id,
-                                'occupied_from' => $bed->occupied_from,
-                                'patient' => $bed->patient ? [
-                                    'id' => $bed->patient->id,
-                                    'first_name' => $bed->patient->first_name,
-                                    'last_name' => $bed->patient->last_name,
-                                    'gender' => $bed->patient->gender,
-                                    'date_of_birth' => $bed->patient->date_of_birth,
-                                    'mrn_no' => $bed->patient->mrn_no,
-                                ] : null,
-                                'floor_name' => $floor->floor_name,
-                                'room_name' => $room->room_name,
-                                'created_at' => $room->created_at,
-                                'updated_at' => $room->updated_at,
-                            ];
+                    foreach ($rooms as $room) {
+                        $floor = floor::where('id', $room->floor_id)->first();
+                        foreach ($room->beds as $bed) {
+                            if ($bed->status == 'vacant') {
+                                $bedData = [
+                                    'id' => $bed->id,
+                                    'status' => $bed->status,
+                                    'bed_no' => $bed->bed_no,
+                                    'room_id' => $bed->room_id,
+                                    'patient_id' => $bed->patient_id,
+                                    'occupied_from' => $bed->occupied_from,
+                                    'patient' => $bed->patient ? [
+                                        'id' => $bed->patient->id,
+                                        'first_name' => $bed->patient->first_name,
+                                        'last_name' => $bed->patient->last_name,
+                                        'gender' => $bed->patient->gender,
+                                        'date_of_birth' => $bed->patient->date_of_birth,
+                                        'mrn_no' => $bed->patient->mrn_no,
+                                    ] : null,
+                                    'floor_name' => $floor->floor_name,
+                                    'room_name' => $room->room_name,
+                                    'created_at' => $room->created_at,
+                                    'updated_at' => $room->updated_at,
+                                ];
 
-                            $response[] = $bedData;
+                                $response[] = $bedData;
+                            }
                         }
                     }
                 }
+
 
                 return $base->sendResponse($response, 'Beds with status "'.$status.'" retrieved successfully');
             } catch (\Exception $e) {

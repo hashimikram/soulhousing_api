@@ -12,14 +12,14 @@
         <div class="card">
             <div class="card-body bg-transparent py-4">
                 <div class="accordion" id="accordionExample">
-                    @foreach ($floor->rooms as $index => $room)
+                    @foreach ($response['floor']['rooms'] as $index => $room)
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading{{ $index }}">
                                 <button class="accordion-button {{ $index == 0 ? '' : 'collapsed' }}" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#collapse{{ $index }}"
                                         aria-expanded="{{ $index == 0 ? 'true' : 'false' }}"
                                         aria-controls="collapse{{ $index }}">
-                                    {{ $room->room_name }}
+                                    {{ $room['room_name'] }}
                                 </button>
                             </h2>
                             <div id="collapse{{ $index }}"
@@ -27,40 +27,41 @@
                                  aria-labelledby="heading{{ $index }}" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row">
-                                        @foreach ($room->beds as $bed)
+                                        @foreach ($room['beds'] as $bed)
                                             <div class="col-md-4">
-                                                <label>{{ $bed->bed_title }}</label>
-                                                @if ($bed->patient)
+                                                <label>{{ $bed['bed_title'] }}</label>
+                                                @if ($bed['patient'])
                                                     <div class="card-body">
                                                         <p class="card-text">
                                                         <div>
-                                                            <strong>{{ $bed->patient->first_name }} {{ $bed->patient->last_name }}</strong>
+                                                            <strong>{{ $bed['patient']['first_name'] }} {{ $bed['patient']['last_name'] }}</strong>
                                                         </div>
-                                                        <div><strong>{{ $bed->patient->gender }}
-                                                                ,</strong> {{ $bed->patient->date_of_birth }}</div>
-                                                        <div><strong>MWRN:</strong> {{ $bed->patient->mrn_no }}</div>
+                                                        <div><strong>{{ $bed['patient']['gender'] }}
+                                                                ,</strong> {{ $bed['patient']['date_of_birth'] }}</div>
+                                                        <div><strong>MWRN:</strong> {{ $bed['patient']['mrn_no'] }}
+                                                        </div>
                                                         </p>
                                                     </div>
                                                 @else
                                                     <div class="input-group mb-5">
                                                         <input type="text" class="form-control bed-search"
-                                                               data-bed-id="{{ $bed->id }}"
+                                                               data-bed-id="{{ $bed['id'] }}"
                                                                placeholder="Recipient's username"
                                                                aria-label="Recipient's username"
                                                                aria-describedby="basic-addon2"/>
                                                         <span class="input-group-text" id="basic-addon2">
-                                        <span class="svg-icon svg-icon-1">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546"
-                                                      height="2" rx="1" transform="rotate(45 17.0365 15.1223)"
-                                                      fill="currentColor"></rect>
-                                                <path
-                                                    d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                                    fill="currentColor"></path>
-                                            </svg>
+                                            <span class="svg-icon svg-icon-1">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546"
+                                                          height="2" rx="1" transform="rotate(45 17.0365 15.1223)"
+                                                          fill="currentColor"></rect>
+                                                    <path
+                                                        d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                                        fill="currentColor"></path>
+                                                </svg>
+                                            </span>
                                         </span>
-                                    </span>
                                                     </div>
                                                     <div class="dropdown">
                                                         <div class="dropdown-menu"

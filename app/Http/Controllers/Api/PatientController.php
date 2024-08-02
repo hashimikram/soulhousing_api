@@ -476,12 +476,16 @@ class PatientController extends BaseController
                 $patient->other_contact_cell = $request->other_contact_cell;
                 $patient->relationship = $request->relationship;
                 $patient->medical_dependency = $request->medical_dependency;
+                $patient->address = $request->contact_address;
                 $patient->city = $request->city;
                 $patient->state = $request->state;
                 $patient->language = $request->language;
                 $patient->phone_no = $request->phone_no;
                 $patient->zip_code = $request->zip_code;
                 $patient->country = $request->country;
+                $patient->auth = $request->auth;
+                $patient->npp = $request->npi;
+                $patient->speciality_id = auth()->user()->details->speciality_id ?? null;
                 // Check if media is provided
                 if ($request->input('profile_pic')) {
                     Log::info('Image Found');
@@ -628,8 +632,11 @@ class PatientController extends BaseController
                 $patient->other_contact_cell = $request->other_contact_cell;
                 $patient->relationship = $request->relationship;
                 $patient->medical_dependency = $request->medical_dependency;
+                $patient->address = $request->contact_address;
                 $patient->city = $request->city;
                 $patient->state = $request->state;
+                $patient->auth = $request->auth;
+                $patient->npp = $request->npi;
                 $patient->language = $request->language;
                 $patient->phone_no = $request->phone_no;
                 $patient->zip_code = $request->zip_code;

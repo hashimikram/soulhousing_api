@@ -31,6 +31,8 @@ return new class extends Migration {
             $table->text('left_touch')->nullable();
             $table->text('right_mono')->nullable();
             $table->text('left_mono')->nullable();
+            $table->text('other_factor')->nullable();
+            $table->text('patient_education')->nullable();
             $table->timestamps();
         });
     }

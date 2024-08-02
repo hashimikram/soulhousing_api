@@ -29,7 +29,7 @@
                     <span>{{ $data->email }}</span>
                 </div>
             </td>
-            <td>{{ formatDate($data->date_of_birth) }}
+            <td>{{ date('m/d/Y', strtotime($data->date_of_birth)) }}
                 <div class="badge badge-success fw-bold">
                     ({{ \Carbon\Carbon::parse($data->date_of_birth)->age }})
                 </div>

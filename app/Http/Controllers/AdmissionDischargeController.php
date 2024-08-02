@@ -14,7 +14,7 @@ class AdmissionDischargeController extends Controller
      */
     public function index($patient_id)
     {
-        $data = AdmissionDischarge::join('facilities', 'facilities.id', '=',
+        $data = AdmissionDischarge::leftjoin('facilities', 'facilities.id', '=',
             'admission_discharges.admission_location')->select('facilities.address as location',
             'admission_discharges.*')->where('admission_discharges.patient_id',
             $patient_id)->where('admission_discharges.status', '1')->get();

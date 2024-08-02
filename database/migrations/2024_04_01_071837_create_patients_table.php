@@ -33,6 +33,7 @@ return new class extends Migration {
             $table->text('fin_class_name')->nullable();
             $table->text('doctor_name')->nullable();
             $table->string('auth')->nullable();
+            $table->string('npp')->nullable();
             $table->string('account_no')->nullable();
             $table->string('admit_date')->nullable();
             $table->string('disch_date')->nullable();
@@ -53,6 +54,7 @@ return new class extends Migration {
             $table->text('other_contact_cell')->nullable();
             $table->text('relationship')->nullable();
             $table->text('medical_dependency')->nullable();
+            $table->text('address')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('language')->nullable();
@@ -60,6 +62,7 @@ return new class extends Migration {
             $table->string('zip_code')->nullable();
             $table->string('country')->nullable();
             $table->longText('profile_pic')->nullable();
+            $table->string('speciality_id')->nullable();
             $table->string('status');
             $table->timestamps();
         });
