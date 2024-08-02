@@ -43,7 +43,7 @@
     <div id="kt_app_content_container" class="app-container container-xxl">
         <div class="card">
             <div class="card-body py-4">
-                <form id="kt_modal_add_user_form" class="form" action="{{ route('floors.store') }}" method="POST"
+                <form id="floor-form" class="form kt_add_data_modal" action="{{ route('floors.store') }}" method="POST"
                       enctype="multipart/form-data">
                     @csrf
 
@@ -56,22 +56,6 @@
                          data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header"
                          data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <label class="required form-label">Select Provider</label>
-                                    <select class="form-select" name="provider_id" data-control="select2" required>
-                                        <option>Select Provider</option>
-                                        @foreach($providers as $provider)
-                                            <option value="{{$provider->id}}">{{$provider->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('provider_id')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="provider_id" data-validator="notEmpty">{{ $message }}</div>
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required form-label">Select Facility</label>
@@ -112,26 +96,27 @@
         document.addEventListener('DOMContentLoaded', function () {
             const floorContainer = document.getElementById('floor-container');
             const addFloorBtn = document.getElementById('add-floor-btn');
+            const form = document.getElementById('floor-form');
 
             addFloorBtn.addEventListener('click', function () {
                 const floorIndex = document.querySelectorAll('.floor-box').length;
                 const floorBox = document.createElement('div');
                 floorBox.className = 'floor-box';
                 floorBox.innerHTML = `
-                    <div class="input-container mb-5">
-                        <input type="text" class="form-control floor-title" required name="floors[${floorIndex}][title]" placeholder="Enter Floor title">
-                        <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-floor-btn">
-                            <span class="svg-icon svg-icon-1">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
-                                    <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-primary add-room-btn">Add Room</button>
-                    <div class="rooms-container mt-5"></div>
-                `;
+                <div class="input-container mb-5">
+                    <input type="text" class="form-control floor-title" required name="floors[${floorIndex}][title]" placeholder="Enter Floor title">
+                    <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-floor-btn">
+                        <span class="svg-icon svg-icon-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+                                <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-primary add-room-btn">Add Room</button>
+                <div class="rooms-container mt-5"></div>
+            `;
                 floorContainer.appendChild(floorBox);
             });
 
@@ -145,20 +130,20 @@
                     const roomBox = document.createElement('div');
                     roomBox.className = 'room-box';
                     roomBox.innerHTML = `
-                        <div class="input-container mb-5">
-                            <input type="text" class="form-control room-title"  required name="floors[${floorIndex}][rooms][${roomIndex}][title]" placeholder="Enter Room title">
-                            <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-room-btn">
-                                <span class="svg-icon svg-icon-1">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
-                                        <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                        <button type="button" class="btn btn-primary add-bed-btn">Add Bed</button>
-                        <div class="beds-container mt-5"></div>
-                    `;
+                    <div class="input-container mb-5">
+                        <input type="text" class="form-control room-title"  required name="floors[${floorIndex}][rooms][${roomIndex}][title]" placeholder="Enter Room title">
+                        <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-room-btn">
+                            <span class="svg-icon svg-icon-1">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+                                    <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-primary add-bed-btn">Add Bed</button>
+                    <div class="beds-container mt-5"></div>
+                `;
 
                     roomsContainer.appendChild(roomBox);
                 }
@@ -174,18 +159,18 @@
                     const bedField = document.createElement('div');
                     bedField.className = 'form-group bed-box';
                     bedField.innerHTML = `
-                        <div class="input-container mb-5">
-                            <input type="text" class="form-control bed-title" required name="floors[${floorIndex}][rooms][${roomIndex}][beds][${bedIndex}][title]" placeholder="Enter Bed title">
-                            <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-bed-btn">
-                                <span class="svg-icon svg-icon-1">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
-                                        <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    `;
+                    <div class="input-container mb-5">
+                        <input type="text" class="form-control bed-title" required name="floors[${floorIndex}][rooms][${roomIndex}][beds][${bedIndex}][title]" placeholder="Enter Bed title">
+                        <button type="button" class="btn btn-sm btn-icon btn-light-danger delete-bed-btn">
+                            <span class="svg-icon svg-icon-1">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+                                    <rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                `;
 
                     bedsContainer.appendChild(bedField);
                 }
@@ -203,6 +188,16 @@
                 if (e.target && e.target.closest('.delete-bed-btn')) {
                     const bedField = e.target.closest('.form-group');
                     bedField.remove();
+                }
+            });
+
+            form.addEventListener('submit', function (e) {
+                if (document.querySelectorAll('.floor-box').length === 0) {
+                    e.preventDefault();
+                    alert('At least one floor is required.');
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    submitButton.removeAttribute('disabled');
+                    submitButton.innerHTML = 'Submit';
                 }
             });
         });

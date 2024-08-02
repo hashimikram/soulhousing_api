@@ -64,8 +64,8 @@
             >
                 <!--begin::Form-->
                 <form
-                    id="kt_modal_add_user_form"
-                    class="form"
+                    id="kt_add_data_modal"
+                    class="form kt_add_data_modal"
                     action="{{route('facility.update',$data->id)}}" method="POST" enctype="multipart/form-data"
                 >
                     @csrf
@@ -83,7 +83,7 @@
                     >
                         <!--begin::Input group-->
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
                                     <label
@@ -94,12 +94,12 @@
                                     <!--begin::Input-->
                                     <input
                                         type="text"
-                                        name="text"
+                                        name="name"
                                         class="form-control form-control-solid mb-3 mb-lg-0"
                                         placeholder="Nine Leaves" required
-                                        value="{{$data->address, old('text')}}"
+                                        value="{{$data->name, old('name')}}"
                                     />
-                                    @error('text')
+                                    @error('name')
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="email" data-validator="notEmpty">{{$message}}</div>
                                     </div>
@@ -107,7 +107,84 @@
                                     <!--end::Input-->
                                 </div>
                             </div>
-
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class="fw-semibold fs-6 mb-2">Address</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="address"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Address"
+                                           value="{{$data->address, old('address')}}"/>
+                                    @error('address')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class="fw-semibold fs-6 mb-2">Contact Information</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="contact_information"
+                                           class="form-control form-control-solid mb-3 mb-lg-0"
+                                           placeholder="Contact Information"
+                                           value="{{$data->contact_information, old('contact_information')}}"/>
+                                    @error('contact_information')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">Facility Type</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-select" name="facility_type" required>
+                                        <option>Select Facility Type</option>
+                                        <option @if($data->facility_type == 'Male') selected @endif value="Male">Male
+                                        </option>
+                                        <option @if($data->facility_type == 'Female') selected @endif  value="Female">
+                                            Female
+                                        </option>
+                                        <option @if($data->facility_type == 'Co-Ed Facility') selected
+                                                @endif  value="Co-Ed Facility">Co-Ed Facility
+                                        </option>
+                                    </select>
+                                    @error('facility_type')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class="fw-semibold fs-6 mb-2">Facility Capacity</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="facility_capacity"
+                                           class="form-control form-control-solid mb-3 mb-lg-0"
+                                           placeholder="Facility Capacity"
+                                           value="{{$data->facility_capacity, old('facility_capacity')}}"/>
+                                    @error('facility_capacity')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
                         </div>
                         <!--end::Input group-->
 
@@ -124,17 +201,8 @@
                         </button>
                         <button
                             type="submit"
-                            class="btn btn-primary"
-                        >
-                                      <span class="indicator-label"
-                                      >Submit</span
-                                      >
-                            <span class="indicator-progress"
-                            >Please wait...
-                                        <span
-                                            class="spinner-border spinner-border-sm align-middle ms-2"
-                                        ></span
-                                        ></span>
+                            class="btn btn-primary">
+                            Submit
                         </button>
                     </div>
                     <!--end::Actions-->

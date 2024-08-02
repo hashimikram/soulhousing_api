@@ -44,7 +44,7 @@
     <div id="kt_app_content_container" class="app-container container-xxl">
         <div class="card">
             <div class="card-body py-4">
-                <form id="kt_modal_edit_user_form" class="form" action="{{ route('floors.update', $floor->id) }}"
+                <form id="" class="form kt_add_data_modal" action="{{ route('floors.update', $floor->id) }}"
                       method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -58,20 +58,6 @@
                          data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_edit_user_header"
                          data-kt-scroll-wrappers="#kt_modal_edit_user_scroll" data-kt-scroll-offset="300px">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <label class="required form-label">Select Provider</label>
-                                    <select class="form-select" name="provider_id" data-control="select2" required
-                                            disabled>
-                                        @foreach($providers as $provider)
-                                            <option
-                                                value="{{ $provider->id }}" {{ $floor->provider_id == $provider->id ? 'selected' : '' }}>
-                                                {{ $provider->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required form-label">Select Facility</label>

@@ -141,7 +141,9 @@
                                 />
                             </div>
                         </th>
+                        <th class="min-w-125px">Name</th>
                         <th class="min-w-125px">Address</th>
+                        <th class="min-w-125px">Facility Type</th>
                         <th class="min-w-125px">Created Date</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
@@ -167,7 +169,13 @@
                             </td>
                             <!--end::Checkbox-->
                             <!--begin::Role=-->
+                            <td>{{ $data->name }}</td>
+                            <!--end::Role=-->
+                            <!--begin::Role=-->
                             <td>{{ $data->address }}</td>
+                            <!--end::Role=-->
+                            <!--begin::Role=-->
+                            <td>{{ $data->facility_type }}</td>
                             <!--end::Role=-->
                             <!--begin::Joined-->
                             <td>{{ formatDate($data->created_at) }}</td>
@@ -200,7 +208,7 @@
                                         <div class="menu-item px-3">
                                             <button type="button" data-bs-toggle="modal"
                                                     data-bs-target="#kt_modal_edit_user_header{{$data->id}}"
-                                                    class="menu-link px-3">Edit
+                                                    class="menu-link px-3 btn">Edit
                                             </button>
 
                                         </div>

@@ -341,8 +341,12 @@ class PatientController extends BaseController
 
     public function search_admin(Request $request)
     {
-        $query = $request->get('query');
-        $patients = patient::where('first_name', 'LIKE', "%{$query}%")->get();
+        $search_text = $request->get('query');
+        $patients = patient::where(function ($query) use ($search_text) {
+            $query->where('patients.first_name', 'LIKE', '%'.$search_text.'%')
+                ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
+                ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
+        })->get();
 
         return response()->json($patients);
     }

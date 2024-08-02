@@ -907,7 +907,12 @@ class PatientEncounterController extends BaseController
                 );
             }
 
+            if ($check_speciality->option_id == 'wound') {
+                $section_text = str_replace('-', "\n", $section_text);
+            }
+
             if ($section['section_slug'] == 'wound_evaluation') {
+
                 $wound_details_array = [];
                 if ($wound_details) {
                     foreach ($wound_details as $detail) {
@@ -917,7 +922,6 @@ class PatientEncounterController extends BaseController
                         $wound_details_array[] = $detail_array;
                     }
                 }
-
                 $formattedData[] = [
                     'section_id' => $section->id,
                     'section_title' => $section->section_title,

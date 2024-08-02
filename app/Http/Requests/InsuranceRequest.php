@@ -19,11 +19,11 @@ class InsuranceRequest extends FormRequest
     {
         return [
             'patient_id' => 'required|exists:patients,id',
-            'group_name' => 'required',
-            'policy_no' => 'required',
-            'policy_holder' => 'required',
-            'ins_phone' => 'required',
-            'policy' => 'required',
+            'group_name' => 'nullable',
+            'policy_no' => 'nullable',
+            'policy_holder' => 'nullable',
+            'ins_phone' => 'nullable',
+            'policy' => 'nullable',
             'age' => 'nullable',
             'policy_holder_dob' => 'nullable|date',
             'zip_code' => 'nullable',

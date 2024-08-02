@@ -132,11 +132,13 @@
                                 />
                             </div>
                         </th>
+                        <th class="min-w-125px">Facility Name</th>
                         <th class="min-w-125px">Floor Name</th>
                         <th class="min-w-125px">Total Rooms</th>
                         <th class="min-w-125px">Total Beds Count</th>
                         <th class="min-w-125px">Occupied Beds Count</th>
                         <th class="min-w-125px">Vacant Beds Count</th>
+                        <th class="min-w-125px">Full Info</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
                     <!--end::Table row-->
@@ -154,6 +156,7 @@
                                 </div>
                             </td>
                             <!--end::Checkbox-->
+                            <td>{{ $floorData['facility_name'] }}</td>
                             <td>{{ $floorData['floor_name'] }}</td>
                             <td><span
                                     class="badge py-3 px-4 fs-7 badge-light-primary">{{ $floorData['total_rooms_count'] }}</span>
@@ -167,13 +170,21 @@
                             <td><span
                                     class="badge py-3 px-4 fs-7 badge-light-success">{{ $floorData['vacant_beds_count'] }}</span>
                             </td>
+                            <td>
+                                @foreach ($floorData['room_details'] as $roomDetail)
+                                    <p>There are {{ $roomDetail['total_beds'] }} beds in {{ $roomDetail['room_name'] }}:
+                                        {{ $roomDetail['occupied_beds'] }} occupied,
+                                        {{ $roomDetail['pending_beds'] }} pending,
+                                        {{ $roomDetail['vacant_beds'] }} vacant.
+                                    </p>
+                                @endforeach
+                            </td>
                             <!--begin::Action=-->
                             <td class="text-end">
                                 <div class="ms-2">
                                     <button type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary"
                                             data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                        <!--begin::Svg Icon | path: icons/duotune/general/gen052.svg-->
-                                        <span class="svg-icon svg-icon-5 m-0">
+                    <span class="svg-icon svg-icon-5 m-0">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <rect x="10" y="10" width="4" height="4" rx="2" fill="currentColor"></rect>
@@ -181,32 +192,24 @@
                             <rect x="3" y="10" width="4" height="4" rx="2" fill="currentColor"></rect>
                         </svg>
                     </span>
-                                        <!--end::Svg Icon-->
                                     </button>
-                                    <!--begin::Menu-->
                                     <div
                                         class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-150px py-4"
                                         data-kt-menu="true" style="">
-                                        <!--begin::Menu item-->
                                         <div class="menu-item px-3">
-                                            <a href="{{route('floors.mapping',$floorData['id'])}}"
+                                            <a href="{{ route('floors.mapping', $floorData['id']) }}"
                                                class="menu-link px-3">Mapping</a>
                                         </div>
-                                        <!--end::Menu item-->
-                                        <!--begin::Menu item-->
                                         <div class="menu-item px-3">
-                                            <a href="{{route('floors.edit',$floorData['id'])}}" class="menu-link px-3">Edit</a>
+                                            <a href="{{ route('floors.edit', $floorData['id']) }}"
+                                               class="menu-link px-3">Edit</a>
                                         </div>
-                                        <!--end::Menu item-->
-                                        <!--begin::Menu item-->
                                         <div class="menu-item px-3">
                                             <a href="#" class="menu-link text-danger px-3 delete-button"
                                                data-id="{{ $floorData['id'] }}"
                                                data-kt-filemanager-table-filter="delete_row">Delete</a>
                                         </div>
-                                        <!--end::Menu item-->
                                     </div>
-                                    <!--end::Menu-->
                                 </div>
                             </td>
                             <!--end::Action=-->

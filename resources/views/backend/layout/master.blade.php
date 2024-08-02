@@ -35,6 +35,15 @@
     <link href="{{asset('backend/assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css"/>
     <!--end::Global Stylesheets Bundle-->
     <style>
+        [data-kt-app-layout=dark-sidebar] .app-sidebar .menu .menu-item .menu-link .menu-title {
+            color: #000;
+            border-bottom: 1px solid;
+        }
+
+        .app-sidebar-menu {
+            background-color: #307bc4;
+        }
+
         /* Basic button styling */
         #load-more-button {
             position: relative;
@@ -230,6 +239,10 @@
     toastr.error("Error", "{{Session::get('error')}}");
     @endif
 
+    $('.kt_add_data_modal').submit(function () {
+        $('.kt_add_data_modal').find('button[type="submit"]').attr('disabled', true);
+        $('.kt_add_data_modal').find('button[type="submit"]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+    });
 </script>
 @yield('custom_js')
 </body>

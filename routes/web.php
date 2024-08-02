@@ -4,7 +4,6 @@ use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FacilityController;
-use App\Http\Controllers\FloorController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\StaffController;
@@ -35,8 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('user', UserController::class);
     Route::resource('facility', FacilityController::class);
     Route::resource('admin', AdminProfileController::class);
-    Route::resource('floors', FloorController::class);
-    Route::get('/mapping/{id}', [FloorController::class, 'mapping'])->name('floors.mapping');
 
     Route::resource('sub-admin', StaffController::class);
     Route::get('/maintenance', [TweetController::class, 'admin_index'])->name('maintenance.admin_index');

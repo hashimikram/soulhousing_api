@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\FloorController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -10,6 +11,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/patient/store', [PatientController::class, 'store'])->name('patients.store');
     Route::get('/fetch-patients/{tabId}', [PatientController::class, 'fetchPatients'])->name('patients.fetch');
     Route::resource('roles', RoleController::class);
+    Route::resource('floors', FloorController::class);
+    Route::get('/mapping/{id}', [FloorController::class, 'mapping'])->name('floors.mapping');
+
 });
 
 require __DIR__.'/auth.php';

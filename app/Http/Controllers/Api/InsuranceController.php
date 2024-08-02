@@ -46,13 +46,17 @@ class InsuranceController extends BaseController
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $base = new BaseController();
+
         DB::beginTransaction();
         try {
             $validatedData['provider_id'] = $user->id;
             $insurance = Insurance::create($validatedData);
             DB::commit();
-            return $base->sendResponse($insurance, 'Insurance created successfully');
+            return response()->json([
+                'success' => true,
+                'data' => $insurance,
+                'message' => 'Insurance created successfully',
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
