@@ -145,10 +145,11 @@ class RegisteredUserController extends Controller
     public function login_user_details()
     {
         $user = User::join('user_details', 'user_details.user_id', '=', 'users.id')
-            ->select('users.id as userId', 'users.name as first_name', 'users.email', 'users.email_verified_at',
+            ->select('users.id as userId', 'users.name as provider_name', 'users.email', 'users.email_verified_at',
                 'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
             ->where('user_details.user_id', auth()->user()->id)->first();
         $user->image = env('APP_URL').'public/uploads/'.$user->image;
+        $user->provider_full_name = $user->title.' '.$user->last_name;
         if ($user != null) {
             return response()->json($user);
         } else {

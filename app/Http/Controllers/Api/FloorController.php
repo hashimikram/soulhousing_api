@@ -159,7 +159,7 @@ class FloorController extends BaseController
                             'gender' => $bed->patient->gender,
                             'date_of_birth' => $bed->patient->date_of_birth,
                             'mrn_no' => $bed->patient->mrn_no,
-                        ] : null,
+                        ] : [],
                     ];
 
 

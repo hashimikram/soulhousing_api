@@ -50,6 +50,7 @@ class StaffController extends Controller
         $user_detail = new UserDetail();
         $user_detail->user_id = $user->id;
         $user_detail->home_phone = $request->phone;
+        $user_detail->image = 'placeholder.jpg';
         $user_detail->save();
 
         $staff = new RoleUser();

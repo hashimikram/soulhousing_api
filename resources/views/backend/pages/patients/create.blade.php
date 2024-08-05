@@ -7,7 +7,7 @@
 @section('patients_a', 'active')
 @section('page_title', 'Create Patient')
 @section('content')
-    <form id="kt_modal_add_user_form" class="form" action="{{route('patients.store')}}" method="POST"
+    <form id="kt_modal_add_user_form" class="form" action="{{ route('patients.store') }}" method="POST"
           enctype="multipart/form-data">
         @csrf
         <div id="kt_app_content_container" class="app-container">
@@ -99,9 +99,9 @@
                                 <!--begin::Input-->
                                 <select class="form-control form-control-solid mb-3 mb-lg-0" name="provider_id">
                                     <option value="">Select Provider</option>
-                                    @foreach($providers as $details)
-                                        <option
-                                            value="{{$details->id}}" {{ old('provider_id') == $details->id ? 'selected' : '' }}>{{$details->name}}
+                                    @foreach ($providers as $details)
+                                        <option value="{{ $details->id }}"
+                                            {{ old('provider_id') == $details->id ? 'selected' : '' }}>{{ $details->name }}
                                         </option>
                                     @endforeach
 
@@ -239,12 +239,12 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Medical Number</label>
+                                    <label class="required fw-semibold fs-6 mb-2">Medical ID</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="medical_number"
                                            class="form-control form-control-solid mb-3 mb-lg-0" placeholder="123456789"
-                                           value="{{ old('medical_number') }}">
+                                           value="{{ old('medical_number') }}" required>
                                     @error('medical_number')
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="medical_number" data-validator="notEmpty">{{ $message }}
@@ -342,7 +342,7 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class="required fw-semibold fs-6 mb-2">Marital Status</label>
+                                    <label class="fw-semibold fs-6 mb-2">Marital Status</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <select class="required form-control form-control-solid mb-3 mb-lg-0"
@@ -378,9 +378,18 @@
                                     <label class=" fw-semibold fs-6 mb-2">Referral Source 1</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <input type="text" name="referral_source_1"
-                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Source 1"
-                                           value="{{ old('referral_source_1') }}"/>
+                                    <select class="required form-control form-control-solid mb-3 mb-lg-0"
+                                            name="referral_source_1">
+                                        <option>Select Referral Source 1</option>
+                                        <option value="Married"
+                                            {{ old('referral_source_1') == 'Hospital' ? 'selected' : '' }}>
+                                            Hospital
+                                        </option>
+                                        <option
+                                            value="Widow" {{ old('referral_source_1') == 'Case Manager' ? 'selected' : '' }}>
+                                            Case Manager
+                                        </option>
+                                    </select>
                                     @error('referral_source_1')
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="referral_source_1" data-validator="notEmpty">{{ $message }}
@@ -416,7 +425,7 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Financial Class</label>
+                                    <label class=" fw-semibold fs-6 mb-2">Current Insurance</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="financial_class"
@@ -439,7 +448,7 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Financial Class Name</label>
+                                    <label class=" fw-semibold fs-6 mb-2">Current Insurance No</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="financial_class_name"
@@ -479,11 +488,11 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">NPP</label>
+                                    <label class=" fw-semibold fs-6 mb-2">NPI</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
                                     <input type="text" name="npp"
-                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="NPP Value"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="NPI Value"
                                            value="{{ old('npp') }}"/>
                                     @error('npp')
                                     <div class="fv-plugins-message-container invalid-feedback">
@@ -568,26 +577,7 @@
                                     <!--end::Input-->
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Nursing Station</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="text" name="nursing_station"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="Nursing Station"
-                                           value="{{ old('nursing_station') }}"/>
-                                    @error('nursing_station')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="occupation" data-validator="notEmpty">{{ $message }}</div>
-                                    </div>
-                                    @enderror
-                                    <!--end::Input-->
-                                </div>
-                            </div>
                         </div>
-
 
                         <!--begin::Input group-->
                         <div class="row">
@@ -674,15 +664,32 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Country</label>
+                                    <label class=" fw-semibold fs-6 mb-2">Address</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <input type="text" name="country"
-                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Country"
-                                           value="{{ old('country') }}"/>
-                                    @error('country')
+                                    <input type="text" name="address"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Address"
+                                           value="{{ old('address') }}"/>
+                                    @error('address')
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="country" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class=" fw-semibold fs-6 mb-2">City</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="city"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="City"
+                                           value="{{ old('city') }}"/>
+                                    @error('city')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="city" data-validator="notEmpty">{{ $message }}</div>
                                     </div>
                                     @enderror
                                     <!--end::Input-->
@@ -764,28 +771,6 @@
                                     <!--end::Input-->
                                 </div>
                             </div>
-                        </div>
-                        <!--end::Input group-->
-
-                        <!--begin::Input group-->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">City</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="text" name="city"
-                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="City"
-                                           value="{{ old('city') }}"/>
-                                    @error('city')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="city" data-validator="notEmpty">{{ $message }}</div>
-                                    </div>
-                                    @enderror
-                                    <!--end::Input-->
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
@@ -803,6 +788,30 @@
                                     <!--end::Input-->
                                 </div>
                             </div>
+
+                        </div>
+                        <!--end::Input group-->
+
+                        <!--begin::Input group-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class=" fw-semibold fs-6 mb-2">Country</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text" name="country"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Country"
+                                           value="{{ old('country') }}"/>
+                                    @error('country')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="country" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
@@ -1056,7 +1065,8 @@
                                            value="{{ old('relationship') }}"/>
                                     @error('relationship')
                                     <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="relationship" data-validator="notEmpty">{{ $message }}</div>
+                                        <div data-field="relationship" data-validator="notEmpty">{{ $message }}
+                                        </div>
                                     </div>
                                     @enderror
                                     <!--end::Input-->

@@ -63,6 +63,7 @@ return new class extends Migration {
             $table->string('country')->nullable();
             $table->longText('profile_pic')->nullable();
             $table->string('speciality_id')->nullable();
+            $table->string('facility_id')->nullable();
             $table->string('status');
             $table->timestamps();
         });

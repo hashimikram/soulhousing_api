@@ -24,7 +24,7 @@ class StoreMedicalLetterRequest extends FormRequest
         return [
             'patient_id' => 'required|exists:patients,id',
             'patient_name' => 'required|string',
-            'date' => 'required|date',
+            'date' => 'nullable|date',
         ];
     }
 }

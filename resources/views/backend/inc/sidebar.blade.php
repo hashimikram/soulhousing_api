@@ -108,7 +108,7 @@
                 </div>
                 <!--end:Menu item-->
                 @php
-                    $user=\App\Models\Staff::where('user_id',auth()->user()->id)->first();
+                    $user=\App\Models\RoleUser::where('user_id',auth()->user()->id)->first();
                     $permission = [];
                     if(isset($user)){
                         $role=\App\Models\Role::where('id',$user->role_id)->first();

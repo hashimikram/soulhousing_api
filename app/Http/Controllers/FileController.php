@@ -40,13 +40,14 @@ class FileController extends Controller
 
         // Encode the image data as base64
         $base64Image = base64_encode($image);
+
         // Determine the MIME type of the image
-//        $mimeType = mime_content_type($imagePath);
+        $mimeType = mime_content_type($imagePath);
 
         // Return the image data and metadata as JSON response
         return response()->json([
             'file' => $base64Image,
-//            'mime_type' => $mimeType
+            'mime_type' => $mimeType
         ]);
     }
 

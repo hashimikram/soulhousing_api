@@ -21,7 +21,6 @@ class BedController extends BaseController
         $beds = Bed::where('id', $request->bed_id)->first();
         if ($beds != null) {
             try {
-                date_default_timezone_set('Asia/Karachi');
                 $checkAssignBed = Bed::where(['patient_id' => $request->patient_id])->first();
                 if (isset($checkAssignBed)) {
                     return response()->json([

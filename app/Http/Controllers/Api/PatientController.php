@@ -35,7 +35,7 @@ class PatientController extends BaseController
             ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
             ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name',
                 'beds.bed_no', 'insurances.group_name')
-            ->where('patients.provider_id', auth()->user()->id)
+            ->where('patients.facility_id', auth()->user()->details->facilities)
             ->orderBy('patients.created_at', 'DESC')
             ->groupBy('patients.id') // Ensure the group by clause is appropriate for your use case
             ->get();
@@ -203,7 +203,7 @@ class PatientController extends BaseController
                     ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
                     ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
             })
-            ->where('patients.provider_id', auth()->user()->id)
+            ->where('patients.facility_id', auth()->user()->details->facilities)
             ->orderBy('patients.created_at', 'DESC')
             ->groupBy('patients.id')
             ->get();
@@ -485,7 +485,7 @@ class PatientController extends BaseController
                 $patient->country = $request->country;
                 $patient->auth = $request->auth;
                 $patient->npp = $request->npi;
-                $patient->speciality_id = auth()->user()->details->speciality_id ?? null;
+                $patient->facility_id = auth()->user()->details->facilities ?? null;
                 // Check if media is provided
                 if ($request->input('profile_pic')) {
                     Log::info('Image Found');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\patient;
 use App\Models\User;
+use App\Models\userDetail;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -27,7 +28,7 @@ class PatientController extends Controller
             'title' => 'required|string',
             'first_name' => 'required|string',
             'gender' => 'required|string',
-            'marital_status' => 'required|string',
+            'medical_number' => 'required|string',
         ]);
         $checkUnique = patient::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
@@ -80,6 +81,11 @@ class PatientController extends Controller
                 $patient->phone_no = $request->phone_no;
                 $patient->zip_code = $request->zip_code;
                 $patient->country = $request->country;
+                $patient->address = $request->address;
+                if ($request->provider_id) {
+                    $user = userDetail::where('user_id', $request->provider_id)->first();
+                    $patient->facility_id = $user->facilities ?? null;
+                }
                 if ($request->file('profile_pic')) {
                     $originalName = $request->file('profile_pic')->getClientOriginalName();
                     $imagePath = pathinfo($originalName,

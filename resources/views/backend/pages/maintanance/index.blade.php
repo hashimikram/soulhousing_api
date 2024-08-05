@@ -8,8 +8,15 @@
 @section('page_title','All Maintenance Tweets')
 @section('content')
     <div id="kt_app_content_container" class="app-container container-xxl">
+        <div class="d-flex align-items-center gap-2 gap-lg-3" style="float: right;">
+            <!--begin::Primary button-->
+            <a href="#" class="btn btn-sm fw-bold btn-primary" data-bs-toggle="modal"
+               data-bs-target="#kt_modal_new_target">Add Post</a>
+            <!--end::Primary button-->
+        </div>
         <!--begin::Row-->
         <div class="row g-5 g-xl-8" id="tweets-container">
+
             <!--begin::Col-->
             @foreach($tweets as $data)
                 <div class="col-xl-4 tweet-item">
@@ -189,6 +196,7 @@
     @include('backend.pages.partials.like_modal')
     @include('backend.pages.partials.comment_modal')
     @include('backend.pages.partials.review_modal')
+    @include('backend.pages.partials.new_maintainance_model')
 @endsection
 
 @section('custom_js')
@@ -201,7 +209,7 @@
 
             let currentPage = 1;
             $('#load-more-button').on('click', function () {
-                $('#load-more-button').text('Processing').attr('disabled', true).addClass('loading');
+                $('#load-more-button').text('Processing').attr('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
 
                 currentPage++;
                 $.ajax({
@@ -211,7 +219,7 @@
                         page: currentPage
                     },
                     success: function (data) {
-                        $('#load-more-button').text('Load More').attr('disabled', false).removeClass('loading');
+                        $('#load-more-button').text('Load More').attr('disabled', false).html('Load More');
                         $('#tweets-container').append(data.html);
 
                         // Scroll to the bottom of the page

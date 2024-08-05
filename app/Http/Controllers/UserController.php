@@ -127,7 +127,6 @@ class UserController extends Controller
             if (!isset($userDetail)) {
                 return redirect()->route('user.index')->with('error', 'User Not Found');
             }
-            $userDetail->user_name = $request->user_name;
             $userDetail->title = $request->title;
             $userDetail->middle_name = $request->middle_name;
             $userDetail->last_name = $request->last_name;
@@ -140,7 +139,7 @@ class UserController extends Controller
             if ($request->file('image')) {
                 if ($userDetail->image != 'placeholder.jpg') {
                     // Delete the old image if it exists
-                    if ($allergy->banner_image && file_exists(public_path('uploads/'.$allergy->banner_image))) {
+                    if ($userDetail->image && file_exists(public_path('uploads/'.$userDetail->image))) {
                         unlink(public_path('uploads/'.$allergy->banner_image));
                     }
                 }

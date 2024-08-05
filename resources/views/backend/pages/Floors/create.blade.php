@@ -62,7 +62,7 @@
                                     <select class="form-select" name="facility_id" data-control="select2" required>
                                         <option>Select Facility</option>
                                         @foreach($facilities as $data)
-                                            <option value="{{$data->id}}">{{$data->address}}</option>
+                                            <option value="{{$data->id}}">{{$data->name}}</option>
                                         @endforeach
                                     </select>
                                     @error('facility_id')

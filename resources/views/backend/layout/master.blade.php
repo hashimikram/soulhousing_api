@@ -159,7 +159,7 @@
 </div>
 <!--end::Scrolltop-->
 <!--begin::Javascript-->
-<script>var hostUrl = "assets/";</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!--begin::Global Javascript Bundle(mandatory for all pages)-->
 <script src="{{asset('backend/assets/plugins/global/plugins.bundle.js')}}"></script>
 <script src="{{asset('backend/assets/js/scripts.bundle.js')}}"></script>
@@ -193,7 +193,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{asset('backend/assets/js/custom/apps/ecommerce/catalog/save-product.js')}}"></script>
 <script src="{{asset('backend/assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!--end::Custom Javascript-->
 <!--end::Javascript-->
 <script>
@@ -242,6 +242,12 @@
     $('.kt_add_data_modal').submit(function () {
         $('.kt_add_data_modal').find('button[type="submit"]').attr('disabled', true);
         $('.kt_add_data_modal').find('button[type="submit"]').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+    });
+    $('[data-kt-users-modal-action="cancel"]').on('click', function () {
+        // Find the closest modal and hide it
+        var $modal = $(this).closest('.modal');
+        var modal = bootstrap.Modal.getInstance($modal[0]);
+        modal.hide();
     });
 </script>
 @yield('custom_js')

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\FloorController;
@@ -13,7 +14,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('floors', FloorController::class);
     Route::get('/mapping/{id}', [FloorController::class, 'mapping'])->name('floors.mapping');
-
+    Route::post('/assign-bed', [FloorController::class, 'assign_bed'])->name('patients.assign');
+    Route::resource('maintenance', MaintenanceController::class);
 });
 
 require __DIR__.'/auth.php';
