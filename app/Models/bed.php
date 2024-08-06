@@ -29,4 +29,6 @@ class bed extends Model
     {
         return $this->belongsTo(patient::class);
     }
+    
+
 }

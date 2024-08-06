@@ -133,12 +133,12 @@ class ProblemController extends BaseController
             $problem->assessment_section_id = $request->assessment_section_id;
             $existingSection = EncounterNoteSection::where('id', $request->assessment_section_id)->first();
             if ($existingSection) {
-                $existingSectionText = json_decode($existingSection->section_text, true);
+                $existingSectionText = json_decode($existingSection->assessment_note, true);
 
                 $newData = [
                     'Code' => $request->diagnosis,
                     'Description' => $request->name,
-                    'assessment_input' => "",
+                    'assessment_input' => $request->assessment_input ?? '',
                     'value_id' => rand(123456, 999999),
                 ];
 

@@ -8,7 +8,6 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TweetController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,7 +30,6 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('user', UserController::class);
     Route::resource('facility', FacilityController::class);
     Route::resource('admin', AdminProfileController::class);
 

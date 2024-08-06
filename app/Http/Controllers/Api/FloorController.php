@@ -19,7 +19,7 @@ class FloorController extends BaseController
         if (auth()->user()->user_type == 'admin') {
             $floors = Floor::all();
         } else {
-            $floors = Floor::where('provider_id', auth()->user()->id)->get();
+            $floors = Floor::where('facility_id', auth()->user()->details->facilities)->get();
         }
 
         foreach ($floors as $floor) {
@@ -159,6 +159,7 @@ class FloorController extends BaseController
                             'gender' => $bed->patient->gender,
                             'date_of_birth' => $bed->patient->date_of_birth,
                             'mrn_no' => $bed->patient->mrn_no,
+                            'medical_no' => $bed->patient->medical_no,
                         ] : [],
                     ];
 
@@ -268,7 +269,7 @@ class FloorController extends BaseController
                 // Create a new floor
                 $floor = Floor::create([
                     'provider_id' => auth()->user()->id,
-                    'facility_id' => $facilityId,
+                    'facility_id' => auth()->user()->details->facilities,
                     'floor_name' => $floorData['floor_title'] ?? '',
                 ]);
 

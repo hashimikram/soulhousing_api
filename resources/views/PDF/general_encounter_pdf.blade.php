@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>{{ $patient->first_name }} {{$patient->last_name}}</title>
+    <title>{{ $patient->first_name }} {{ $patient->last_name }}</title>
     <style>
         @page {
             margin: 100px 50px;
@@ -66,6 +67,7 @@
         }
     </style>
 </head>
+
 <body>
 <header>
     <div class="logo">
@@ -98,10 +100,10 @@
 </footer>
 
 <div class="content">
-    <p>Patient Name: {{ $patient->first_name }} {{$patient->last_name}}</p>
+    <p>Patient Name: {{ $patient->first_name }} {{ $patient->last_name }}</p>
     <p>Patient Age: {{ $patient->age }}</p>
     <p>Encounter Date: {{ formatDate($encounter->date) }}</p>
-    @foreach($encounter_notes as $data)
+    @foreach ($encounter_notes as $data)
         @if ($data->section_slug == 'review-of-systems' || $data->section_slug == 'physical-exam')
             @if (!$loop->first)
                 <div class="page-break"></div>
@@ -113,35 +115,88 @@
                     if ($data->section_slug == 'review-of-systems') {
                         $section_text = str_replace(
                             [
-                                'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth/Throat:', 'Neck:',
-                                'Breasts/Chest:', 'Respiratory:', 'Cardiovascular:', 'Gastrointestinal:',
-                                'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
-                                'Hematologic/Lymphatic:', 'Allergic/Immunologic:'
+                                'General:',
+                                'Skin:',
+                                'Head:',
+                                'Eyes:',
+                                'Ears:',
+                                'Nose:',
+                                'Mouth/Throat:',
+                                'Neck:',
+                                'Breasts/Chest:',
+                                'Respiratory:',
+                                'Cardiovascular:',
+                                'Gastrointestinal:',
+                                'Genitourinary:',
+                                'Musculoskeletal:',
+                                'Neurological:',
+                                'Psychiatric:',
+                                'Endocrine:',
+                                'Hematologic/Lymphatic:',
+                                'Allergic/Immunologic:',
                             ],
                             [
-                                '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>',
-                                '<b>Mouth/Throat:</b>', '<b>Neck:</b>', '<b>Breasts/Chest:</b>', '<b>Respiratory:</b>',
-                                '<b>Cardiovascular:</b>', '<b>Gastrointestinal:</b>', '<b>Genitourinary:</b>',
-                                '<b>Musculoskeletal:</b>', '<b>Neurological:</b>', '<b>Psychiatric:</b>', '<b>Endocrine:</b>',
-                                '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>'
+                                '<b>General:</b>',
+                                '<b>Skin:</b>',
+                                '<b>Head:</b>',
+                                '<b>Eyes:</b>',
+                                '<b>Ears:</b>',
+                                '<b>Nose:</b>',
+                                '<b>Mouth/Throat:</b>',
+                                '<b>Neck:</b>',
+                                '<b>Breasts/Chest:</b>',
+                                '<b>Respiratory:</b>',
+                                '<b>Cardiovascular:</b>',
+                                '<b>Gastrointestinal:</b>',
+                                '<b>Genitourinary:</b>',
+                                '<b>Musculoskeletal:</b>',
+                                '<b>Neurological:</b>',
+                                '<b>Psychiatric:</b>',
+                                '<b>Endocrine:</b>',
+                                '<b>Hematologic/Lymphatic:</b>',
+                                '<b>Allergic/Immunologic:</b>',
                             ],
-                            $section_text
+                            $section_text,
                         );
                     }
 
                     if ($data->section_slug == 'physical-exam') {
                         $section_text = str_replace(
                             [
-                                'General Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
-                                'Neck:', 'Chest/Lungs:', 'Heart:', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
-                                'Neurological:', 'Psychiatric:'
+                                'General Appearance:',
+                                'Skin:',
+                                'Head:',
+                                'Eyes:',
+                                'Ears:',
+                                'Nose:',
+                                'Mouth & Throat:',
+                                'Neck:',
+                                'Chest/Lungs:',
+                                'Heart:',
+                                'Abdomen:',
+                                'Genitourinary:',
+                                'Musculoskeletal:',
+                                'Neurological:',
+                                'Psychiatric:',
                             ],
                             [
-                                '<b>General Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Eyes:</b>', '<b>Ears:</b>',
-                                '<b>Nose:</b>', '<b>Mouth & Throat:</b>', '<b>Neck:</b>', '<b>Chest/Lungs:</b>', '<b>Heart:</b>', '<b>Abdomen:</b>',
-                                '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>', '<b>Psychiatric:</b>'
+                                '<b>General Appearance:</b>',
+                                '<b>Skin:</b>',
+                                '<b>Head:</b>',
+                                '<b>Eyes:</b>',
+                                '<b>Ears:</b>',
+                                '<b>Nose:</b>',
+                                '<b>Mouth & Throat:</b>',
+                                '<b>Neck:</b>',
+                                '<b>Chest/Lungs:</b>',
+                                '<b>Heart:</b>',
+                                '<b>Abdomen:</b>',
+                                '<b>Genitourinary:</b>',
+                                '<b>Musculoskeletal:</b>',
+                                '<b>Neurological:</b>',
+                                '<b>Psychiatric:</b>',
                             ],
-                            $section_text
+                            $section_text,
                         );
                     }
                 @endphp
@@ -154,12 +209,34 @@
                 <div class="page-break"></div>
             @endif
         @else
-            <div style="margin-bottom: 20px">
-                <span class="section-title">{{ $data->section_title }}: </span>
-                <span class="section-text">{!! nl2br(html_entity_decode($data->section_text)) !!}</span>
-            </div>
+            @if ($data->section_slug == 'assessments')
+                <div style="margin-bottom: 20px">
+                    <span class="section-title">{{ $data->section_title }}: </span>
+                    @php
+                        $json_decode = json_decode($data->assessment_note);
+                    @endphp
+                    @if ($json_decode != null)
+                        @foreach ($json_decode as $details_json)
+                            <div style="display: flex; margin-top: 0.5rem;">
+                                <span
+                                    style="width: 40%; white-space: nowrap;">{{ $details_json->Code }} {{ $details_json->Description }}</span>
+                                <textarea
+                                    style="height: 5rem; width: 30rem; border-radius: 7px; border-color: rgb(192, 194, 197); margin-left: 0.5rem;">{{ $details_json->assessment_input }}</textarea>
+                            </div>
+                        @endforeach
+                    @endif
+                    <span class="section-text">{!! nl2br(html_entity_decode($data->section_text)) !!}</span>
+                </div>
+
+            @else
+                <div style="margin-bottom: 20px">
+                    <span class="section-title">{{ $data->section_title }}: </span>
+                    <span class="section-text">{!! nl2br(html_entity_decode($data->section_text)) !!}</span>
+                </div>
+            @endif
         @endif
     @endforeach
 </div>
 </body>
+
 </html>

@@ -22,11 +22,12 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('admin.pages.User.create');
+        return view('backend.pages.UserManagement.users.create');
     }
 
     public function store(UserStoreRequest $request)
     {
+
         Unauthorized();
         try {
             DB::beginTransaction();
@@ -49,7 +50,7 @@ class UserController extends Controller
             $userDetail->city = $request->city;
             $userDetail->country = $request->country;
             $userDetail->date_of_birth = $request->date_of_birth;
-            $userDetail->facilities = $request->facilities;
+            $userDetail->facilities = json_encode($request->facilities);
             $userDetail->speciality_id = $request->speciality_id;
 
             if ($request->file('image')) {
@@ -85,7 +86,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::where('id', $id)
-            ->with(['userDetail', 'roles.permissions'])
+            ->with(['userDetail'])
             ->orderBy('created_at', 'DESC')
             ->first();
 

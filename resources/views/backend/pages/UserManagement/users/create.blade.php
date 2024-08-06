@@ -1,41 +1,27 @@
-<div class="modal fade" id="kt_modal_add_user" tabindex="-1" aria-hidden="true">
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered  modal-xl">
-        <!--begin::Modal content-->
-        <div class="modal-content">
-            <!--begin::Modal header-->
-            <div class="modal-header" id="kt_modal_add_user_header">
-                <!--begin::Modal title-->
-                <h2 class="fw-bold">Add User</h2>
-                <!--end::Modal title-->
-                <!--begin::Close-->
-                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close">
-                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                    <span class="svg-icon svg-icon-1">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1"
-                                  transform="rotate(-45 6 17.3137)" fill="currentColor"/>
-                            <rect x="7.41422" y="6" width="16" height="2" rx="1"
-                                  transform="rotate(45 7.41422 6)" fill="currentColor"/>
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
+@extends('backend.layout.master')
+@section('breadcrumb_title', 'Create User')
+@section('breadcrumb_li_1', 'Home')
+@section('breadcrumb_li_2', 'User Management - Users')
+@section('breadcrumb_href', route('dashboard'))
+@section('user_management_li', 'here show')
+@section('users_a', 'active')
+@section('page_title', 'Create User')
+@section('custom_css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+@endsection
+@section('content')
+    <form id="kt_modal_add_user_form" class="form" action="{{ route('user.store') }}" method="POST"
+          enctype="multipart/form-data">
+        @csrf
+        <div id="kt_app_content_container" class="app-container">
+            <!--begin::Card-->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">User Information</h3>
                 </div>
-                <!--end::Close-->
-            </div>
-            <!--end::Modal header-->
-            <!--begin::Modal body-->
-            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                <!--begin::Form-->
-                <form id="kt_modal_add_user_form" class="form" action="{{ route('user.store') }}" method="POST"
-                      enctype="multipart/form-data">
-                    @csrf
-
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                    <!--begin::Scroll-->
+                <!--begin::Card body-->
+                <div class="card-body py-4">
+                    <!--begin::Form-->
                     <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll"
                          data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}"
                          data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header"
@@ -108,7 +94,9 @@
                         <!--begin::Input group-->
                         <div class="row">
                             <div class="col-md-6">
-
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
                                     <label class="required fw-semibold fs-6 mb-2">Title</label>
@@ -359,8 +347,10 @@
                                     <label class="required fw-semibold fs-6 mb-2">Facilities</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->
-                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="facilities"
-                                            required>
+                                    <select
+                                        class="form-control form-control-solid mb-3 mb-lg-0 js-example-basic-multiple"
+                                        multiple="multiple" name="facilities[]"
+                                        required>
                                         <option value="">Select Facilities</option>
                                         @foreach (\App\Models\Facility::all() as $data)
                                             <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -396,26 +386,29 @@
                             </div>
                         </div>
                         <!--end::Input group-->
-                    </div>
-                    <!--end::Scroll-->
-                    <!--begin::Actions-->
-                    <div class="text-center pt-15">
-                        <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">
-                            Discard
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="indicator-label">Submit</span>
-                            <span class="indicator-progress">Please wait...
+
+                        <div class="text-center pt-15">
+                            <button type="reset" class="btn btn-light me-3" data-kt-users-modal-action="cancel">
+                                Discard
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="indicator-label">Submit</span>
+                                <span class="indicator-progress">Please wait...
                                 <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                        </button>
+                            </button>
+                        </div>
                     </div>
-                    <!--end::Actions-->
-                </form>
-                <!--end::Form-->
+                </div>
             </div>
-            <!--end::Modal body-->
         </div>
-        <!--end::Modal content-->
-    </div>
-    <!--end::Modal dialog-->
-</div>
+    </form>
+
+@endsection
+@section('custom_js')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.js-example-basic-multiple').select2();
+        });
+    </script>
+@endsection

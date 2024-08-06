@@ -126,6 +126,7 @@ class TweetController extends Controller
             // Create a new Tweet instance
             $tweet = new Tweet();
             $tweet->user_id = auth()->user()->id;
+            $tweet->facility_id = auth()->user()->details->facilities;
             $tweet->body = $request->body;
             $fileName = null;
             $filePath = null;

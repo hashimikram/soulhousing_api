@@ -26,317 +26,261 @@ class PatientController extends BaseController
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $patients = Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
-            ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
-            ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
-            ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
-            ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
-            ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name',
-                'beds.bed_no', 'insurances.group_name')
-            ->where('patients.facility_id', auth()->user()->details->facilities)
-            ->orderBy('patients.created_at', 'DESC')
-            ->groupBy('patients.id') // Ensure the group by clause is appropriate for your use case
-            ->get();
+        try {
+            $patients = Patient::with([
+                'problems',
+                'admission',
+                'allergies',
+                'medications',
+                'insurance',
+                'room.floor',
+                'role.role.permissions'
+            ])
+                ->where('facility_id', auth()->user()->details->facilities)
+                ->orderBy('created_at', 'DESC')
+                ->get();
 
-        foreach ($patients as $data) {
+            foreach ($patients as $patient) {
+                $this->processPatientData($patient);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving patient data. Please try again later.'
+            ], 500);
+        }
+    }
+
+    private function processPatientData($patient)
+    {
+        try {
+            $patient->patient_full_name = $this->formatPatientFullName($patient);
+            $patient->age = Carbon::parse($patient->date_of_birth)->age;
+            $patient->provider_full_name = auth()->user()->name;
+            $patient->profile_pic = image_url($patient->profile_pic);
+
+            $admission = $patient->admission;
+
+            $patient->admission_date = $admission ? $admission->admission_date : '';
+            $patient->room_no = $admission ? $admission->room_no : '';
+            $patient->floor_name = $patient->room->floor->floor_name ?? '';
+            $patient->room_name = $patient->room->room_name ?? '';
+            $patient->bed_title = $patient->bed->bed_title ?? '';
+            $patient->patient_facility = $patient->facility->name ?? '';
+
+            $patient->admission_date_result = $this->calculateAdmissionDateResult($admission);
+
+            $patient->allergies = $patient->allergies;
+            $patient->problems = $patient->problems;
+            $patient->medications = $this->formatMedications($patient->id);
+
+            $patient->role = $patient->role ? [
+                'role_name' => $patient->role->role->role_name,
+                'permissions' => $patient->role->role->permissions->map(function ($permission) {
+                    return [
+                        'permissions' => $permission->permissions,
+                    ];
+                })
+            ] : null;
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred while processing patient data: '.$e->getMessage(), [
+                'patient_id' => $patient->id,
+                'exception' => $e
+            ]);
+        }
+    }
+
+    private function formatPatientFullName($patient)
+    {
+        try {
             $parts = [];
 
-            if (!empty($data->last_name)) {
-                $parts[] = $data->last_name;
+            if (!empty($patient->last_name)) {
+                $parts[] = $patient->last_name;
             }
 
-            if (!empty($data->first_name)) {
-                $parts[] = $data->first_name;
+            if (!empty($patient->first_name)) {
+                $parts[] = $patient->first_name;
             }
 
-            if (!empty($data->middle_name)) {
-                $parts[] = ucfirst(substr($data->middle_name, 0, 1));
+            if (!empty($patient->middle_name)) {
+                $parts[] = ucfirst(substr($patient->middle_name, 0, 1));
             }
 
-            $data->patient_full_name = implode(', ', $parts);
-            $data->age = Carbon::parse($data->date_of_birth)->age;
+            return implode(', ', $parts);
 
-            $data->provider_full_name = auth()->user()->name;
-            $data->profile_pic = image_url($data->profile_pic);
-            $admission_date = AdmissionDischarge::where('patient_id', $data->id)
-                ->where('status', '1')
-                ->first();
+        } catch (\Exception $e) {
+            Log::error('An error occurred while formatting patient full name: '.$e->getMessage(), [
+                'patient_id' => $patient->id,
+                'exception' => $e
+            ]);
 
-            $data->latest_encounter = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
-                'patient_encounters.encounter_type')
-                ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
-                ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
-                ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
-                ->select('patient_encounters.id', 'patient_encounters.provider_id',
-                    'patient_encounters.provider_id_patient', 'patient_encounters.patient_id',
-                    'patient_encounters.signed_by', 'patient_encounters.encounter_date',
-                    'patient_encounters.parent_encounter', 'patient_encounters.location',
-                    'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status',
-                    'patient_encounters.created_at', 'patient_encounters.updated_at',
-                    'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
-                    'provider.name as provider_name', 'patients.mrn_no',
-                    DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
-                    'patients.date_of_birth', 'patients.gender',
-                    'patient_encounters.pdf_make')->where('patient_encounters.patient_id', $data->id)
-                ->latest()->first() ?? [];
+            return 'Unknown';
+        }
+    }
 
-            if ($admission_date) {
-                $data->admission_date = $admission_date->admission_date;
-            } else {
-                $data->admission_date = '';
-            }
-
-            $data->room_no = $admission_date ? $admission_date->room_no : '';
+    private function calculateAdmissionDateResult($admission)
+    {
+        try {
             $formattedResult = [
                 'color' => '',
                 'exceeded_days' => '',
                 'remaining_days' => '',
                 'message' => ""
             ];
-            $data->admission_date_result = $formattedResult;
-            if ($admission_date) {
-                Log::info('patients Found '.$data->id);
 
-                // Parse the admission date
-                $admissionDate = Carbon::parse($data->admission_date);
-                Log::info('Admission Date: '.$admissionDate->toDateString().' for patients ID '.$data->id);
-
-                // Get the current date
-                $currentDate = Carbon::now();
-
-                // Calculate the difference in days between the current date and the admission date
-                $daysDifference = $admissionDate->diffInDays($currentDate);
-                Log::info('Days Difference: '.$daysDifference);
-
-                // Check if the days difference is greater than 90
-                if ($daysDifference > 90) {
-                    $daysBeyondNinety = $daysDifference - 90;
-                    $formattedResult = [
-                        'color' => 'red',
-                        'exceeded_days' => number_format($daysBeyondNinety, 0),
-                        'remaining_days' => 0,
-                        'message' => "Exceeded by $daysBeyondNinety days"
-                    ];
-                } else {
-                    $remainingDays = 90 - $daysDifference;
-                    $formattedResult = [
-                        'color' => 'green',
-                        'exceeded_days' => 0,
-                        'remaining_days' => number_format($remainingDays, 0),
-                        'message' => "$remainingDays days remaining"
-                    ];
-                }
-
-                // Log the formatted result
-                Log::info(json_encode($formattedResult));
-
-                // Assign the result to the admission_date_result property
-                $data->admission_date_result = $formattedResult;
+            if (!$admission) {
+                return $formattedResult;
             }
 
+            $admissionDate = Carbon::parse($admission->admission_date);
+            $currentDate = Carbon::now();
+            $daysDifference = $admissionDate->diffInDays($currentDate);
 
-            $data->allergies = Allergy::where('patient_id', $data->id)->get();
-            $data->problems = Problem::where('patient_id', $data->id)
-                ->get()
-                ->map(function ($problem) {
-                    $problem->diagnosis = $problem->diagnosis;
-                    return $problem;
-                });
-            $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
-            foreach ($data->medications as $medication_data) {
-                $formatted_data = $medication_data->title;
-
-                if (!empty($medication_data->dose) && !empty($medication_data->unit)) {
-                    $medication_data->dose = ' - '.$medication_data->dose.' '.$medication_data->unit;
-                }
-
-                if (!empty($medication_data->quantity)) {
-                    $medication_data->quantity = ', '.$medication_data->quantity;
-                }
-
-                if (!empty($medication_data->frequency)) {
-                    $medication_data->frequency = ' ('.$medication_data->frequency.')';
-                }
-            }
-
-            // Get role and permissions for the patient
-            $roleUser = RoleUser::where('user_id', $data->id)->first();
-            if ($roleUser) {
-                $role = Role::where('id', $roleUser->role_id)->first();
-                $permissions = Permission::where('role_id', $roleUser->role_id)->get();
-
-                $data->role = [
-                    'role_name' => $role->role_name,
-                    'permissions' => $permissions->map(function ($permission) {
-                        return [
-                            'permissions' => $permission->permissions,
-                        ];
-                    })
+            if ($daysDifference > 90) {
+                $daysBeyondNinety = $daysDifference - 90;
+                $formattedResult = [
+                    'color' => 'red',
+                    'exceeded_days' => number_format($daysBeyondNinety, 0),
+                    'remaining_days' => 0,
+                    'message' => "Exceeded by $daysBeyondNinety days"
                 ];
             } else {
-                $data->role = null;
+                $remainingDays = 90 - $daysDifference;
+                $formattedResult = [
+                    'color' => 'green',
+                    'exceeded_days' => 0,
+                    'remaining_days' => number_format($remainingDays, 0),
+                    'message' => "$remainingDays days remaining"
+                ];
             }
 
-        }
+            return $formattedResult;
 
-        return response()->json([
-            'success' => true,
-            'data' => $patients
-        ]);
+        } catch (\Exception $e) {
+            Log::error('An error occurred while calculating admission date result: '.$e->getMessage(), [
+                'admission' => $admission,
+                'exception' => $e
+            ]);
+
+            return [
+                'color' => 'grey',
+                'exceeded_days' => '',
+                'remaining_days' => '',
+                'message' => 'Error calculating result'
+            ];
+        }
     }
 
+    private function formatMedications($patientId)
+    {
+        try {
+            return medication::where('patient_id', $patientId)
+                ->where('status', 'active')
+                ->latest()
+                ->get()
+                ->map(function ($medication) {
+                    $formatted = $medication->title;
+
+                    if (!empty($medication->dose) && !empty($medication->unit)) {
+                        $formatted .= ' - '.$medication->dose.' '.$medication->unit;
+                    }
+
+                    if (!empty($medication->quantity)) {
+                        $formatted .= ', '.$medication->quantity;
+                    }
+
+                    if (!empty($medication->frequency)) {
+                        $formatted .= ' ('.$medication->frequency.')';
+                    }
+
+                    return $formatted;
+                });
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred while formatting medications: '.$e->getMessage(), [
+                'patient_id' => $patientId,
+                'exception' => $e
+            ]);
+
+            return [];
+        }
+    }
 
     public function search($search_text)
     {
+        try {
+            // Make sure to pass the search text to the method
+            $patients = $this->getPatientsSearchWithDetails($search_text);
 
-        $patients = Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
-            ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
-            ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
-            ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
-            ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
-            ->select('patients.*', 'problems.diagnosis as problem_name', 'floors.floor_name', 'rooms.room_name',
-                'beds.bed_no', 'insurances.group_name')
-            ->where(function ($query) use ($search_text) {
-                $query->where('patients.first_name', 'LIKE', '%'.$search_text.'%')
-                    ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
-                    ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
-            })
-            ->where('patients.facility_id', auth()->user()->details->facilities)
-            ->orderBy('patients.created_at', 'DESC')
-            ->groupBy('patients.id')
-            ->get();
-
-        foreach ($patients as $data) {
-            $parts = [];
-
-            if (!empty($data->last_name)) {
-                $parts[] = $data->last_name;
+            foreach ($patients as $patient) {
+                $this->processPatientData($patient);
             }
 
-            if (!empty($data->first_name)) {
-                $parts[] = $data->first_name;
-            }
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
 
-            if (!empty($data->middle_name)) {
-                $parts[] = ucfirst(substr($data->middle_name, 0, 1));
-            }
+        } catch (\Exception $e) {
+            Log::error('An error occurred in Patient Search: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
 
-            $data->patient_full_name = implode(', ', $parts);
-            $data->age = Carbon::parse($data->date_of_birth)->age;
-
-            $data->provider_full_name = auth()->user()->name;
-            $data->profile_pic = image_url($data->profile_pic);
-            $admission_date = AdmissionDischarge::where('patient_id', $data->id)
-                ->where('status', '1')
-                ->first();
-
-            $data->latest_encounter = PatientEncounter::join('list_options as encounter_type', 'encounter_type.id', '=',
-                'patient_encounters.encounter_type')
-                ->join('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
-                ->join('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
-                ->join('patients', 'patients.id', '=', 'patient_encounters.patient_id')
-                ->select('patient_encounters.id', 'patient_encounters.provider_id',
-                    'patient_encounters.provider_id_patient', 'patient_encounters.patient_id',
-                    'patient_encounters.signed_by', 'patient_encounters.encounter_date',
-                    'patient_encounters.parent_encounter', 'patient_encounters.location',
-                    'patient_encounters.reason', 'patient_encounters.attachment', 'patient_encounters.status',
-                    'patient_encounters.created_at', 'patient_encounters.updated_at',
-                    'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
-                    'provider.name as provider_name', 'patients.mrn_no',
-                    DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
-                    'patients.date_of_birth', 'patients.gender',
-                    'patient_encounters.pdf_make')->where('patient_encounters.patient_id', $data->id)
-                ->latest()->first() ?? [];
-
-            if ($admission_date) {
-                $data->admission_date = $admission_date->admission_date;
-            } else {
-                $data->admission_date = '';
-            }
-
-            $data->room_no = $admission_date ? $admission_date->room_no : '';
-            $formattedResult = [
-                'color' => '',
-                'exceeded_days' => '',
-                'remaining_days' => '',
-                'message' => ""
-            ];
-            $data->admission_date_result = $formattedResult;
-            if ($admission_date) {
-                Log::info('patients Found '.$data->id);
-
-                // Parse the admission date
-                $admissionDate = Carbon::parse($data->admission_date);
-                Log::info('Admission Date: '.$admissionDate->toDateString().' for patients ID '.$data->id);
-
-                // Get the current date
-                $currentDate = Carbon::now();
-
-                // Calculate the difference in days between the current date and the admission date
-                $daysDifference = $admissionDate->diffInDays($currentDate);
-                Log::info('Days Difference: '.$daysDifference);
-
-                // Check if the days difference is greater than 90
-                if ($daysDifference > 90) {
-                    $daysBeyondNinety = $daysDifference - 90;
-                    $formattedResult = [
-                        'color' => 'red',
-                        'exceeded_days' => number_format($daysBeyondNinety, 0),
-                        'remaining_days' => 0,
-                        'message' => "Exceeded by $daysBeyondNinety days"
-                    ];
-                } else {
-                    $remainingDays = 90 - $daysDifference;
-                    $formattedResult = [
-                        'color' => 'green',
-                        'exceeded_days' => 0,
-                        'remaining_days' => number_format($remainingDays, 0),
-                        'message' => "$remainingDays days remaining"
-                    ];
-                }
-
-                // Log the formatted result
-                Log::info(json_encode($formattedResult));
-
-                // Assign the result to the admission_date_result property
-                $data->admission_date_result = $formattedResult;
-            }
-
-
-            $data->allergies = Allergy::where('patient_id', $data->id)->get();
-            $data->problems = Problem::where('patient_id', $data->id)
-                ->get()
-                ->map(function ($problem) {
-                    $problem->diagnosis = $problem->diagnosis;
-                    return $problem;
-                });
-            $data->medications = Medication::where('patient_id', $data->id)->where('status', 'active')->latest()->get();
-            foreach ($data->medications as $medication_data) {
-                $formatted_data = $medication_data->title;
-
-                if (!empty($medication_data->dose) && !empty($medication_data->unit)) {
-                    $medication_data->dose = ' - '.$medication_data->dose.' '.$medication_data->unit;
-                }
-
-                if (!empty($medication_data->quantity)) {
-                    $medication_data->quantity = ', '.$medication_data->quantity;
-                }
-
-                if (!empty($medication_data->frequency)) {
-                    $medication_data->frequency = ' ('.$medication_data->frequency.')';
-                }
-            }
-
-
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving patient data. Please try again later.'
+            ], 500);
         }
+    }
 
-        return response()->json([
-            'success' => true,
-            'data' => $patients
-        ]);
+    private function getPatientsSearchWithDetails($search_text)
+    {
+        try {
+            // Ensure that the $search_text parameter is used in the query
+            return Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
+                ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
+                ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
+                ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
+                ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
+                ->select(
+                    'patients.*',
+                    'problems.diagnosis as problem_name',
+                    'floors.floor_name',
+                    'rooms.room_name',
+                    'beds.bed_no',
+                    'insurances.group_name'
+                )
+                ->where(function ($query) use ($search_text) {
+                    $query->where('patients.first_name', 'LIKE', '%'.$search_text.'%')
+                        ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
+                        ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
+                })
+                ->where('patients.facility_id', auth()->user()->details->facilities)
+                ->orderBy('patients.created_at', 'DESC')
+                ->groupBy('patients.id')
+                ->get();
+        } catch (\Exception $e) {
+            Log::error('An error occurred while fetching patients: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
 
+            throw new \RuntimeException('Failed to retrieve patient details.');
+        }
     }
 
     public function search_admin(Request $request)
@@ -373,7 +317,6 @@ class PatientController extends BaseController
             return $base->sendError('patients Already Exists');
         }
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -560,7 +503,7 @@ class PatientController extends BaseController
         $patient = Patient::find($patientId);
         $allergies = Allergy::where('patient_id', $patientId)->get();
         $problems = Problem::where('patient_id', $patientId)->get();
-        $medications = Medication::where('patient_id', $patientId)->where('status', 'active')->latest()->get();
+        $medications = medication::where('patient_id', $patientId)->where('status', 'active')->latest()->get();
         if (!$patient) {
             return response()->json(['message' => 'patients not found'], 404);
         }
@@ -573,7 +516,6 @@ class PatientController extends BaseController
             'problems' => $problems,
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -680,7 +622,6 @@ class PatientController extends BaseController
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
@@ -719,8 +660,9 @@ class PatientController extends BaseController
             });
 
         $admission_patient = AdmissionDischarge::join('facilities', 'facilities.id', '=',
-            'admission_discharges.admission_location')->select('facilities.address as location',
-            'admission_discharges.*')->where('admission_discharges.patient_id', $id)->where('status', '1')
+            'admission_discharges.admission_location')->select('facilities.name as location',
+            'admission_discharges.*')->where('admission_discharges.patient_id',
+            $id)->where('admission_discharges.status', '1')
             ->first();
         if ($admission_patient) {
             $admission_patient->admission_date = $admission_patient->admission_date;
@@ -775,7 +717,7 @@ class PatientController extends BaseController
             ->leftjoin('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
             ->leftjoin('patients', 'patients.id', '=', 'patient_encounters.patient_id')
             ->leftjoin('facilities', 'facilities.id', '=', 'patient_encounters.location')
-            ->select('patient_encounters.*', 'facilities.address as location',
+            ->select('patient_encounters.*', 'facilities.name as location',
                 'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
                 'provider.name as provider_name', 'patients.mrn_no',
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
@@ -786,7 +728,7 @@ class PatientController extends BaseController
             ->latest()
             ->first() ?? [];
 
-        $medication = Medication::where('patient_id', $id)->get();
+        $medication = medication::where('patient_id', $id)->get();
         foreach ($medication as $medication_data) {
             $formatted_data = $medication_data->title;
 
@@ -828,5 +770,65 @@ class PatientController extends BaseController
             'code' => true,
             'data' => $providers
         ], 200);
+    }
+
+    private function getRoleAndPermissions($patientId)
+    {
+        try {
+            $roleUser = RoleUser::where('user_id', $patientId)->first();
+
+            if (!$roleUser) {
+                return null;
+            }
+
+            $role = Role::find($roleUser->role_id);
+            $permissions = Permission::where('role_id', $roleUser->role_id)->get();
+
+            return [
+                'role_name' => $role->role_name,
+                'permissions' => $permissions->map(function ($permission) {
+                    return [
+                        'permissions' => $permission->permissions,
+                    ];
+                })
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred while getting role and permissions: '.$e->getMessage(), [
+                'patient_id' => $patientId,
+                'exception' => $e
+            ]);
+
+            return null;
+        }
+    }
+
+    private function getPatientsWithDetails()
+    {
+        try {
+            return Patient::leftJoin('problems', 'problems.patient_id', '=', 'patients.id')
+                ->leftJoin('beds', 'beds.patient_id', '=', 'patients.id')
+                ->leftJoin('rooms', 'beds.room_id', '=', 'rooms.id')
+                ->leftJoin('floors', 'rooms.floor_id', '=', 'floors.id')
+                ->leftJoin('insurances', 'insurances.patient_id', '=', 'patients.id')
+                ->select(
+                    'patients.*',
+                    'problems.diagnosis as problem_name',
+                    'floors.floor_name',
+                    'rooms.room_name',
+                    'beds.bed_no',
+                    'insurances.group_name'
+                )
+                ->where('patients.facility_id', auth()->user()->details->facilities)
+                ->orderBy('patients.created_at', 'DESC')
+                ->groupBy('patients.id')
+                ->get();
+        } catch (\Exception $e) {
+            Log::error('An error occurred while fetching patients: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            throw new \RuntimeException('Failed to retrieve patient details.');
+        }
     }
 }

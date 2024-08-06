@@ -691,33 +691,42 @@ class PatientEncounterController extends BaseController
                 $existingSection = EncounterNoteSection::where('id', $sectionData['sorting_order'])->first();
                 if ($existingSection) {
                     if ($existingSection->section_slug == 'assessments') {
+                        // Extract the JSON portion of the string
                         $jsonString = $existingSection->assessment_note;
                         $jsonEndPos = strpos($jsonString, ']');
+
+                        // Ensure valid JSON closing bracket is found
                         if ($jsonEndPos !== false) {
                             $jsonString = substr($jsonString, 0, $jsonEndPos + 1);
                         }
+
+                        // Decode JSON string
                         $sectionText = json_decode($jsonString, true);
+
+                        // Check if JSON decoding was successful
                         if (json_last_error() === JSON_ERROR_NONE) {
-                            if ($sectionText !== null) {
+                            // Ensure $sectionText is an array
+                            if (is_array($sectionText)) {
+                                // Iterate over each item in the decoded array
                                 foreach ($sectionText as &$data) {
-                                    if ($data['value_id'] === null || $data['value_id'] === "") {
+                                    // Ensure value_id exists; if not, assign a random value
+                                    if (!isset($data['value_id']) || empty($data['value_id'])) {
                                         $data['value_id'] = rand(123456, 999999);
-                                        $data['assessment_input'] = $sectionData['assessment_input'];
                                     }
+
+                                    // Update assessment_input if value_id matches
                                     if ($data['value_id'] == $sectionData['value_id']) {
                                         $data['assessment_input'] = $sectionData['assessment_input'];
                                     }
                                 }
+
+                                // Encode the updated array back to JSON
                                 $existingSection->assessment_note = json_encode($sectionText);
-                            } else {
-                                Log::error('Failed to decode section_text', ['section_id' => $existingSection->id]);
+                                $existingSection->save();  // Save the updated section
+
+                                Log::info('Assessment Note Updated Successfully',
+                                    ['section_id' => $existingSection->id]);
                             }
-                        } else {
-                            Log::error('Invalid JSON in section_text', [
-                                'section_id' => $existingSection->id,
-                                'error' => json_last_error_msg(),
-                                'json_string' => $jsonString
-                            ]);
                         }
                     } else {
                         $existingSection->section_text = $sectionData['section_text'];
@@ -1011,7 +1020,7 @@ class PatientEncounterController extends BaseController
         $providers = User::where('id', auth()->user()->id)->get();
 
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
-        $facilities = DB::table('facilities')->select('id', 'address')->get();
+        $facilities = DB::table('facilities')->select('id', 'name as address')->get();
         // Prepare fields' names from PatientEncounter table
         $encounter_fields = Schema::getColumnListing('patient_encounters');
         $loginProvider = User::where('id', auth()->user()->id)->select('name', 'id')->first();

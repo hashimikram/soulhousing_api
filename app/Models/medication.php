@@ -11,6 +11,7 @@ class medication extends Model
 
     public function patients()
     {
-        return $this->belongsTo(patient::class,'patient_id');
+        return $this->belongsTo(patient::class, 'patient_id');
     }
+
 }

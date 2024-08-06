@@ -4,9 +4,11 @@ use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\PatientController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\FloorController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
+    Route::resource('user', UserController::class);
     Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/patient/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/patient/store', [PatientController::class, 'store'])->name('patients.store');
