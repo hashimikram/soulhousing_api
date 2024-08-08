@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\patient;
 use App\Models\User;
-use App\Models\userDetail;
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
@@ -83,8 +82,7 @@ class PatientController extends Controller
                 $patient->country = $request->country;
                 $patient->address = $request->address;
                 if ($request->provider_id) {
-                    $user = userDetail::where('user_id', $request->provider_id)->first();
-                    $patient->facility_id = $user->facilities ?? null;
+                    $patient->facility_id = current_facility($request->provider_id) ?? null;
                 }
                 if ($request->file('profile_pic')) {
                     $originalName = $request->file('profile_pic')->getClientOriginalName();

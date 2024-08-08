@@ -29,6 +29,7 @@ class PatientController extends BaseController
 
     public function index()
     {
+        Log::info(current_facility(auth()->user()->id));
         try {
             $patients = Patient::with([
                 'problems',
@@ -39,7 +40,7 @@ class PatientController extends BaseController
                 'room.floor',
                 'role.role.permissions'
             ])
-                ->where('facility_id', auth()->user()->details->facilities)
+                ->where('facility_id', current_facility(auth()->user()->id))
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
@@ -270,7 +271,7 @@ class PatientController extends BaseController
                         ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
                         ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
                 })
-                ->where('patients.facility_id', auth()->user()->details->facilities)
+                ->where('patients.facility_id', current_facility(auth()->user()->id))
                 ->orderBy('patients.created_at', 'DESC')
                 ->groupBy('patients.id')
                 ->get();
@@ -428,7 +429,7 @@ class PatientController extends BaseController
                 $patient->country = $request->country;
                 $patient->auth = $request->auth;
                 $patient->npp = $request->npi;
-                $patient->facility_id = auth()->user()->details->facilities ?? null;
+                $patient->facility_id = current_facility(auth()->user()->id) ?? null;
                 // Check if media is provided
                 if ($request->input('profile_pic')) {
                     Log::info('Image Found');

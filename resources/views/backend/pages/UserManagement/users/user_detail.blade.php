@@ -6,6 +6,44 @@
 @section('user_management_li', 'here show')
 @section('users_a', 'active')
 @section('page_title','User Details')
+@section('custom_css')
+    <style>
+        .roles_listing {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .list {
+            width: 45%;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .item {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            cursor: move;
+            list-style: none;
+        }
+
+        .item_2 {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            list-style: none;
+        }
+
+        .roles_listing {
+            padding: 20px;
+        }
+    </style>
+
+@endsection
 @section('content')
     <div
         id="kt_app_content_container"
@@ -207,6 +245,7 @@
                 <!--begin::Navs-->
             </div>
         </div>
+        <input type="hidden" value="{{$user->id}}" id="user_id">
         <!--end::Navbar-->
         <!--begin::Row-->
         <div class="row g-5 g-xxl-8">
@@ -215,8 +254,28 @@
                 <!--begin::Feeds Widget 1-->
                 <div class="card mb-5 mb-xxl-8">
                     <!--begin::Body-->
-                    <div class="card-body pb-0">
+                    <div class="card-body pb-0 roles_listing">
+                        <ul id="user-roles" class="list">
+                            User Roles
+                            @foreach($userRoles as $role)
+                                <li class="item" data-role-id="{{ $role->id }}">
+                                    <span style="margin-right: 10px;"><i class="fa-solid fa-bars"></i></span>
+                                    {{ $role->role_name }}
+                                </li>
+                            @endforeach
 
+
+                        </ul>
+                        <ul id="available-roles" class="list">
+                            Available Roles
+                            @foreach($availableRoles as $role)
+                                @if(!$userRoles->contains('id', $role->id))
+                                    <li class="item" data-role-id="{{ $role->id }}"><span
+                                            style="margin-right: 10px;"><i
+                                                class="fa-solid fa-bars"></i></span> {{ $role->role_name }} </li>
+                                @endif
+                            @endforeach
+                        </ul>
                     </div>
                     <!--end::Body-->
                 </div>
@@ -224,8 +283,85 @@
             </div>
             <!--end::Col-->
         </div>
+
         <!--end::Row-->
     </div>
 
 @endsection
+@section('custom_js')
+
+    <!-- SortableJS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize SortableJS for user-roles
+            Sortable.create(document.getElementById('user-roles'), {
+                group: 'shared',
+                animation: 150,
+                ghostClass: 'blue-background-class',
+                onEnd: function (evt) {
+                    handleRoleChange(evt.from.id, evt.to.id, evt.item.dataset.roleId);
+                }
+            });
+
+            // Initialize SortableJS for available-roles
+            Sortable.create(document.getElementById('available-roles'), {
+                group: 'shared',
+                animation: 150,
+                ghostClass: 'blue-background-class',
+                onEnd: function (evt) {
+                    handleRoleChange(evt.from.id, evt.to.id, evt.item.dataset.roleId);
+                }
+            });
+
+            function handleRoleChange(fromId, toId, roleId) {
+                const userId = $('#user_id').val();
+                const action = (fromId === 'available-roles' && toId === 'user-roles') ? 'add' : 'remove';
+
+                $.ajax({
+                    url: '{{ route('update.roles') }}',
+                    method: 'POST',
+                    data: JSON.stringify({
+                        userId: userId,
+                        roleId: roleId,
+                        action: action
+                    }),
+                    contentType: 'application/json',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                    .done(function (data) {
+                        toastr.options = {
+                            "closeButton": true,
+                            "debug": true,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toastr-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        };
+                        toastr.success("Success", "User Role Updated");
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error:', textStatus, errorThrown);
+                        console.error('Error Response:', jqXHR.responseText);
+                    });
+            }
+
+
+        });
+    </script>
+
+@endsection
+
 

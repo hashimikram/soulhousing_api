@@ -230,5 +230,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/all-providers', [PatientController::class, 'all_providers']);
     Route::get('/get-latest-vitals/{patient_id}', [VitalController::class, 'get_latest_vital']);
     Route::get('/all-facilities', [FacilityController::class, 'all_facilities']);
-
+    Route::get('/login-user-facility', [FacilityController::class, 'LoginUserFacility']);
+    Route::post('/update-login-facility', [FacilityController::class, 'updateLoginUserFacility']);
 });

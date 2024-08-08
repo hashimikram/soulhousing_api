@@ -5,27 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\EncounterNoteSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AssessmentNoteController extends Controller
 {
     public function store(Request $request)
     {
+        // Validate the request data
         $request->validate([
-            'code' => 'required',
-            'assessment_input' => 'required',
+            'code' => 'required|nullable',
+            'assessment_input' => 'nullable|string'
         ]);
+
         try {
             $get_record = DB::table('problem_quotes')->where('code', $request->code)->first();
-            if (isset($get_record)) {
+
+            if ($get_record) {
                 DB::table('problem_quotes')
                     ->where('code', $request->code)
-                    ->update(['assessment_notes' => $request->assessment_input]);
-                return response()->json(['status' => 'success', 'message' => 'Assessment Note Saved Successfully']);
+                    ->update(['assessment_notes' => $request->assessment_input ?? null]);
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Assessment Note Saved Successfully'
+                ]);
             } else {
-                return response()->json(['status' => 'error', 'message' => 'Record Not Found']);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Record Not Found'
+                ]);
             }
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Invalid Request']);
+            Log::error('Error saving assessment note: '.$e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request'
+            ]);
         }
     }
 

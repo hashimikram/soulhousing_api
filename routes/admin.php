@@ -18,6 +18,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/mapping/{id}', [FloorController::class, 'mapping'])->name('floors.mapping');
     Route::post('/assign-bed', [FloorController::class, 'assign_bed'])->name('patients.assign');
     Route::resource('maintenance', MaintenanceController::class);
+    Route::post('/update-roles', [UserController::class, 'updateRoles'])->name('update.roles');
+
 });
 
 require __DIR__.'/auth.php';

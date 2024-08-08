@@ -19,7 +19,7 @@ class FloorController extends BaseController
         if (auth()->user()->user_type == 'admin') {
             $floors = Floor::all();
         } else {
-            $floors = Floor::where('facility_id', auth()->user()->details->facilities)->get();
+            $floors = Floor::where('facility_id', current_facility(auth()->user()->id))->get();
         }
 
         foreach ($floors as $floor) {
@@ -195,7 +195,9 @@ class FloorController extends BaseController
             $status = 'vacant';
             $base = new BaseController();
             try {
-                $floors = floor::where('provider_id', auth()->user()->id)->get();
+                $floors = floor::where('facility_id', current_facility(auth()->user()->id))->get();
+                $response = []; // Initialize the response array here
+
                 foreach ($floors as $details) {
                     $rooms = Room::where('floor_id', $details->id)->with([
                         'beds' => function ($query) use ($status) {
@@ -204,8 +206,6 @@ class FloorController extends BaseController
                                 ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
                         }
                     ])->get();
-
-                    $response = [];
 
                     foreach ($rooms as $room) {
                         $floor = floor::where('id', $room->floor_id)->first();
@@ -238,13 +238,13 @@ class FloorController extends BaseController
                     }
                 }
 
-
                 return $base->sendResponse($response, 'Beds with status "'.$status.'" retrieved successfully');
             } catch (\Exception $e) {
                 return $base->sendError('Error', $e->getMessage());
             }
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -269,7 +269,7 @@ class FloorController extends BaseController
                 // Create a new floor
                 $floor = Floor::create([
                     'provider_id' => auth()->user()->id,
-                    'facility_id' => auth()->user()->details->facilities,
+                    'facility_id' => current_facility(auth()->user()->id),
                     'floor_name' => $floorData['floor_title'] ?? '',
                 ]);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
 use App\Models\User;
 use App\Models\userDetail;
 use Illuminate\Auth\Events\Registered;
@@ -67,7 +68,25 @@ class RegisteredUserController extends Controller
             $token = $user->createToken(config('app.name'))->plainTextToken;
             $success['token'] = $token;
             $success['user'] = $user;
+
+            //  Getting User Facilities
+            $user_Facilities = json_decode($user->details->facilities, true);
+            $transformed_Facilities = [];
+            if (is_array($user_Facilities)) {
+                foreach ($user_Facilities as $facility_id) {
+                    $facilities_table = Facility::where('id', $facility_id)->first();
+                    if ($facilities_table) {
+                        $transformed_Facilities[] = [
+                            'id' => $facilities_table->id,
+                            'facility_name' => $facilities_table->name
+                        ];
+                    }
+                }
+            }
+            $success['user_facilities'] = $transformed_Facilities;
+
             return $baseController->sendResponse($success, 'User login successfully.');
+
         } else {
             return $baseController->sendError('Credentials Wrong');
         }

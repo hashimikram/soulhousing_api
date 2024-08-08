@@ -688,51 +688,41 @@ class PatientEncounterController extends BaseController
 
         try {
             foreach ($validatedData['sections'] as $sectionData) {
-                $existingSection = EncounterNoteSection::where('id', $sectionData['sorting_order'])->first();
+                $existingSection = EncounterNoteSection::where('encounter_id', $sectionData['sorting_order'])->first();
+
                 if ($existingSection) {
                     if ($existingSection->section_slug == 'assessments') {
-                        // Extract the JSON portion of the string
-                        $jsonString = $existingSection->assessment_note;
-                        $jsonEndPos = strpos($jsonString, ']');
+                        // Decode the JSON portion of the string
+                        $jsonString = json_decode($existingSection->assessment_note, true);
 
-                        // Ensure valid JSON closing bracket is found
-                        if ($jsonEndPos !== false) {
-                            $jsonString = substr($jsonString, 0, $jsonEndPos + 1);
-                        }
-
-                        // Decode JSON string
-                        $sectionText = json_decode($jsonString, true);
-
-                        // Check if JSON decoding was successful
                         if (json_last_error() === JSON_ERROR_NONE) {
-                            // Ensure $sectionText is an array
-                            if (is_array($sectionText)) {
-                                // Iterate over each item in the decoded array
-                                foreach ($sectionText as &$data) {
-                                    // Ensure value_id exists; if not, assign a random value
-                                    if (!isset($data['value_id']) || empty($data['value_id'])) {
-                                        $data['value_id'] = rand(123456, 999999);
-                                    }
+                            foreach ($jsonString as &$data) {
+                                Log::info('Checking value_id', [
+                                    'data_value_id' => $data['value_id'], 'section_value_id' => $sectionData['value_id']
+                                ]);
 
-                                    // Update assessment_input if value_id matches
-                                    if ($data['value_id'] == $sectionData['value_id']) {
-                                        $data['assessment_input'] = $sectionData['assessment_input'];
-                                    }
+                                // Update assessment_input if value_id matches
+                                if ($data['value_id'] == $sectionData['value_id']) {
+                                    $data['assessment_input'] = $sectionData['assessment_input'];
                                 }
-
-                                // Encode the updated array back to JSON
-                                $existingSection->assessment_note = json_encode($sectionText);
-                                $existingSection->save();  // Save the updated section
-
-                                Log::info('Assessment Note Updated Successfully',
-                                    ['section_id' => $existingSection->id]);
                             }
+
+                            // Encode the updated array back to JSON
+                            $existingSection->assessment_note = json_encode($jsonString);
+                        } else {
+                            Log::error('JSON decoding error', ['error' => json_last_error_msg()]);
                         }
+
+                        $existingSection->section_text = $sectionData['section_text'];
+                        Log::info('Assessment Note Updated Successfully', ['section_id' => $existingSection->id]);
                     } else {
                         $existingSection->section_text = $sectionData['section_text'];
+                        Log::info('Section Text Updated', ['section_id' => $existingSection->id]);
                     }
-                    $existingSection->save();
-                    Log::info('Section Text Updated', ['section_id' => $existingSection->id]);
+
+                    $existingSection->save();  // Save the updated section
+                } else {
+                    Log::warning('Encounter Note Section not found', ['section_id' => $sectionData['sorting_order']]);
                 }
             }
 
@@ -851,19 +841,19 @@ class PatientEncounterController extends BaseController
                 $section_text = str_replace(
                     [
                         'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:',
-                        'Mouth/Throat:', 'Neck:', 'Breasts/Chest:', 'Respiratory:', 'Cardiovascular:',
+                        'Throat:', 'Neck:', 'Chest:', 'Respiratory:', 'Cardiovascular:',
                         'Gastrointestinal:',
                         'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
-                        'Hematologic/Lymphatic:', 'Allergic/Immunologic:'
+                        'Lymphatic:', 'Immunologic:'
                     ],
                     [
                         '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>',
-                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Mouth/Throat:</b>',
-                        '<b>Neck:</b>', '<b>Breasts/Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
+                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Throat:</b>',
+                        '<b>Neck:</b>', '<b>Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
                         '<b>Gastrointestinal:</b>',
                         '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
                         '<b>Psychiatric:</b>',
-                        '<b>Endocrine:</b>', '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>',
+                        '<b>Endocrine:</b>', '<b>Lymphatic:</b>', '<b>Immunologic:</b>',
                     ],
                     $section_text
                 );
@@ -872,18 +862,18 @@ class PatientEncounterController extends BaseController
             if ($section['section_slug'] == 'physical-exam') {
                 $section_text = str_replace(
                     [
-                        'General Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
-                        'Neck:', 'Chest/Lungs:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
+                        'Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', ' Throat:',
+                        'Neck:', 'Chest:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
                         'Neurological:', 'Psychiatric:'
                     ],
                     [
-                        '<b>General Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
+                        '<b>Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
                         '<b>Ears:</b>',
                         '<b>Nose:</b>',
-                        '<b>Mouth & Throat:</b>', '<b>Cardiovascular:</b>', '<b>Respiratory System:</b>',
+                        '<b> Throat:</b>', '<b>Neck:</b>', '<b>Chest:</b>', '<b>Heart:</b>',
                         '<b>Abdomen:</b>',
-                        '<b>Musculoskeletal System:</b>', '<b>Neurological System:</b>', '<b>Genitourinary System:</b>',
-                        '<b>Psychosocial Assessment:</b>'
+                        '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
+                        '<b>Psychiatric:</b>'
                     ],
                     $section_text
                 );
@@ -1124,6 +1114,7 @@ class PatientEncounterController extends BaseController
             'data' => $encounter_type
         ], 200);
     }
+
 
     public function mental_section_show($section_id, $patient_id)
     {

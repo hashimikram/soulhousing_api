@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\patient;
+use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\User;
 use App\Models\userDetail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -97,7 +99,14 @@ class UserController extends Controller
         $user->first_name = $nameParts[0];
         $user->last_name = isset($nameParts[1]) ? $nameParts[1] : '';
         $total_patients = patient::where('provider_id', $id)->count();
-        return view('backend.pages.UserManagement.users.user_detail')->with(compact('user', 'total_patients'));
+        $availableRoles = Role::all();
+        $userRoles = RoleUser::join('roles', 'roles.id', '=', 'role_users.role_id')
+            ->select('roles.id', 'roles.role_name')
+            ->where('role_users.user_id', $id)
+            ->get();
+
+        return view('backend.pages.UserManagement.users.user_detail')->with(compact('user', 'total_patients',
+            'availableRoles', 'userRoles'));
     }
 
     public function edit($id)
@@ -168,5 +177,39 @@ class UserController extends Controller
         }
         $user->delete();
         return redirect()->route('user.index')->with('success', 'User Deleted Successfully');
+    }
+
+    public function updateRoles(Request $request)
+    {
+        $request->validate([
+            'userId' => 'required|exists:users,id',
+            'roleId' => 'required|exists:roles,id',
+            'action' => 'required|in:add,remove',
+        ]);
+
+        $userId = $request->input('userId');
+        $roleId = $request->input('roleId');
+        $action = $request->input('action');
+
+        // Fetch the user by ID
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['success' => false, 'error' => 'User not found'], 404);
+        }
+
+        // Handle adding or removing roles
+        if ($action === 'add') {
+            // Add the role to the user
+            $role_user = new RoleUser();
+            $role_user->user_id = $userId;
+            $role_user->role_id = $roleId;
+            $role_user->save();
+        } elseif ($action === 'remove') {
+            // Remove the role from the user
+            $role = RoleUser::where('user_id', $userId)->where('role_id', $roleId)->delete();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

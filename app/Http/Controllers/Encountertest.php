@@ -156,7 +156,7 @@ class Encountertest extends Controller
             $text_2 = null;
             $text_json = null;
             if ($section['section_slug'] === 'mental_status_examination') {
-                $text_2 = "appearance: Kemp<br></br>
+                $text_2 = "appearance: Kempt<br></br>
                         alert: Yes<br></br>
                         behavior: Normal<br></br>
                         speech: Verbal<br></br>
@@ -179,7 +179,7 @@ class Encountertest extends Controller
 
                 $text = html_entity_decode($text_2);
                 $text_json = json_encode([
-                    "appearance" => ["Kemp"],
+                    "appearance" => ["Kempt"],
                     "alert" => ["Yes"],
                     "behavior" => ["Normal"],
                     "speech" => ["Verbal"],
@@ -281,15 +281,15 @@ class Encountertest extends Controller
             $text = $section['section_text'];
             $text_2 = $section['section_text'];
             if ($section['section_slug'] === 'physical-exam') {
-                $text_2 = "General Appearance: Well-nourished, well-developed, no acute distress.
+                $text_2 = "Appearance: Well-nourished, well-developed, no acute distress.
                 Skin: Warm, dry, intact, no rashes or lesions.
                 Head: Normocephalic, atraumatic.
                 Eyes: PERRLA (Pupils Equal, Round, Reactive to Light and Accommodation), EOMI (Extraocular Movements Intact), sclerae white, conjunctivae pink.
                 Ears: Tympanic membranes intact, no erythema or discharge.
                 Nose: Mucosa pink, no discharge, septum midline.
-                Mouth & Throat:  Mucosa pink, no lesions, tonsils absent or not enlarged, uvula midline.
+                Throat:  Mucosa pink, no lesions, tonsils absent or not enlarged, uvula midline.
                 Neck: No lymphadenopathy, thyroid non-palpable, trachea midline.
-                Chest/Lungs: Clear to auscultation bilaterally, no wheezes, rales, or rhonchi.
+                Lungs: Clear to auscultation bilaterally, no wheezes, rales, or rhonchi.
                 Heart: Regular rate and rhythm, no murmurs, gallops, or rubs.
                 Abdomen: Soft, non-tender, no masses or organomegaly, bowel sounds normal.
                 Genitourinary: No costovertebral angle tenderness.
@@ -305,9 +305,9 @@ class Encountertest extends Controller
                          Eyes: Denies vision changes, pain, redness, or discharge.
                          Ears: Denies hearing loss, pain, tinnitus, or discharge.
                          Nose: Denies congestion, discharge, nosebleeds, or sinus pain.
-                         Mouth/Throat: Denies sore throat, difficulty swallowing, or hoarseness.
+                         Throat: Denies sore throat, difficulty swallowing, or hoarseness.
                          Neck: Denies lumps, pain, or stiffness.
-                         Breasts/Chest: Denies lumps, pain, or discharge.
+                         Chest: Denies lumps, pain, or discharge.
                          Respiratory: Denies cough, shortness of breath, or wheezing.
                          Cardiovascular: Denies chest pain, palpitations, or edema.
                          Gastrointestinal: Denies nausea, vomiting, diarrhea, or constipation.
@@ -316,8 +316,8 @@ class Encountertest extends Controller
                          Neurological: Denies numbness, tingling, weakness, or seizures.
                          Psychiatric: Denies anxiety, depression, or sleep disturbances.
                          Endocrine: Denies polyuria, polydipsia, or heat/cold intolerance.
-                         Hematologic/Lymphatic: Denies easy bruising, bleeding, or swollen glands.
-                         Allergic/Immunologic: Denies allergies, frequent infections, or immunodeficiency.";
+                         Lymphatic: Denies easy bruising, bleeding, or swollen glands.
+                         Immunologic: Denies allergies, frequent infections, or immunodeficiency.";
                 $text = str_replace("\n", "<br></br>", $text_2);
                 $text = html_entity_decode($text);
             } elseif ($section['section_slug'] === 'allergies') {
@@ -408,6 +408,7 @@ class Encountertest extends Controller
         $sections = EncounterNoteSection::where('encounter_id', $encounter->id)->orderBy('id', 'ASC')->get();
 
         foreach ($sections as $key => $section) {
+            $speciality = ListOption::where('id', $encounter->specialty)->first();
             $encounter = PatientEncounter::where('id', $encounter->id)->first();
             if ($encounter->speciality == 'psychiatrist') {
                 $fixed_id = 69;
@@ -419,19 +420,19 @@ class Encountertest extends Controller
                 $section_text = str_replace(
                     [
                         'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:',
-                        'Mouth/Throat:', 'Neck:', 'Breasts/Chest:', 'Respiratory:', 'Cardiovascular:',
+                        'Throat:', 'Neck:', 'Chest:', 'Respiratory:', 'Cardiovascular:',
                         'Gastrointestinal:',
                         'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
-                        'Hematologic/Lymphatic:', 'Allergic/Immunologic:'
+                        'Lymphatic:', 'Immunologic:'
                     ],
                     [
                         '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>',
-                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Mouth/Throat:</b>',
-                        '<b>Neck:</b>', '<b>Breasts/Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
+                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Throat:</b>',
+                        '<b>Neck:</b>', '<b>Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
                         '<b>Gastrointestinal:</b>',
                         '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
                         '<b>Psychiatric:</b>',
-                        '<b>Endocrine:</b>', '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>',
+                        '<b>Endocrine:</b>', '<b>Lymphatic:</b>', '<b>Immunologic:</b>',
                     ],
                     $section_text
                 );
@@ -440,18 +441,18 @@ class Encountertest extends Controller
             if ($section['section_slug'] == 'physical-exam') {
                 $section_text = str_replace(
                     [
-                        'General Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
-                        'Neck:', 'Chest/Lungs:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
+                        'Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', ' Throat:',
+                        'Neck:', 'Chest:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
                         'Neurological:', 'Psychiatric:'
                     ],
                     [
-                        '<b>General Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
+                        '<b>Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
                         '<b>Ears:</b>',
                         '<b>Nose:</b>',
-                        '<b>Mouth & Throat:</b>', '<b>Cardiovascular:</b>', '<b>Respiratory System:</b>',
+                        '<b> Throat:</b>', '<b>Neck:</b>', '<b>Chest:</b>', '<b>Heart:</b>',
                         '<b>Abdomen:</b>',
-                        '<b>Musculoskeletal System:</b>', '<b>Neurological System:</b>', '<b>Genitourinary System:</b>',
-                        '<b>Psychosocial Assessment:</b>'
+                        '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
+                        '<b>Psychiatric:</b>'
                     ],
                     $section_text
                 );
@@ -485,6 +486,10 @@ class Encountertest extends Controller
                 Log::info('Section Text of Assems: '.json_encode($section_text));
             }
 
+            if ($speciality->option_id == 'wound') {
+                $section_text = str_replace('-', "\n", $section_text);
+                Log::info($encounter->speciality);
+            }
 
             if ($section['section_slug'] == 'wound_evaluation') {
                 $formattedData[] = [
