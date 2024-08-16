@@ -33,7 +33,7 @@
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href="{{asset('backend/assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('backend/assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css"/>
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.dataTables.css"/>
     <!--end::Global Stylesheets Bundle-->
     <style>
         [data-kt-app-layout=dark-sidebar] .app-sidebar .menu .menu-item .menu-link .menu-title {
@@ -73,6 +73,22 @@
                 transform: rotate(360deg);
             }
         }
+
+        .dt-input:focus,
+        .dt-input:focus-visible {
+            outline: none !important;
+        }
+
+        div.dt-container .dt-search input {
+            background-color: var(--kt-input-solid-bg);
+            border-color: var(--kt-input-solid-bg);
+            color: var(--kt-input-solid-color);
+            transition: color .2s ease;
+            padding: 8px;
+            border: 1px solid #e9e9e9;
+
+        }
+
 
     </style>
     @yield('custom_css')
@@ -194,10 +210,21 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{asset('backend/assets/js/custom/apps/ecommerce/catalog/save-product.js')}}"></script>
 <script src="{{asset('backend/assets/plugins/custom/formrepeater/formrepeater.bundle.js')}}"></script>
+<script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
 
 <!--end::Custom Javascript-->
 <!--end::Javascript-->
 <script>
+    $(document).ready(function () {
+        $('table').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthChange": false,
+            "ordering": false
+        });
+    });
+
+
     @if(Session::has('success'))
         toastr.options = {
         "closeButton": true,

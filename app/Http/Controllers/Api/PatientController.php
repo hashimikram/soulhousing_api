@@ -29,6 +29,7 @@ class PatientController extends BaseController
 
     public function index()
     {
+
         Log::info(current_facility(auth()->user()->id));
         try {
             $patients = Patient::with([
@@ -222,6 +223,126 @@ class PatientController extends BaseController
         }
     }
 
+    public function my_patients()
+    {
+        Log::info(current_facility(auth()->user()->id));
+        try {
+            $patients = Patient::with([
+                'problems',
+                'admission',
+                'allergies',
+                'medications',
+                'insurance',
+                'room.floor',
+                'role.role.permissions'
+            ])
+                ->where('provider_id', auth()->user()->id)
+                ->where('facility_id', current_facility(auth()->user()->id))
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            foreach ($patients as $patient) {
+                $this->processPatientData($patient);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving patient data. Please try again later.'
+            ], 500);
+        }
+    }
+
+    public function un_assigned_patients()
+    {
+        Log::info(current_facility(auth()->user()->id));
+        try {
+            $patients = Patient::with([
+                'problems',
+                'admission',
+                'allergies',
+                'medications',
+                'insurance',
+                'room.floor',
+                'role.role.permissions'
+            ])
+                ->where('facility_id', current_facility(auth()->user()->id))
+                ->where('provider_id', null)
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+            foreach ($patients as $patient) {
+                $this->processPatientData($patient);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving patient data. Please try again later.'
+            ], 500);
+        }
+    }
+
+    public function un_sign_patients()
+    {
+        Log::info(current_facility(auth()->user()->id));
+        try {
+            $patients = Patient::select('patients.*')
+                ->leftJoin('patient_encounters', 'patients.id', '=', 'patient_encounters.patient_id')
+                ->whereNull('patient_encounters.patient_id')
+                ->with([
+                    'problems',
+                    'admission',
+                    'allergies',
+                    'medications',
+                    'insurance',
+                    'room.floor',
+                    'role.role.permissions'
+                ])
+                ->where('facility_id', current_facility(auth()->user()->id))
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+
+            foreach ($patients as $patient) {
+                $this->processPatientData($patient);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $patients
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+                'exception' => $e
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving patient data. Please try again later.'
+            ], 500);
+        }
+    }
+
     public function search($search_text)
     {
         try {
@@ -329,12 +450,12 @@ class PatientController extends BaseController
             'title' => 'nullable|string',
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'last_name' => 'nullable|string',
+            'last_name' => 'required|string',
             'social_security_no' => 'nullable|string',
             'medical_no' => 'required|string',
             'age' => 'nullable|string',
             'gender' => 'required|string',
-            'date_of_birth' => 'required|date',
+            'date_of_birth' => 'required',
             'race' => 'nullable|string',
             'ethnicity' => 'nullable|string',
             'marital_status' => 'nullable|string',
@@ -392,7 +513,10 @@ class PatientController extends BaseController
                 $patient->medical_no = $request->medical_no;
                 $patient->age = $request->age;
                 $patient->gender = $request->gender;
-                $patient->date_of_birth = $request->date_of_birth;
+                $formattedDate = $request->date_of_birth;
+                $cleanedDateString = preg_replace('/\s*\(.*?\)/', '', $formattedDate);
+                $date = date('Y-m-d', strtotime($cleanedDateString));
+                $patient->date_of_birth = $date;
                 $patient->race = $request->race;
                 $patient->ethnicity = $request->ethnicity;
                 $patient->marital_status = $request->marital_status;
@@ -547,7 +671,10 @@ class PatientController extends BaseController
                 $patient->medical_no = $request->medical_no;
                 $patient->age = $request->age;
                 $patient->gender = $request->gender;
-                $patient->date_of_birth = $request->date_of_birth;
+                $formattedDate = $request->date_of_birth;
+                $cleanedDateString = preg_replace('/\s*\(.*?\)/', '', $formattedDate);
+                $date = date('Y-m-d', strtotime($cleanedDateString));
+                $patient->date_of_birth = $date;
                 $patient->race = $request->race;
                 $patient->ethnicity = $request->ethnicity;
                 $patient->marital_status = $request->marital_status;

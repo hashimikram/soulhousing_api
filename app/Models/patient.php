@@ -14,6 +14,11 @@ class patient extends Model
         return $this->hasMany(medication::class)->where('status', 'active');
     }
 
+    public function encounters()
+    {
+        return $this->hasMany(PatientEncounter::class, 'patient_id');
+    }
+
     public function notes()
     {
         return $this->hasMany(Note::class);
@@ -70,5 +75,10 @@ class patient extends Model
     public function bed()
     {
         return $this->hasOne(bed::class, 'patient_id', 'id');
+    }
+
+    public function provider()
+    {
+        return $this->belongsTo(User::class);
     }
 }

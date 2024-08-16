@@ -11,6 +11,11 @@ class AdmissionDischarge extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(patient::class);
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'provider_id');
     }
 }

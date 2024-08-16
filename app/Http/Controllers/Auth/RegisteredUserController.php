@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
+use App\Models\RoleUser;
 use App\Models\User;
 use App\Models\userDetail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
@@ -36,16 +38,15 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $detail = new userDetail();
+
+        $detail = new UserDetail();
         $detail->user_id = $user->id;
         $detail->save();
-
         event(new Registered($user));
-
         Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
+
 
     /**
      * Display the registration view.
@@ -61,37 +62,64 @@ class RegisteredUserController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
         $baseController = new BaseController();
         $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $user = User::where('email', $request->email)->first();
-            $token = $user->createToken(config('app.name'))->plainTextToken;
-            $success['token'] = $token;
-            $success['user'] = $user;
 
-            //  Getting User Facilities
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken(config('app.name'))->plainTextToken;
+            $success = [
+                'token' => $token,
+                'user' => $user,
+            ];
+
+            // Fetch the facilities and get the first one
             $user_Facilities = json_decode($user->details->facilities, true);
-            $transformed_Facilities = [];
-            if (is_array($user_Facilities)) {
-                foreach ($user_Facilities as $facility_id) {
-                    $facilities_table = Facility::where('id', $facility_id)->first();
-                    if ($facilities_table) {
-                        $transformed_Facilities[] = [
-                            'id' => $facilities_table->id,
-                            'facility_name' => $facilities_table->name
-                        ];
+
+            $first_facility_id = null;
+            if (is_array($user_Facilities) && !empty($user_Facilities)) {
+                $facility_id = $user_Facilities[0];
+                $facilities_table = Facility::find($facility_id);
+                if ($facilities_table) {
+                    $first_facility_id = $facilities_table->id;
+                    DB::table('personal_access_tokens')
+                        ->where('tokenable_id', Auth::id())
+                        ->latest()
+                        ->take(1)
+                        ->update(['current_facility' => $first_facility_id]);
+                }
+            }
+
+            $role_user = RoleUser::with('role')->where('user_id', Auth::id())->first();
+            $decodedPermissions = [];
+
+            if ($role_user && $role_user->role) {
+                $permissionsData = $role_user->role->permissions->first();
+                if ($permissionsData && !empty($permissionsData->permissions)) {
+                    $permissionsArray = json_decode($permissionsData->permissions, true);
+                    // Convert to associative array with key and value as the same permission name
+                    foreach ($permissionsArray as $permission) {
+                        if (!is_numeric($permission)) {
+                            $decodedPermissions[$permission] = $permission;
+                        }
                     }
                 }
             }
-            $success['user_facilities'] = $transformed_Facilities;
+
+            $success['acl'] = [
+                'user_id' => Auth::id(),
+                'role' => $role_user ? $role_user->role->role_name : null,
+                'permissions' => $decodedPermissions,
+            ];
 
             return $baseController->sendResponse($success, 'User login successfully.');
 
         } else {
-            return $baseController->sendError('Credentials Wrong');
+            return $baseController->sendError('Credentials are incorrect');
         }
-        return $baseController->sendError('Unauthorised.', ['error' => 'Unauthorised']);
     }
+
 
     public function forgot_password(Request $request)
     {

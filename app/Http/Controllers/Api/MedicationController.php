@@ -16,11 +16,14 @@ class MedicationController extends BaseController
      */
     public function index($id)
     {
-        $active_medications = medication::with('patients')->where('status', 'active')->where('patient_id', $id)->get();
+        $active_medications = medication::with(['patients', 'staff'])->where('status', 'active')->where('patient_id',
+            $id)->get();
         $inactive_medications = medication::with('patients')->where('status', 'inactive')->where('patient_id',
             $id)->get();
 
         foreach ($active_medications as $result) {
+        
+
             if (isset($result->end_date)) {
                 $enddate = Carbon::parse($result->end_date);
                 if (Carbon::now()->isAfter($enddate)) {

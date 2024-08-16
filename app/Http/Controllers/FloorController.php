@@ -104,7 +104,7 @@ class FloorController extends Controller
 
                     if (isset($roomData['beds'])) {
                         foreach ($roomData['beds'] as $bedData) {
-                            Bed::create([
+                            bed::create([
                                 'room_id' => $room->id,
                                 'bed_title' => $bedData['title'],
                                 'status' => 'vacant',
@@ -203,7 +203,7 @@ class FloorController extends Controller
                     }
                     $bed->save();
                 } else {
-                    $bed = Bed::find($bedId);
+                    $bed = bed::find($bedId);
                     if ($bed) {
                         $bed->bed_title = $bedData['title'];
                         $bed->save();
@@ -298,15 +298,17 @@ class FloorController extends Controller
             'bed_id' => 'required|exists:beds,id',
             'patient_id' => 'required|exists:patients,id',
         ]);
-        $beds = Bed::where('id', $request->bed_id)->first();
+
+        $beds = bed::where('id', $request->bed_id)->first();
         if ($beds != null) {
             try {
-                $checkAssignBed = Bed::where(['patient_id' => $request->patient_id])->first();
+                $checkAssignBed = bed::where(['patient_id' => $request->patient_id])->first();
                 if (isset($checkAssignBed)) {
                     return response()->json([
                         'code' => false,
                         'status' => '1',
-                        'message' => 'patients Already Assigned',
+                        'old_bed_id' => $checkAssignBed->id, // Return the old bed id
+                        'message' => 'Patient already assigned',
                     ], 200);
                 } else {
                     $occupied_at = date('Y-m-d h:i:s', strtotime($request->occupied_at));
@@ -318,7 +320,7 @@ class FloorController extends Controller
                     $beds->save();
                     return response()->json([
                         'code' => true,
-                        'message' => 'patients Added',
+                        'message' => 'Patient added',
                     ], 200);
                 }
             } catch (\Exception $e) {
@@ -329,8 +331,49 @@ class FloorController extends Controller
             }
         } else {
             return response()->json([
-                'code' => 'false',
-                'message' => 'Bed Not Found',
+                'code' => false,
+                'message' => 'Bed not found',
+            ], 404);
+        }
+    }
+
+    public function transfer_patient(Request $request)
+    {
+        $request->validate([
+            'old_bed_id' => 'required|exists:beds,id',
+            'new_bed_id' => 'required|exists:beds,id',
+            'patient_id' => 'required|exists:patients,id',
+        ]);
+
+        $oldBed = bed::where('id', $request->old_bed_id)->first();
+        $newBed = bed::where('id', $request->new_bed_id)->first();
+
+        if ($oldBed && $newBed) {
+            try {
+                $oldBed->patient_id = null;
+                $oldBed->status = 'vacant';
+                $oldBed->occupied_from = null;
+                $oldBed->booked_till = null;
+                $oldBed->save();
+
+                $newBed->patient_id = $request->patient_id;
+                $newBed->status = 'occupied';
+                $newBed->save();
+
+                return response()->json([
+                    'code' => true,
+                    'message' => 'Patient transferred successfully',
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'code' => false,
+                'message' => 'Bed not found',
             ], 404);
         }
     }

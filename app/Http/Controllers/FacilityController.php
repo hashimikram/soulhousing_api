@@ -21,7 +21,7 @@ class FacilityController extends Controller
 
     public function all_facilities()
     {
-        $facility = Facility::select('address')->get();
+        $facility = Facility::select('name as address')->get();
         return response()->json([
             'success' => true,
             'data' => $facility

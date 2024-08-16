@@ -18,4 +18,44 @@ class PatientEncounter extends Model
         'location',
         'specialty',
     ];
+
+    public function provider()
+    {
+        return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function facility()
+    {
+        return $this->belongsTo(Facility::class, 'location');
+    }
+
+    public function providerPatient()
+    {
+        return $this->belongsTo(User::class, 'provider_id_patient');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
+    public function signedBy()
+    {
+        return $this->belongsTo(User::class, 'signed_by');
+    }
+
+    public function encounterType()
+    {
+        return $this->belongsTo(ListOption::class, 'encounter_type');
+    }
+
+    public function specialty_type()
+    {
+        return $this->belongsTo(ListOption::class, 'specialty');
+    }
+
+    public function parentEncounter()
+    {
+        return $this->belongsTo(PatientEncounter::class, 'parent_encounter');
+    }
 }

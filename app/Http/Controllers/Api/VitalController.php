@@ -105,6 +105,7 @@ class VitalController extends BaseController
             'blood_group_date' => 'nullable|date',
             'office_test_pain_scale' => 'nullable|string',
             'pain_scale_date' => 'nullable|date',
+            'blood_pressure' => 'nullable'
         ]);
 
         if (!auth()->check()) {
@@ -226,6 +227,8 @@ class VitalController extends BaseController
             'office_test_date_1' => 'nullable|date',
             'office_test_oxygen_source_2' => 'nullable|string',
             'office_test_date_2' => 'nullable|date',
+            'blood_pressure' => 'nullable'
+
         ]);
 
         // Check if the user is authenticated
@@ -264,10 +267,6 @@ class VitalController extends BaseController
             $vital = Vital::findOrFail($id);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Vital not found'], 404);
-        }
-
-        if ($vital->provider_id !== auth()->user()->id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         // 4. Attempt to delete the note

@@ -25,6 +25,8 @@ class Wound extends Model
         'left_touch',
         'right_mono',
         'left_mono',
+        'other_factor',
+        'patient_education'
     ];
 
     public function details()

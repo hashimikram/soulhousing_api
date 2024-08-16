@@ -94,19 +94,19 @@
                         <div class="col-md-6">
                             <div class="fv-row mb-7">
                                 <!--begin::Label-->
-                                <label class="required fw-semibold fs-6 mb-2">Provider</label>
+                                <label class="required fw-semibold fs-6 mb-2">Facility</label>
                                 <!--end::Label-->
                                 <!--begin::Input-->
-                                <select class="form-control form-control-solid mb-3 mb-lg-0" name="provider_id">
-                                    <option value="">Select Provider</option>
-                                    @foreach ($providers as $details)
+                                <select class="form-control form-control-solid mb-3 mb-lg-0" name="facility_id">
+                                    <option value="">Select Facility</option>
+                                    @foreach ($facilities as $details)
                                         <option value="{{ $details->id }}"
-                                            {{ old('provider_id') == $details->id ? 'selected' : '' }}>{{ $details->name }}
+                                            {{ old('facility_id') == $details->id ? 'selected' : '' }}>{{ $details->name }}
                                         </option>
                                     @endforeach
 
                                 </select>
-                                @error('provider_id')
+                                @error('facility_id')
                                 <div class="fv-plugins-message-container invalid-feedback">
                                     <div data-field="gender" data-validator="notEmpty">{{ $message }}</div>
                                 </div>
@@ -295,23 +295,6 @@
                                     <div class="fv-plugins-message-container invalid-feedback">
                                         <div data-field="date_of_birth" data-validator="notEmpty">{{ $message }}
                                         </div>
-                                    </div>
-                                    @enderror
-                                    <!--end::Input-->
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <!--begin::Label-->
-                                    <label class=" fw-semibold fs-6 mb-2">Age</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="text" name="age"
-                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="30"
-                                           value="{{ old('age') }}"/>
-                                    @error('age')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="age" data-validator="notEmpty">{{ $message }}</div>
                                     </div>
                                     @enderror
                                     <!--end::Input-->

@@ -92,7 +92,7 @@ if (!function_exists('current_facility')) {
     {
         $facility = \Illuminate\Support\Facades\DB::table('personal_access_tokens')->where('tokenable_id',
             $user_id)->latest()->first();
-        return $facility->current_facility;
+        return $facility->current_facility ?? null;
     }
 }
 

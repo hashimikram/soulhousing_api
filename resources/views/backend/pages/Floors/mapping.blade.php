@@ -6,7 +6,17 @@
 @section('floors_management_li', 'here show')
 @section('floors_a', 'active')
 @section('page_title', 'Bed Mapping')
-
+@section('custom_css')
+    <style>
+        .dropdown-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+    </style>
+@endsection
 @section('content')
     <div id="kt_app_content_container" class="app-container container-xxl">
         <div class="card">
@@ -91,7 +101,10 @@
             </div>
         </div>
     </div>
+    @include('backend.pages.partials.transfer_patient_bed_modal')
 @endsection
+
+
 
 @section('custom_js')
     <script>
@@ -107,7 +120,7 @@
 
                 if (query.length > 0) {
                     $.ajax({
-                        url: '{{ route('patients.search') }}', // Adjust the route as needed
+                        url: '{{ route('patients.search') }}',
                         method: 'GET',
                         data: {
                             query: query,
@@ -118,7 +131,10 @@
                             if (data.length) {
                                 data.forEach(function (patient) {
                                     $dropdownMenu.append(
-                                        `<a class="dropdown-item" href="#" data-patient-id="${patient.id}">${patient.first_name} ${patient.last_name}</a>`
+                                        `<a class="dropdown-item" href="#" data-patient-id="${patient.id}">
+                                        <img src="{{ image_url('${patient.profile_pic}') }}"  alt="${patient.first_name} ${patient.last_name}">
+                                        ${patient.first_name} ${patient.last_name}
+                                    </a>`
                                     );
                                 });
                             } else {
@@ -144,11 +160,12 @@
             $(document).on('click', '.dropdown-item', function (e) {
                 e.preventDefault();
                 const $item = $(this);
-                const patientName = $item.text();
+                let patientName = $item.text().trim();
                 const patientId = $item.data('patient-id');
                 const $input = $item.closest('.dropdown').prev('.input-group').find('.bed-search');
-                const bedId = $input.data('bed-id');
-
+                const newBedId = $input.data('bed-id');
+                const oldBedId = $('#oldBedId').val();
+                console.log(patientName);
                 $input.val(patientName);
                 $('.dropdown-menu').hide();
 
@@ -157,33 +174,48 @@
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        bed_id: bedId,
+                        bed_id: newBedId,
                         patient_id: patientId
                     },
                     success: function (response) {
-                        toastr.options = {
-                            "closeButton": true,
-                            "debug": false,
-                            "newestOnTop": false,
-                            "progressBar": true,
-                            "positionClass": "toastr-top-right",
-                            "preventDuplicates": false,
-                            "onclick": null,
-                            "showDuration": "300",
-                            "hideDuration": "1000",
-                            "timeOut": "5000",
-                            "extendedTimeOut": "1000",
-                            "showEasing": "swing",
-                            "hideEasing": "linear",
-                            "showMethod": "fadeIn",
-                            "hideMethod": "fadeOut"
-                        };
-
                         if (response.code) {
                             toastr.success(response.message || "Patient assigned to bed successfully.");
                             location.reload();
+                        } else if (response.status === '1') {
+                            $('#oldBedId').val(response.old_bed_id);
+                            $('#newBedId').val(newBedId);
+                            $('#patientId').val(patientId);
+                            $('#transfer_patient_bed_modal').modal('show');
                         } else {
                             toastr.error(response.message || "An error occurred while assigning the patient.");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error('An unexpected error occurred: ' + textStatus + '.');
+                    }
+                });
+            });
+
+            $('#confirmTransfer').click(function () {
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...').attr('disabled', true);
+                const oldBedId = $('#oldBedId').val();
+                const newBedId = $('#newBedId').val();
+                const patientId = $('#patientId').val();
+                $.ajax({
+                    url: '{{ route('patients.transfer') }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        old_bed_id: oldBedId,
+                        new_bed_id: newBedId,
+                        patient_id: patientId
+                    },
+                    success: function (response) {
+                        if (response.code) {
+                            toastr.success(response.message || "Patient transferred successfully.");
+                            location.reload();
+                        } else {
+                            toastr.error(response.message || "An error occurred while transferring the patient.");
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

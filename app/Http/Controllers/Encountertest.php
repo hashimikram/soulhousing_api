@@ -11,6 +11,7 @@ use App\Models\medication;
 use App\Models\patient;
 use App\Models\PatientEncounter;
 use App\Models\Problem;
+use App\Models\User;
 use App\Models\Vital;
 use App\Models\Wound;
 use App\Models\WoundDetails;
@@ -29,12 +30,15 @@ class Encountertest extends Controller
             $encounter->patient_id = $request->patient_id;
             $encounter->provider_id = auth()->user()->id;
             $encounter->provider_id_patient = $request->provider_id_patient;
-            $encounter->encounter_date = $request->signed_at;
+            $formattedDate = $request->signed_at;
+            $cleanedDateString = preg_replace('/\s*\(.*?\)/', '', $formattedDate);
+            $date = date('Y-m-d H:i:s', strtotime($cleanedDateString));
+            $encounter->encounter_date = $date ?? Carbon::now();
             $encounter->signed_by = auth()->user()->id;
             $encounter->encounter_type = $request->encounter_type;
             $encounter->specialty = $request->specialty;
             $encounter->parent_encounter = $request->parent_encounter;
-            $encounter->location = $request->location;
+            $encounter->location = current_facility(auth()->user()->id);
             $encounter->status = '0';
             $encounter->reason = $request->reason;
             $encounter->created_at = Carbon::now();
@@ -441,7 +445,7 @@ class Encountertest extends Controller
             if ($section['section_slug'] == 'physical-exam') {
                 $section_text = str_replace(
                     [
-                        'Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', ' Throat:',
+                        'Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', ' Throat:', ' Lungs:',
                         'Neck:', 'Chest:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
                         'Neurological:', 'Psychiatric:'
                     ],
@@ -449,7 +453,7 @@ class Encountertest extends Controller
                         '<b>Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
                         '<b>Ears:</b>',
                         '<b>Nose:</b>',
-                        '<b> Throat:</b>', '<b>Neck:</b>', '<b>Chest:</b>', '<b>Heart:</b>',
+                        '<b>Throat:</b>', '<b>Lungs:</b>', '<b>Neck:</b>', '<b>Chest:</b>', '<b>Heart:</b>',
                         '<b>Abdomen:</b>',
                         '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
                         '<b>Psychiatric:</b>'
@@ -605,21 +609,25 @@ class Encountertest extends Controller
             $check_speciality = ListOption::where('id', $encounter->specialty)->first();
             if (isset($check_speciality)) {
                 $patient = Patient::findOrFail($encounter->patient_id);
+                $user = User::with('details')->where('id', $encounter->provider_id)->first();
                 $encounter_notes = EncounterNoteSection::where('encounter_id', $encounter->id)
                     ->where('patient_id', $encounter->patient_id)
+                    ->whereNotNull('section_text')
                     ->get();
+
                 if ($check_speciality->option_id == 'psychiatrist') {
                     $pdf = PDF::loadView('PDF.psychiatric_encounter_pdf',
-                        compact('patient', 'encounter', 'encounter_notes'));
+                        compact('patient', 'encounter', 'encounter_notes', 'check_speciality', 'user'));
                 } elseif ($check_speciality->option_id == 'wound') {
                     $wound = Wound::where('encounter_id', $encounter->id)->first();
                     $woundDetails = $wound ? WoundDetails::where('wound_id',
                         $wound->id)->get() : collect();
                     $pdf = PDF::loadView('PDF.wound_encounter_pdf',
-                        compact('patient', 'encounter', 'encounter_notes', 'wound', 'woundDetails'));
+                        compact('patient', 'encounter', 'encounter_notes', 'wound', 'woundDetails',
+                            'check_speciality', 'user'));
                 } else {
                     $pdf = PDF::loadView('PDF.general_encounter_pdf',
-                        compact('patient', 'encounter', 'encounter_notes'));
+                        compact('patient', 'encounter', 'encounter_notes', 'check_speciality', 'user'));
                 }
                 $pdfContent = $pdf->output();
                 $base64file = base64_encode($pdfContent);

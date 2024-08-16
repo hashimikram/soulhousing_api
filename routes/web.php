@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\CommentController;
@@ -25,17 +26,16 @@ Route::get('/testing-form', function () {
 });
 Route::post('/save-data', [\App\Http\Controllers\Api\FloorController::class, 'form_data'])->name('save.data');
 
-Route::get('/dashboard', function () {
-    return view('backend.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [AdminController::class, 'index'])->middleware([
+    'auth', 'verified'
+])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
     Route::resource('facility', FacilityController::class);
     Route::resource('admin', AdminProfileController::class);
-
     Route::resource('sub-admin', StaffController::class);
-    Route::get('/maintenance', [TweetController::class, 'admin_index'])->name('maintenance.admin_index');
-    Route::get('/tweets/load-more', [TweetController::class, 'loadMore'])->name('tweets.loadMore');
+
     Route::get('/likes', [LikeController::class, 'getLikes_admin']);
     Route::get('/comments', [CommentController::class, 'index']);
     Route::post('/give-review-maintenance', [TweetController::class, 'give_review'])->name('maintenance.give_review');

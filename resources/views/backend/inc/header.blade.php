@@ -24,8 +24,8 @@
         <!--end::sidebar mobile toggle-->
         <!--begin::Mobile logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-            <a class="d-lg-none" href="../../demo1/dist/index.html">
-                <img alt="Logo" class="h-30px" src="assets/media/logos/default-small.svg"/>
+            <a class="d-lg-none" href="{{route('dashboard')}}">
+                <img alt="Logo" class="h-30px" src="{{asset('backend/assets/media/auth/logo-center-white.png')}}"/>
             </a>
         </div>
         <!--end::Mobile logo-->
@@ -54,7 +54,7 @@
                                 <div class="aiz-topbar-item">
                                     <div class="d-flex align-items-center">
                                         <a class="btn btn-icon btn-circle btn-light"
-                                           href="https://championautoengineering.com" target="_blank"
+                                           href="https://care.soulhousing.org/" target="_blank"
                                            title="Browse Website">
                                             <i class="las la-globe"></i>
                                         </a>
@@ -63,7 +63,7 @@
                             </div>
                             <span class="menu-link">
 											  <a class="btn btn-danger btn-sm d-flex align-items-center"
-                                                 href="https://championautoengineering.com/admin/clear-cache">
+                                                 href="https://care.soulhousing.org/">
                                             <i class="las la-hdd fs-20"></i>
                                             <span class="fw-500 ml-1 mr-0 d-none d-md-block">Clear Cache</span>
                                         </a>

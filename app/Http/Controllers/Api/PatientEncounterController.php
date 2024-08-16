@@ -688,7 +688,7 @@ class PatientEncounterController extends BaseController
 
         try {
             foreach ($validatedData['sections'] as $sectionData) {
-                $existingSection = EncounterNoteSection::where('encounter_id', $sectionData['sorting_order'])->first();
+                $existingSection = EncounterNoteSection::where('id', $sectionData['sorting_order'])->first();
 
                 if ($existingSection) {
                     if ($existingSection->section_slug == 'assessments') {
@@ -831,9 +831,41 @@ class PatientEncounterController extends BaseController
             $check_speciality = ListOption::find($encounter->specialty);
 
             $wounds = Wound::where('encounter_id', $encounter_id)->first();
+            // Fetch the wound record based on encounter ID
+            $wounds = Wound::where('encounter_id', $encounter_id)->first();
+
             if (isset($wounds)) {
+                // Fetch the wound details associated with the wound
                 $wound_details = WoundDetails::where('wound_id', $wounds->id)->get();
+
+                foreach ($wound_details as $wound_detail_data) {
+                    $clinicalSigns = $wound_detail_data->clinical_signs_of_infection;
+
+                    // Check if clinical_signs_of_infection is a string
+                    if (is_string($clinicalSigns)) {
+                        $clinicalSignsArray = json_decode($clinicalSigns, true);
+
+                        // Check if json_decode returned an array
+                        if (is_array($clinicalSignsArray)) {
+                            $section_text = implode(",", $clinicalSignsArray);
+                        } else {
+                            // Handle the case where json_decode does not return an array
+                            $section_text = $clinicalSigns; // or some default value
+                        }
+                    } else {
+                        if (is_array($clinicalSigns)) {
+                            // If clinical_signs_of_infection is already an array
+                            $section_text = implode(",", $clinicalSigns);
+                        } else {
+                            // Handle the case where clinical_signs_of_infection is neither string nor array
+                            $section_text = ''; // or some default value
+                        }
+                    }
+
+                    $wound_detail_data->clinical_signs_of_infection = $section_text;
+                }
             }
+
 
             $section_text = $section->section_text ?? '';
 

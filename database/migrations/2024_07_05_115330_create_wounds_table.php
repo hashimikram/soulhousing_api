@@ -13,9 +13,7 @@ return new class extends Migration {
         Schema::create('wounds', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('provider_id');
-            $table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('patient_id');
-            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+            $table->string('patient_id')->nullable();
             $table->string('encounter_id')->nullable();
             $table->text('right_dp')->nullable();
             $table->text('right_pt')->nullable();
@@ -31,8 +29,8 @@ return new class extends Migration {
             $table->text('left_touch')->nullable();
             $table->text('right_mono')->nullable();
             $table->text('left_mono')->nullable();
-            $table->text('other_factor')->nullable();
-            $table->text('patient_education')->nullable();
+            $table->json('other_factor')->nullable();
+            $table->json('patient_education')->nullable();
             $table->timestamps();
         });
     }

@@ -89,7 +89,7 @@ class TweetController extends Controller
 
     public function admin_index()
     {
-        $tweets = Tweet::with('user')->orderBy('created_at', 'DESC')->paginate('10');
+        $tweets = Tweet::with(['user', 'facility'])->orderBy('created_at', 'DESC')->paginate('10');
         return view('backend.pages.maintanance.index', compact('tweets'));
     }
 

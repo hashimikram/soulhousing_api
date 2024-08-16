@@ -110,6 +110,27 @@
                             <div class="col-md-12">
                                 <div class="fv-row mb-7">
                                     <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">Facility</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control" name="facility_id" required>
+                                        <option value="">Select Facility</option>
+                                        @foreach(\App\Models\Facility::all() as $details_facility)
+                                            <option
+                                                value="{{$details_facility->id}}">{{$details_facility->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('description')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
                                     <label class="required fw-semibold fs-6 mb-2">Description</label>
                                     <!--end::Label-->
                                     <!--begin::Input-->

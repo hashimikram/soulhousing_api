@@ -13,4 +13,21 @@ class Facility extends Model
     {
         return $this->hasMany(patient::class, 'facility_id');
     }
+
+    public function tweets()
+    {
+        return $this->hasMany(Tweet::class);
+    }
+
+    public function operation()
+    {
+        return $this->hasMany(Operation::class);
+    }
+
+    public function encounters()
+    {
+        return $this->hasMany(PatientEncounter::class, 'location');
+    }
+
+
 }

@@ -36,9 +36,10 @@
                                     <!--begin::Info-->
                                     <div class="d-flex flex-column">
                                         <a href="#"
-                                           class="text-gray-900 text-hover-primary fs-6 fw-bold">{{$data->user->name}}</a>
+                                           class="text-gray-900 text-hover-primary fs-6 fw-bold">{{$data->user->name}}
+                                        </a>
                                         <span
-                                            class="text-gray-400 fw-bold">{{ \Carbon\Carbon::parse($data->created_at)->diffForHumans() }}</span>
+                                            class="text-gray-400 fw-bold">{{ \Carbon\Carbon::parse($data->created_at)->diffForHumans() }} ({{$data->facility->name}})</span>
                                     </div>
                                     <!--end::Info-->
                                 </div>

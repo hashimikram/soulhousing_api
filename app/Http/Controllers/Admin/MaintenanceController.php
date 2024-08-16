@@ -14,7 +14,7 @@ class MaintenanceController extends Controller
         $tweet = new Tweet();
         $tweet->user_id = auth()->user()->id;
         $tweet->body = $request->description;
-
+        $tweet->facility_id = $request->facility_id;
         if ($request->file('media')) {
             $originalName = $request->file('media')->getClientOriginalName();
             $imagePath = pathinfo($originalName,

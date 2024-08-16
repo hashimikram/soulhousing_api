@@ -24,6 +24,8 @@ class WoundController extends Controller
     {
         $data = $request->all();
         $data['provider_id'] = auth()->user()->id;
+        $data['other_factor'] = $request->other_factor;
+        $data['patient_education'] = $request->patient_education;
 
         // Check if a wound record already exists for the given encounter_id
         $existingWound = Wound::where('encounter_id', $request->encounter_id)->first();
@@ -33,7 +35,6 @@ class WoundController extends Controller
             $existingWound->update($data);
             $wound = $existingWound;
         } else {
-            // Create a new wound record
             $wound = Wound::create($data);
         }
 
@@ -55,11 +56,10 @@ class WoundController extends Controller
                 $woundDetailData['provider_id'] = auth()->user()->id;
                 $woundDetailData['patient_id'] = $request->patient_id;
                 $woundDetailData['encounter_id'] = $request->encounter_id;
-
+                $woundDetailData['clinical_signs_of_infection'] = $woundDetailData['clinical_signs_of_infection'];
                 // Check if the wound detail already exists for the given wound_id and encounter_id
                 $existingWoundDetail = WoundDetails::where('wound_id', $wound->id)
                     ->where('encounter_id', $request->encounter_id)
-                    ->where('location', $woundDetailData['location'])
                     ->where('location', $woundDetailData['location'])
                     ->first();
 
