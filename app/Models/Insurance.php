@@ -24,4 +24,9 @@ class Insurance extends Model
         'policy_holder_dob',
         'age',
     ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

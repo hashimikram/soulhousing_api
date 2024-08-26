@@ -10,7 +10,7 @@ class FileController extends Controller
     {
 
 
-        $imagePath = public_path('/uploads/' . $name);
+        $imagePath = public_path('/uploads/'.$name);
         // Check if the file exists
         if (!file_exists($imagePath)) {
             return response()->json(['error' => 'File not found'], 404);
@@ -28,7 +28,7 @@ class FileController extends Controller
     public function show_file(Request $request)
     {
         // Assume the images are stored in the public directory under 'images'
-        $imagePath = public_path('/uploads/' . $request->file_name);
+        $imagePath = public_path('/uploads/'.$request->file_name);
 
         // Check if the file exists
         if (!file_exists($imagePath)) {

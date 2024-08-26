@@ -21,7 +21,6 @@ class BedController extends BaseController
         $beds = Bed::where('id', $request->bed_id)->first();
         if ($beds != null) {
             try {
-                date_default_timezone_set('Asia/Karachi');
                 $checkAssignBed = Bed::where(['patient_id' => $request->patient_id])->first();
                 if (isset($checkAssignBed)) {
                     return response()->json([
@@ -112,7 +111,7 @@ class BedController extends BaseController
             $bed = new bed();
             $bed->room_id = $request->room_id;
             $bed->bed_title = $request->bed_title;
-            $bed->status = 'vacent';
+            $bed->status = 'vacant';
             $bed->save();
             return response()->json([
                 'success' => true,
@@ -194,5 +193,38 @@ class BedController extends BaseController
             'success' => true,
             'message' => 'Bed Deleted'
         ], 200);
+    }
+
+    public function discharge_patient_bed(Request $request)
+    {
+        $request->validate([
+            'bed_id' => 'required|exists:beds,id',
+            'patient_id' => 'required|exists:patients,id',
+        ]);
+        try {
+            $bed = bed::where(['id' => $request->bed_id])->first();
+            if (isset($bed)) {
+                $bed->patient_id = null;
+                $bed->status = 'vacant';
+                $bed->occupied_from = null;
+                $bed->booked_till = null;
+                $bed->save();
+                return response()->json([
+                    'code' => true,
+                    'message' => 'patients DisCharged',
+                ], 200);
+            } else {
+                return response()->json([
+                    'code' => 'false',
+                    'message' => 'Bed Not Found',
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 'false',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+
     }
 }

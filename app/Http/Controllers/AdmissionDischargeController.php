@@ -14,12 +14,21 @@ class AdmissionDischargeController extends Controller
      */
     public function index($patient_id)
     {
-        $data = AdmissionDischarge::join('facilities', 'facilities.id', '=',
+        $data = AdmissionDischarge::leftjoin('facilities', 'facilities.id', '=',
             'admission_discharges.admission_location')->select('facilities.address as location',
             'admission_discharges.*')->where('admission_discharges.patient_id',
             $patient_id)->where('admission_discharges.status', '1')->get();
         foreach ($data as $result) {
+            $result->patient_name = $result->patient->first_name.' '.$result->patient->last_name;
+            $result->patient_date_of_birth = $result->patient->date_of_birth;
+            $result->patient_medical_id = $result->patient->medical_no;
 
+            $result->staff_name = $result->staff->name.' '.$result->staff->details->last_name;
+            $result->position = $result->staff->user_type;
+
+            $result->soul_housing_address = 'UK';
+            $result->soul_housing_phone = '+09837656728';
+            $result->website = 'https://care-soulhousing.anchorstech.net/';
             $result->registered_type = true;
         }
         return response()->json([

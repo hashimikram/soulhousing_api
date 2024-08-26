@@ -257,25 +257,6 @@
                         </div>
                         <!--end::Input group-->
 
-                        <!--begin::Input group-->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Username</label>
-                                    <input type="text" name="user_name" required
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="Username"
-                                           value="{{ old('user_name', $user->userDetail->user_name) }}"/>
-                                    @error('user_name')
-                                    <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="username" data-validator="notEmpty">{{ $message }}</div>
-                                    </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <!--end::Input group-->
-
                         <!--begin::Actions-->
                         <div class="text-center pt-15">
                             <button type="reset" class="btn btn-light me-3">Discard</button>

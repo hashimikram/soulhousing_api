@@ -73,6 +73,31 @@ class User extends Authenticatable
         return $this->hasMany(Role::class);
     }
 
+    public function patients()
+    {
+        return $this->hasMany(patient::class);
+    }
+
+    public function providerEncounters()
+    {
+        return $this->hasMany(PatientEncounter::class, 'provider_id');
+    }
+
+    public function providerPatientEncounters()
+    {
+        return $this->hasMany(PatientEncounter::class, 'provider_id_patient');
+    }
+
+    public function signedEncounters()
+    {
+        return $this->hasMany(PatientEncounter::class, 'signed_by');
+    }
+
+    public function admission()
+    {
+        return $this->hasMany(AdmissionDischarge::class, 'provider_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

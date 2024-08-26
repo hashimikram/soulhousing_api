@@ -53,7 +53,6 @@ class ProblemQuoteController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-
         $searchTerm = $search_text;
 
         // Base query
@@ -68,9 +67,17 @@ class ProblemQuoteController extends Controller
         }
         $cptCodes = $query->get();
 
-        // Return the paginated results
+        // Modify the collection to rename `assessment_notes` to `assessment_input`
+        $cptCodes = $cptCodes->map(function ($item) {
+            $item->assessment_input = $item->assessment_notes;
+            unset($item->assessment_notes);
+            return $item;
+        });
+
+        // Return the results
         return apiSuccess($cptCodes);
     }
+
 
     /**
      * Show the form for creating a new resource.

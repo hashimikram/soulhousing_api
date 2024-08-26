@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcknowledgeController;
 use App\Http\Controllers\AdmissionDischargeController;
+use App\Http\Controllers\Api\AclController;
 use App\Http\Controllers\Api\AllergyController;
 use App\Http\Controllers\Api\BedController;
 use App\Http\Controllers\Api\ContactController;
@@ -21,6 +22,8 @@ use App\Http\Controllers\AssessmentNoteController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CptCodeController;
+use App\Http\Controllers\DischargedPatientsController;
+use App\Http\Controllers\DischargeFormController;
 use App\Http\Controllers\EncounterTemplateController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\FileController;
@@ -55,6 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/check-patient-record', [PatientController::class, 'check_availability']);
     Route::post('/add-patient', [PatientController::class, 'store']);
     Route::get('/get-patients', [PatientController::class, 'index']);
+    Route::get('/my-patients', [PatientController::class, 'my_patients']);
+    Route::get('/un-assigned-patients', [PatientController::class, 'un_assigned_patients']);
+    Route::get('/un-sign-patients', [PatientController::class, 'un_sign_patients']);
     Route::get('/patient-detail/{patientId}', [PatientController::class, 'show']);
     Route::post('/update-patient', [PatientController::class, 'update']);
     Route::get('/delete-patient/{patient}', [PatientController::class, 'destroy']);
@@ -87,7 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
     Route::post('/update-room', [FloorController::class, 'update_room']);
     Route::get('/delete-room/{room_id}', [RoomController::class, 'delete_room']);
-//    Route::post('/update-beds', [FloorController::class, 'update_bed']);
+    Route::post('/update-beds', [FloorController::class, 'update_bed']);
     Route::get('/delete-bed/{bed_id}', [BedController::class, 'delete_bed']);
     Route::get('/floors', [FloorController::class, 'index']);
     Route::post('/assign-bed', [BedController::class, 'assign_bed']);
@@ -100,7 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add-new-bed', [BedController::class, 'store']);
     Route::post('/update-room', [RoomController::class, 'update']);
     Route::post('/update-beds', [BedController::class, 'update']);
-
+    Route::post('/discharge-patient-bed', [BedController::class, 'discharge_patient_bed']);
 
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
@@ -213,6 +219,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/discharge-patient/{id}', [AdmissionDischargeController::class, 'discharge_patient']);
     Route::get('/get-discharged-patients/{patient_id}', [AdmissionDischargeController::class, 'discharged_patients']);
 
+    Route::post('/discharge-patient', [DischargedPatientsController::class, 'store']);
+
+
 //    WoundController
     Route::post('/store-wound', [WoundController::class, 'store']);
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
@@ -230,5 +239,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/all-providers', [PatientController::class, 'all_providers']);
     Route::get('/get-latest-vitals/{patient_id}', [VitalController::class, 'get_latest_vital']);
     Route::get('/all-facilities', [FacilityController::class, 'all_facilities']);
+    Route::get('/login-user-facility', [FacilityController::class, 'LoginUserFacility']);
+    Route::post('/update-login-facility', [FacilityController::class, 'updateLoginUserFacility']);
+    Route::get('/discharge-form', [DischargeFormController::class, 'index']);
+    Route::get('/roles-permissions', [AclController::class, 'index']);
 
 });

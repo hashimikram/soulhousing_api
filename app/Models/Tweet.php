@@ -14,8 +14,13 @@ class Tweet extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function facility()
+    {
+        return $this->belongsTo(Facility::class);
+    }
+
     public function post_comments()
     {
-        return $this->belongsTo(Comment::class,'tweet_id');
+        return $this->belongsTo(Comment::class, 'tweet_id');
     }
 }

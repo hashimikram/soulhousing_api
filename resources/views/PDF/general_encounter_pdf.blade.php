@@ -1,165 +1,222 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>{{ $patient->first_name }} {{$patient->last_name}}</title>
+    <title>{{ $patient->first_name }} {{ $patient->last_name }}</title>
     <style>
         @page {
-            margin: 100px 50px;
+            margin: 0cm 1cm;
+        }
+
+        body {
+            margin-top: 6cm;
+            width: 100%;
+            margin-bottom: 2cm;
         }
 
         header {
             position: fixed;
-            top: -80px;
-            left: 0px;
-            right: 0px;
-            height: 60px;
-            width: 100%;
+            top: 1cm;
+            left: 0cm;
+            right: 0cm;
+            height: 4.5cm;
+            display: block;
+            border-bottom: 1px solid #d5d5d5;
         }
 
         header .logo {
             float: left;
-            width: 20%;
+            width: 40%;
         }
 
         header .info {
             float: right;
-            width: 75%;
+            width: 60%;
             text-align: right;
         }
 
         footer {
             position: fixed;
-            bottom: -60px;
-            left: 0px;
-            right: 0px;
-            height: 50px;
-            text-align: center;
-            font-size: 12px;
+            top: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 2cm;
         }
 
-        .content {
-            margin-top: 200px;
-        }
-
-        ul {
+        .info li {
             list-style: none;
+        }
+
+        .logo ul {
             padding: 0;
         }
 
-        li {
-            padding: 0;
-            margin: 0;
+        .logo li {
+            list-style: none;
         }
 
         .section-title {
+            background-color: #CFCFCF;
             font-weight: bold;
-            display: inline;
-        }
-
-        .section-text {
-            font-weight: normal;
-            display: inline;
-        }
-
-        .page-break {
-            page-break-before: always;
+            font-size: 14px;
         }
     </style>
 </head>
+
 <body>
 <header>
-    <div class="logo">
-        <img src="{{ asset('assets/admin/images/logo-blue-latest.png') }}" style="width: 100%;" alt="Logo">
-    </div>
-    <div class="info">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item border-0">Eileen Murphy-Sinclair FNP-C</li>
-            <li class="list-group-item border-0">NPI# 1598536906</li>
-            <li class="list-group-item border-0">Soul Housing</li>
-            <li class="list-group-item border-0">145 S. Fairfax Ave, Suite 200,</li>
-            <li class="list-group-item border-0">Los Angeles, CA 90036</li>
-        </ul>
+    <div>
+        <div class="logo">
+            <img src="{{ asset('assets/admin/images/logo-blue-latest.png') }}" style="width: 200px;" alt="Logo">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item border-0">Patient
+                    Name: {{ $patient->first_name }} {{ $patient->last_name }}</li>
+                <li class="list-group-item border-0">Patient
+                    Age: {{ \Carbon\Carbon::parse($patient->date_of_birth)->age }}</li>
+                <li class="list-group-item border-0">Date of
+                    Birth: {{ date('d-M-Y', strtotime($patient->date_of_birth)) }}</li>
+                <li class="list-group-item border-0">Encounter
+                    Type: {{ $encounter->encounterType->title ?? 'N/A' }}</li>
+                <li class="list-group-item border-0">Encounter Date: {{ formatDate($encounter->date) }}</li>
+            </ul>
+        </div>
+        <div class="info">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item border-0">{{$encounter->provider->name}} {{$encounter->provider->details->middle_name}} {{$encounter->provider->details->last_name}}
+                    {{ $encounter->specialty_type->title ?? 'N/A' }}
+                </li>
+                <li class="list-group-item border-0">NPI# {{$encounter->provider->details->npi ?? 'N/A'}}</li>
+                <li class="list-group-item border-0">Soul Housing</li>
+                <li class="list-group-item border-0">{{ $encounter->facility->name ?? 'N/A' }}</li>
+                <li class="list-group-item border-0">{{ $encounter->facility->address ?? 'N/A' }}</li>
+            </ul>
+        </div>
     </div>
 </header>
 
 <footer>
     <script type="text/php">
-        if (isset($pdf)) {
-            $pdf->page_script('
-                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $size = 12;
-                $pageText = "Page " . $PAGE_NUM . " of " . $PAGE_COUNT;
-                $y = 15;
-                $x = 520;
-                $pdf->text($x, $y, $pageText, $font, $size);
-            ');
+        if(isset($pdf)){
+        $x = 502;
+        $y = 780;
+        $text = "{PAGE_NUM} of {PAGE_COUNT}";
+        $font=$fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+        $size = 10;
+        $color = array(.16,.16,.16);
+        $word_space = 0.0;  //  default
+        $char_space = 0.0;  //  default
+        $angle = 0.0;   //  default
+        $pdf->page_text($x, $y, $text, $font, $size, $color, $word_space, $char_space, $angle);
         }
     </script>
 </footer>
 
-<div class="content">
-    <p>Patient Name: {{ $patient->first_name }} {{$patient->last_name}}</p>
-    <p>Patient Age: {{ $patient->age }}</p>
-    <p>Encounter Date: {{ formatDate($encounter->date) }}</p>
-    @foreach($encounter_notes as $data)
-        @if ($data->section_slug == 'review-of-systems' || $data->section_slug == 'physical-exam')
-            @if (!$loop->first)
-                <div class="page-break"></div>
-            @endif
-            <h5>{{ $data->section_title }}</h5>
-            <div class="section-text">
-                @php
-                    $section_text = html_entity_decode($data->section_text);
-                    if ($data->section_slug == 'review-of-systems') {
-                        $section_text = str_replace(
-                            [
-                                'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth/Throat:', 'Neck:',
-                                'Breasts/Chest:', 'Respiratory:', 'Cardiovascular:', 'Gastrointestinal:',
-                                'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
-                                'Hematologic/Lymphatic:', 'Allergic/Immunologic:'
-                            ],
-                            [
-                                '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>',
-                                '<b>Mouth/Throat:</b>', '<b>Neck:</b>', '<b>Breasts/Chest:</b>', '<b>Respiratory:</b>',
-                                '<b>Cardiovascular:</b>', '<b>Gastrointestinal:</b>', '<b>Genitourinary:</b>',
-                                '<b>Musculoskeletal:</b>', '<b>Neurological:</b>', '<b>Psychiatric:</b>', '<b>Endocrine:</b>',
-                                '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>'
-                            ],
-                            $section_text
-                        );
-                    }
+<main>
+    <div class="content">
+        @foreach ($encounter_notes as $data)
+            @php
+                $section_text = html_entity_decode($data->section_text);
+                if ($data->section_slug == 'review-of-systems') {
+                    $section_text = str_replace(
+                        [
+                            'General:',
+                            'Skin:',
+                            'Head:',
+                            'Eyes:',
+                            'Ears:',
+                            'Nose:',
+                            'Throat:',
+                            'Neck:',
+                            'Chest:',
+                            'Respiratory:',
+                            'Cardiovascular:',
+                            'Gastrointestinal:',
+                            'Genitourinary:',
+                            'Musculoskeletal:',
+                            'Neurological:',
+                            'Psychiatric:',
+                            'Endocrine:',
+                            'Lymphatic:',
+                            'Immunologic:',
+                        ],
+                        [
+                            '<b>General:</b>',
+                            '<b>Skin:</b>',
+                            '<b>Head:</b>',
+                            '<b>Eyes:</b>',
+                            '<b>Ears:</b>',
+                            '<b>Nose:</b>',
+                            '<b>Throat:</b>',
+                            '<b>Neck:</b>',
+                            '<b>Chest:</b>',
+                            '<b>Respiratory:</b>',
+                            '<b>Cardiovascular:</b>',
+                            '<b>Gastrointestinal:</b>',
+                            '<b>Genitourinary:</b>',
+                            '<b>Musculoskeletal:</b>',
+                            '<b>Neurological:</b>',
+                            '<b>Psychiatric:</b>',
+                            '<b>Endocrine:</b>',
+                            '<b>Lymphatic:</b>',
+                            '<b>Immunologic:</b>',
+                        ],
+                        $section_text,
+                    );
+                }
 
-                    if ($data->section_slug == 'physical-exam') {
-                        $section_text = str_replace(
-                            [
-                                'General Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
-                                'Neck:', 'Chest/Lungs:', 'Heart:', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
-                                'Neurological:', 'Psychiatric:'
-                            ],
-                            [
-                                '<b>General Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Eyes:</b>', '<b>Ears:</b>',
-                                '<b>Nose:</b>', '<b>Mouth & Throat:</b>', '<b>Neck:</b>', '<b>Chest/Lungs:</b>', '<b>Heart:</b>', '<b>Abdomen:</b>',
-                                '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>', '<b>Psychiatric:</b>'
-                            ],
-                            $section_text
-                        );
-                    }
-                @endphp
-                {!! nl2br($section_text) !!}
+                if ($data->section_slug == 'physical-exam') {
+                    $section_text = str_replace(
+                        [
+                            'Appearance:',
+                            'Skin:',
+                            'Head:',
+                            'Eyes:',
+                            'Ears:',
+                            'Nose:',
+                            'Throat:',
+                            'Neck:',
+                            'Lungs:',
+                            'Chest:',
+                            'Heart',
+                            'Abdomen:',
+                            'Genitourinary:',
+                            'Musculoskeletal:',
+                            'Neurological:',
+                            'Psychiatric:',
+                        ],
+                        [
+                            '<b>Appearance:</b>',
+                            '<b>Skin:</b>',
+                            '<b>Head:</b>',
+                            '<b>Neck:</b>',
+                            '<b>Eyes:</b>',
+                            '<b>Ears:</b>',
+                            '<b>Nose:</b>',
+                            '<b>Throat:</b>',
+                            '<b>Neck:</b>',
+                            '<b>Lungs:</b>',
+                            '<b>Chest:</b>',
+                            '<b>Heart:</b>',
+                            '<b>Abdomen:</b>',
+                            '<b>Genitourinary:</b>',
+                            '<b>Musculoskeletal:</b>',
+                            '<b>Neurological:</b>',
+                            '<b>Psychiatric:</b>',
+                        ],
+                        $section_text,
+                    );
+                }
+            @endphp
+
+            <div style="margin-bottom: 20px;">
+                <p class="section-title">{{ $data->section_title }}: </p>
+                <p class="section-text">{!! nl2br($section_text) !!}</p>
             </div>
-            @if ($data->section_slug == 'review-of-systems')
-                <div class="page-break"></div>
-            @endif
-            @if ($data->section_slug == 'physical-exam')
-                <div class="page-break"></div>
-            @endif
-        @else
-            <div style="margin-bottom: 20px">
-                <span class="section-title">{{ $data->section_title }}: </span>
-                <span class="section-text">{!! nl2br(html_entity_decode($data->section_text)) !!}</span>
-            </div>
-        @endif
-    @endforeach
-</div>
+        @endforeach
+    </div>
+
+</main>
+
 </body>
+
 </html>

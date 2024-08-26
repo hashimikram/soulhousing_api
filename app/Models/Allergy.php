@@ -23,4 +23,9 @@ class Allergy extends Model
     {
         return $this->belongsTo(ListOption::class, 'reaction');
     }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class WoundDetails extends Model
 {
+
+    protected $casts = [
+        'clinical_signs_of_infection' => 'array',
+        'other_factor' => 'array',
+        'patient_education' => 'array',
+    ];
+
     protected $fillable = [
         'provider_id',
         'patient_id',

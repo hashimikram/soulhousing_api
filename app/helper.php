@@ -87,3 +87,12 @@ if (!function_exists('check_id')) {
     }
 }
 
+if (!function_exists('current_facility')) {
+    function current_facility($user_id)
+    {
+        $facility = \Illuminate\Support\Facades\DB::table('personal_access_tokens')->where('tokenable_id',
+            $user_id)->latest()->first();
+        return $facility->current_facility ?? null;
+    }
+}
+

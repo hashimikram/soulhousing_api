@@ -16,7 +16,6 @@ class ProblemController extends BaseController
      */
     public function index($patient_id)
     {
-
         $problem = Problem::where('add_page', 'problem_page')->with([
             'type:id,list_id,title', 'chronicity:id,list_id,title', 'severity:id,list_id,title',
             'status:id,list_id,title'
@@ -133,13 +132,12 @@ class ProblemController extends BaseController
             $problem->assessment_section_id = $request->assessment_section_id;
             $existingSection = EncounterNoteSection::where('id', $request->assessment_section_id)->first();
             if ($existingSection) {
-                $existingSectionText = json_decode($existingSection->section_text, true);
-
+                $existingSectionText = json_decode($existingSection->assessment_note, true);
                 $newData = [
                     'Code' => $request->diagnosis,
                     'Description' => $request->name,
-                    'assessment_input' => "",
-                    'value_id' => rand(123456, 999999),
+                    'assessment_input' => $request->assessment_input ?? '',
+                    'value_id' => $request->value_id,
                 ];
 
                 $existingSectionText[] = $newData;

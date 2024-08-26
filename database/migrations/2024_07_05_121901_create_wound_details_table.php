@@ -42,7 +42,7 @@ return new class extends Migration {
             $table->text('pain_level')->nullable();
             $table->text('infection')->nullable();
             $table->text('wound_duration')->nullable();
-            $table->text('clinical_signs_of_infection')->nullable();
+            $table->json('clinical_signs_of_infection')->nullable();
             $table->text('status')->nullable();
             $table->text('stage')->nullable();
             $table->longText('images')->nullable();

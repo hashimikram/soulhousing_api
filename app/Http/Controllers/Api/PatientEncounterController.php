@@ -689,41 +689,40 @@ class PatientEncounterController extends BaseController
         try {
             foreach ($validatedData['sections'] as $sectionData) {
                 $existingSection = EncounterNoteSection::where('id', $sectionData['sorting_order'])->first();
+
                 if ($existingSection) {
                     if ($existingSection->section_slug == 'assessments') {
-                        $jsonString = $existingSection->assessment_note;
-                        $jsonEndPos = strpos($jsonString, ']');
-                        if ($jsonEndPos !== false) {
-                            $jsonString = substr($jsonString, 0, $jsonEndPos + 1);
-                        }
-                        $sectionText = json_decode($jsonString, true);
+                        // Decode the JSON portion of the string
+                        $jsonString = json_decode($existingSection->assessment_note, true);
+
                         if (json_last_error() === JSON_ERROR_NONE) {
-                            if ($sectionText !== null) {
-                                foreach ($sectionText as &$data) {
-                                    if ($data['value_id'] === null || $data['value_id'] === "") {
-                                        $data['value_id'] = rand(123456, 999999);
-                                        $data['assessment_input'] = $sectionData['assessment_input'];
-                                    }
-                                    if ($data['value_id'] == $sectionData['value_id']) {
-                                        $data['assessment_input'] = $sectionData['assessment_input'];
-                                    }
+                            foreach ($jsonString as &$data) {
+                                Log::info('Checking value_id', [
+                                    'data_value_id' => $data['value_id'], 'section_value_id' => $sectionData['value_id']
+                                ]);
+
+                                // Update assessment_input if value_id matches
+                                if ($data['value_id'] == $sectionData['value_id']) {
+                                    $data['assessment_input'] = $sectionData['assessment_input'];
                                 }
-                                $existingSection->assessment_note = json_encode($sectionText);
-                            } else {
-                                Log::error('Failed to decode section_text', ['section_id' => $existingSection->id]);
                             }
+
+                            // Encode the updated array back to JSON
+                            $existingSection->assessment_note = json_encode($jsonString);
                         } else {
-                            Log::error('Invalid JSON in section_text', [
-                                'section_id' => $existingSection->id,
-                                'error' => json_last_error_msg(),
-                                'json_string' => $jsonString
-                            ]);
+                            Log::error('JSON decoding error', ['error' => json_last_error_msg()]);
                         }
+
+                        $existingSection->section_text = $sectionData['section_text'];
+                        Log::info('Assessment Note Updated Successfully', ['section_id' => $existingSection->id]);
                     } else {
                         $existingSection->section_text = $sectionData['section_text'];
+                        Log::info('Section Text Updated', ['section_id' => $existingSection->id]);
                     }
-                    $existingSection->save();
-                    Log::info('Section Text Updated', ['section_id' => $existingSection->id]);
+
+                    $existingSection->save();  // Save the updated section
+                } else {
+                    Log::warning('Encounter Note Section not found', ['section_id' => $sectionData['sorting_order']]);
                 }
             }
 
@@ -832,9 +831,41 @@ class PatientEncounterController extends BaseController
             $check_speciality = ListOption::find($encounter->specialty);
 
             $wounds = Wound::where('encounter_id', $encounter_id)->first();
+            // Fetch the wound record based on encounter ID
+            $wounds = Wound::where('encounter_id', $encounter_id)->first();
+
             if (isset($wounds)) {
+                // Fetch the wound details associated with the wound
                 $wound_details = WoundDetails::where('wound_id', $wounds->id)->get();
+
+                foreach ($wound_details as $wound_detail_data) {
+                    $clinicalSigns = $wound_detail_data->clinical_signs_of_infection;
+
+                    // Check if clinical_signs_of_infection is a string
+                    if (is_string($clinicalSigns)) {
+                        $clinicalSignsArray = json_decode($clinicalSigns, true);
+
+                        // Check if json_decode returned an array
+                        if (is_array($clinicalSignsArray)) {
+                            $section_text = implode(",", $clinicalSignsArray);
+                        } else {
+                            // Handle the case where json_decode does not return an array
+                            $section_text = $clinicalSigns; // or some default value
+                        }
+                    } else {
+                        if (is_array($clinicalSigns)) {
+                            // If clinical_signs_of_infection is already an array
+                            $section_text = implode(",", $clinicalSigns);
+                        } else {
+                            // Handle the case where clinical_signs_of_infection is neither string nor array
+                            $section_text = ''; // or some default value
+                        }
+                    }
+
+                    $wound_detail_data->clinical_signs_of_infection = $section_text;
+                }
             }
+
 
             $section_text = $section->section_text ?? '';
 
@@ -842,19 +873,19 @@ class PatientEncounterController extends BaseController
                 $section_text = str_replace(
                     [
                         'General:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:',
-                        'Mouth/Throat:', 'Neck:', 'Breasts/Chest:', 'Respiratory:', 'Cardiovascular:',
+                        'Throat:', 'Neck:', 'Chest:', 'Respiratory:', 'Cardiovascular:',
                         'Gastrointestinal:',
                         'Genitourinary:', 'Musculoskeletal:', 'Neurological:', 'Psychiatric:', 'Endocrine:',
-                        'Hematologic/Lymphatic:', 'Allergic/Immunologic:'
+                        'Lymphatic:', 'Immunologic:'
                     ],
                     [
                         '<b>General:</b>', '<b>Skin:</b>', '<b>Head:</b>',
-                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Mouth/Throat:</b>',
-                        '<b>Neck:</b>', '<b>Breasts/Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
+                        '<b>Eyes:</b>', '<b>Ears:</b>', '<b>Nose:</b>', '<b>Throat:</b>',
+                        '<b>Neck:</b>', '<b>Chest:</b>', '<b>Respiratory:</b>', '<b>Cardiovascular:</b>',
                         '<b>Gastrointestinal:</b>',
                         '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
                         '<b>Psychiatric:</b>',
-                        '<b>Endocrine:</b>', '<b>Hematologic/Lymphatic:</b>', '<b>Allergic/Immunologic:</b>',
+                        '<b>Endocrine:</b>', '<b>Lymphatic:</b>', '<b>Immunologic:</b>',
                     ],
                     $section_text
                 );
@@ -863,18 +894,18 @@ class PatientEncounterController extends BaseController
             if ($section['section_slug'] == 'physical-exam') {
                 $section_text = str_replace(
                     [
-                        'General Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', 'Mouth & Throat:',
-                        'Neck:', 'Chest/Lungs:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
+                        'Appearance:', 'Skin:', 'Head:', 'Eyes:', 'Ears:', 'Nose:', ' Throat:',
+                        'Neck:', 'Chest:', 'Heart', 'Abdomen:', 'Genitourinary:', 'Musculoskeletal:',
                         'Neurological:', 'Psychiatric:'
                     ],
                     [
-                        '<b>General Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
+                        '<b>Appearance:</b>', '<b>Skin:</b>', '<b>Head:</b>', '<b>Neck:</b>', '<b>Eyes:</b>',
                         '<b>Ears:</b>',
                         '<b>Nose:</b>',
-                        '<b>Mouth & Throat:</b>', '<b>Cardiovascular:</b>', '<b>Respiratory System:</b>',
+                        '<b> Throat:</b>', '<b>Neck:</b>', '<b>Chest:</b>', '<b>Heart:</b>',
                         '<b>Abdomen:</b>',
-                        '<b>Musculoskeletal System:</b>', '<b>Neurological System:</b>', '<b>Genitourinary System:</b>',
-                        '<b>Psychosocial Assessment:</b>'
+                        '<b>Genitourinary:</b>', '<b>Musculoskeletal:</b>', '<b>Neurological:</b>',
+                        '<b>Psychiatric:</b>'
                     ],
                     $section_text
                 );
@@ -1011,7 +1042,7 @@ class PatientEncounterController extends BaseController
         $providers = User::where('id', auth()->user()->id)->get();
 
         $Specialty = ListOption::where('list_id', 'Specialty')->select('id', 'title')->get();
-        $facilities = DB::table('facilities')->select('id', 'address')->get();
+        $facilities = DB::table('facilities')->select('id', 'name as address')->get();
         // Prepare fields' names from PatientEncounter table
         $encounter_fields = Schema::getColumnListing('patient_encounters');
         $loginProvider = User::where('id', auth()->user()->id)->select('name', 'id')->first();
@@ -1115,6 +1146,7 @@ class PatientEncounterController extends BaseController
             'data' => $encounter_type
         ], 200);
     }
+
 
     public function mental_section_show($section_id, $patient_id)
     {

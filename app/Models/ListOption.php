@@ -30,7 +30,6 @@ class ListOption extends Model
     }
 
 
-
     public function allergyWithType()
     {
         return $this->hasMany(Allergy::class, 'allergy_type');
@@ -45,4 +44,15 @@ class ListOption extends Model
     {
         return $this->hasMany(Allergy::class, 'reaction');
     }
+
+    public function encounterTypes()
+    {
+        return $this->hasMany(PatientEncounter::class, 'encounter_type');
+    }
+
+    public function specialties()
+    {
+        return $this->hasMany(PatientEncounter::class, 'specialty');
+    }
+
 }

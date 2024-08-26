@@ -21,7 +21,8 @@ class TweetController extends Controller
         if (!auth()->check()) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        $tweets = Tweet::orderBy('created_at', 'DESC')->paginate('10');
+        $tweets = Tweet::where('facility_id', current_facility(auth()->user()->id))->orderBy('created_at',
+            'DESC')->paginate('10');
 
         foreach ($tweets as $data) {
             $data->total_likes = $data->likes;
@@ -88,7 +89,7 @@ class TweetController extends Controller
 
     public function admin_index()
     {
-        $tweets = Tweet::with('user')->orderBy('created_at', 'DESC')->paginate('10');
+        $tweets = Tweet::with(['user', 'facility'])->orderBy('created_at', 'DESC')->paginate('10');
         return view('backend.pages.maintanance.index', compact('tweets'));
     }
 
@@ -126,6 +127,7 @@ class TweetController extends Controller
             // Create a new Tweet instance
             $tweet = new Tweet();
             $tweet->user_id = auth()->user()->id;
+            $tweet->facility_id = current_facility(auth()->user()->id);
             $tweet->body = $request->body;
             $fileName = null;
             $filePath = null;

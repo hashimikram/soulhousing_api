@@ -8,6 +8,7 @@ use App\Models\floor;
 use App\Models\room;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FloorController extends Controller
 {
@@ -103,7 +104,7 @@ class FloorController extends Controller
 
                     if (isset($roomData['beds'])) {
                         foreach ($roomData['beds'] as $bedData) {
-                            Bed::create([
+                            bed::create([
                                 'room_id' => $room->id,
                                 'bed_title' => $bedData['title'],
                                 'status' => 'vacant',
@@ -159,81 +160,59 @@ class FloorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Fetch the floor to update
-        $floor = Floor::find($id);
+        $data = $request->all();
 
-        // Update floor details
-        $floor->update([
-            'floor_name' => $request->input('floors.'.$id.'.title'),
-            'facility_id' => $request->input('facility_id'),
-        ]);
+        $newRoomIds = [];
 
-        // Handle rooms
-        foreach ($request->input('rooms', []) as $roomId => $roomData) {
-            if (is_numeric($roomId)) {
-                $room = Room::find($roomId);
-                if ($room) {
-                    $room->update([
-                        'room_name' => $roomData['title'],
-                    ]);
-                    // Handle beds
-                    foreach ($request->input('beds', []) as $bedId => $bedData) {
-                        if (isset($bedData['delete']) && $bedData['delete'] == '1') {
-                            // Handle deletion for beds that have an ID
-                            if (is_numeric($bedId)) {
-                                Bed::destroy($bedId); // Delete bed
-                            }
-                        } else {
-                            // Ensure room_id and title are set
-                            if (!isset($bedData['room_id']) || !isset($bedData['title'])) {
-                                continue; // Skip this entry if necessary data is missing
-                            }
-
-                            if (is_numeric($bedId)) {
-                                // Update existing bed
-                                $bed = Bed::find($bedId);
-                                if ($bed) {
-                                    $bed->update([
-                                        'bed_title' => $bedData['title'],
-                                        'room_id' => $bedData['room_id'],
-                                    ]);
-                                }
-                            } else {
-                                // Handle new beds (no ID yet)
-                                Bed::create([
-                                    'bed_title' => $bedData['title'],
-                                    'room_id' => $bedData['room_id'],
-                                    // Add other necessary fields if required
-                                ]);
-                            }
-                        }
-                    }
-
-
+        if (isset($data['floors'])) {
+            foreach ($data['floors'] as $floorId => $floorData) {
+                $floor = Floor::find($floorId);
+                if ($floor) {
+                    $floor->floor_name = $floorData['title'];
+                    $floor->save();
                 }
             }
         }
 
-        // Add new rooms and beds if necessary
-        foreach ($request->input('rooms', []) as $roomId => $roomData) {
-            if (!is_numeric($roomId)) {
-                Room::create([
-                    'room_name' => $roomData['title'],
-                    'floor_id' => $id,
-                ]);
+        if (isset($data['rooms'])) {
+            foreach ($data['rooms'] as $roomId => $roomData) {
+                Log::info($roomId);
+                if (strpos($roomId, 'new_') === 0) {
+                    $room = new Room();
+                    $room->room_name = $roomData['title'];
+                    $room->floor_id = $id;
+                    $room->save();
+                    $newRoomIds[$roomId] = $room->id;
+                } else {
+                    $room = Room::find($roomId);
+                    if ($room) {
+                        $room->room_name = $roomData['title'];
+                        $room->save();
+                    }
+                }
             }
         }
 
-        foreach ($request->input('beds', []) as $bedId => $bedData) {
-            if (!is_numeric($bedId)) {
-                Bed::create([
-                    'bed_title' => $bedData['title'],
-                    'room_id' => $bedData['room_id'],
-                ]);
+        if (isset($data['beds'])) {
+            foreach ($data['beds'] as $bedId => $bedData) {
+                if (strpos($bedId, 'new_') === 0) {
+                    $bed = new Bed();
+                    $bed->bed_title = $bedData['title'];
+                    if (isset($bedData['room_id'])) {
+                        $bed->room_id = $newRoomIds[$bedData['room_id']] ?? $bedData['room_id'];
+                    }
+                    $bed->save();
+                } else {
+                    $bed = bed::find($bedId);
+                    if ($bed) {
+                        $bed->bed_title = $bedData['title'];
+                        $bed->save();
+                    }
+                }
             }
         }
 
-        return redirect()->route('floors.index')->with('success', 'Floor updated successfully.');
+        return redirect()->route('floors.index')->with('success', 'Data updated successfully.');
     }
 
     /**
@@ -311,5 +290,91 @@ class FloorController extends Controller
         }
 
         return view('backend.pages.Floors.mapping', compact('response',));
+    }
+
+    public function assign_bed(Request $request)
+    {
+        $request->validate([
+            'bed_id' => 'required|exists:beds,id',
+            'patient_id' => 'required|exists:patients,id',
+        ]);
+
+        $beds = bed::where('id', $request->bed_id)->first();
+        if ($beds != null) {
+            try {
+                $checkAssignBed = bed::where(['patient_id' => $request->patient_id])->first();
+                if (isset($checkAssignBed)) {
+                    return response()->json([
+                        'code' => false,
+                        'status' => '1',
+                        'old_bed_id' => $checkAssignBed->id, // Return the old bed id
+                        'message' => 'Patient already assigned',
+                    ], 200);
+                } else {
+                    $occupied_at = date('Y-m-d h:i:s', strtotime($request->occupied_at));
+                    $booked_till = date('Y-m-d h:i:s', strtotime($request->booked_till));
+                    $beds->patient_id = $request->patient_id;
+                    $beds->occupied_from = $occupied_at;
+                    $beds->booked_till = $booked_till;
+                    $beds->status = 'occupied';
+                    $beds->save();
+                    return response()->json([
+                        'code' => true,
+                        'message' => 'Patient added',
+                    ], 200);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => false,
+                    'message' => $e->getMessage(),
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'code' => false,
+                'message' => 'Bed not found',
+            ], 404);
+        }
+    }
+
+    public function transfer_patient(Request $request)
+    {
+        $request->validate([
+            'old_bed_id' => 'required|exists:beds,id',
+            'new_bed_id' => 'required|exists:beds,id',
+            'patient_id' => 'required|exists:patients,id',
+        ]);
+
+        $oldBed = bed::where('id', $request->old_bed_id)->first();
+        $newBed = bed::where('id', $request->new_bed_id)->first();
+
+        if ($oldBed && $newBed) {
+            try {
+                $oldBed->patient_id = null;
+                $oldBed->status = 'vacant';
+                $oldBed->occupied_from = null;
+                $oldBed->booked_till = null;
+                $oldBed->save();
+
+                $newBed->patient_id = $request->patient_id;
+                $newBed->status = 'occupied';
+                $newBed->save();
+
+                return response()->json([
+                    'code' => true,
+                    'message' => 'Patient transferred successfully',
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                'code' => false,
+                'message' => 'Bed not found',
+            ], 404);
+        }
     }
 }

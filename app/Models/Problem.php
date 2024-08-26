@@ -47,4 +47,5 @@ class Problem extends Model
     {
         return $this->belongsTo(patient::class, 'patient_id');
     }
+
 }
