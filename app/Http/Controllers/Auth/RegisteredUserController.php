@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
+use App\Models\Facility;
+use App\Models\RoleUser;
 use App\Models\User;
 use App\Models\userDetail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
@@ -35,16 +38,15 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $detail = new userDetail();
+
+        $detail = new UserDetail();
         $detail->user_id = $user->id;
         $detail->save();
-
         event(new Registered($user));
-
         Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
+
 
     /**
      * Display the registration view.
@@ -60,19 +62,69 @@ class RegisteredUserController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
         $baseController = new BaseController();
         $credentials = $request->only('email', 'password');
+
         if (Auth::attempt($credentials)) {
-            $user = User::where('email', $request->email)->first();
+            $user = Auth::user();
             $token = $user->createToken(config('app.name'))->plainTextToken;
-            $success['token'] = $token;
-            $success['user'] = $user;
+            $success = [
+                'token' => $token,
+                'user' => $user,
+            ];
+
+            // Fetch the facilities and get the first one
+            $user_Facilities = json_decode($user->details->facilities, true);
+
+            $first_facility_id = null;
+            if (is_array($user_Facilities) && !empty($user_Facilities)) {
+                $facility_id = $user_Facilities[0];
+                $facilities_table = Facility::find($facility_id);
+                if ($facilities_table) {
+                    $first_facility_id = $facilities_table->id;
+                    DB::table('personal_access_tokens')
+                        ->where('tokenable_id', Auth::id())
+                        ->latest()
+                        ->take(1)
+                        ->update(['current_facility' => $first_facility_id]);
+                }
+            }
+
+            $role_user = RoleUser::with('role')->where('user_id', Auth::id())->get();
+
+            $decodedPermissions = [];
+            $roles = [];
+            foreach ($role_user as $role) {
+                if ($role && $role->role) {
+                    $roles[] = $role->role->name;
+                    $permissionsData = $role->role->permissions->first();
+                    if ($permissionsData && !empty($permissionsData->permissions)) {
+                        $permissionsArray = json_decode($permissionsData->permissions, true);
+                        // Convert to associative array with key and value as the same permission name
+                        foreach ($permissionsArray as $permission) {
+                            if (!is_numeric($permission)) {
+                                $decodedPermissions[$permission] = $permission;
+                            }
+                        }
+                    }
+                }
+
+            }
+            $decodedPermissions = array_unique($decodedPermissions);
+            $success['acl'] = [
+                'user_id' => Auth::id(),
+                'role' =>$roles?array_merge($roles):null ,
+                'permissions' => $decodedPermissions,
+            ];
+
             return $baseController->sendResponse($success, 'User login successfully.');
+
         } else {
-            return $baseController->sendError('Credentials Wrong');
+            return $baseController->sendError('Credentials are incorrect');
         }
-        return $baseController->sendError('Unauthorised.', ['error' => 'Unauthorised']);
     }
+
 
     public function forgot_password(Request $request)
     {
@@ -145,10 +197,11 @@ class RegisteredUserController extends Controller
     public function login_user_details()
     {
         $user = User::join('user_details', 'user_details.user_id', '=', 'users.id')
-            ->select('users.id as userId', 'users.name as first_name', 'users.email', 'users.email_verified_at',
+            ->select('users.id as userId', 'users.name as provider_name', 'users.email', 'users.email_verified_at',
                 'users.user_type', 'users.created_at', 'users.updated_at', 'user_details.*')
             ->where('user_details.user_id', auth()->user()->id)->first();
         $user->image = env('APP_URL').'public/uploads/'.$user->image;
+        $user->provider_full_name = $user->title.' '.$user->last_name;
         if ($user != null) {
             return response()->json($user);
         } else {
