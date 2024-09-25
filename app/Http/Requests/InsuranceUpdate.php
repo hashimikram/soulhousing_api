@@ -23,18 +23,15 @@ class InsuranceUpdate extends FormRequest
     public function rules(): array
     {
         return [
-            'insurance_id' => 'required',
-            'group_name' => 'required',
-            'policy_no' => 'required',
-            'policy_holder' => 'required',
-            'ins_phone' => 'required',
-            'policy' => 'required',
-            'age' => 'nullable',
-            'policy_holder_dob' => 'nullable|date',
-            'zip_code' => 'nullable',
-            'city' => 'nullable',
+            'insurance_id' => 'required|exists:insurances,id',
+            'auth_date' => 'nullable',
+            'group_name' => 'nullable',
+            'member_id' => 'nullable',
+            'authorization_no' => 'nullable',
             'state' => 'nullable',
-            'address' => 'nullable',
+            'ins_phone' => 'nullable',
+            'policy_holder_dob' => 'nullable|date',
+            'age' => 'nullable',
         ];
     }
 }

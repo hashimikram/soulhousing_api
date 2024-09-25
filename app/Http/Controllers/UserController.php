@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\User;
 use App\Models\userDetail;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -58,7 +59,7 @@ class UserController extends Controller
             if ($request->file('image')) {
                 $originalName = $request->file('image')->getClientOriginalName();
                 $imagePath = pathinfo($originalName,
-                        PATHINFO_FILENAME).'_'.time().'.'.$request->file('image')->getClientOriginalExtension();
+                        PATHINFO_FILENAME) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
                 $destinationPath = public_path('uploads');
                 $request->file('image')->move($destinationPath, $imagePath);
                 $userDetail->image = $imagePath;
@@ -78,7 +79,7 @@ class UserController extends Controller
 
             DB::commit();
             return redirect()->route('user.index')->with('success', 'User Added Successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -132,6 +133,7 @@ class UserController extends Controller
                 return redirect()->route('user.index')->with('error', 'User Not Found');
             }
             $user->name = $request->first_name;
+            $user->user_type = $request->user_type;
             $user->save();
             $userDetail = userDetail::where('user_id', $id)->first();
             if (!isset($userDetail)) {
@@ -145,17 +147,19 @@ class UserController extends Controller
             $userDetail->country = $request->country;
             $userDetail->date_of_birth = $request->date_of_birth;
             $userDetail->home_phone = $request->home_phone;
+            $userDetail->facilities = json_encode($request->facilities);
+            $userDetail->speciality_id = $request->speciality_id;
 
             if ($request->file('image')) {
                 if ($userDetail->image != 'placeholder.jpg') {
                     // Delete the old image if it exists
-                    if ($userDetail->image && file_exists(public_path('uploads/'.$userDetail->image))) {
-                        unlink(public_path('uploads/'.$allergy->banner_image));
+                    if ($userDetail->image && file_exists(public_path('uploads/' . $userDetail->image))) {
+                        unlink(public_path('uploads/' . $userDetail->image));
                     }
                 }
                 $originalName = $request->file('image')->getClientOriginalName();
                 $imagePath = pathinfo($originalName,
-                        PATHINFO_FILENAME).'_'.time().'.'.$request->file('image')->getClientOriginalExtension();
+                        PATHINFO_FILENAME) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
                 $destinationPath = public_path('uploads');
                 $request->file('image')->move($destinationPath, $imagePath);
                 $userDetail->image = $imagePath;
@@ -163,7 +167,7 @@ class UserController extends Controller
             $userDetail->save();
             DB::commit();
             return redirect()->route('user.index')->with('success', 'Details Updated Successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
         }

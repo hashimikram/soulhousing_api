@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use Carbon\Carbon; @endphp
+    <!DOCTYPE html>
 <html>
 
 <head>
@@ -61,21 +62,43 @@
             font-size: 14px;
         }
 
-        table {
+        .Wound-Evaluation h5 {
+            font-size: 14px;
+            background-color: #CFCFCF;
+            margin: 0px;
+        }
+
+        .Wound-Evaluation p {
+            font-size: 12px;
+            margin: 0px;
+        }
+
+        .Evaluation-table table {
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 18px;
-            text-align: left;
         }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+        .Evaluation-table th,
+        .Evaluation-table td {
+            font-size: 12px;
         }
 
-        th {
-            background-color: #f2f2f2;
+        .Evaluation-width {
+            width: 33%;
+        }
+
+        .Evaluation-img img {
+            width: 10%;
+            margin-right: 5px;
+        }
+
+        .width-left {
+            float: left;
+            width: 50%;
+        }
+
+        .width-right {
+            float: right;
+            width: 50%;
         }
     </style>
 </head>
@@ -89,12 +112,13 @@
                 <li class="list-group-item border-0">Patient
                     Name: {{ $patient->first_name }} {{ $patient->last_name }}</li>
                 <li class="list-group-item border-0">Patient
-                    Age: {{ \Carbon\Carbon::parse($patient->date_of_birth)->age }}</li>
+                    Age: {{ Carbon::parse($patient->date_of_birth)->age }}</li>
                 <li class="list-group-item border-0">Date of
                     Birth: {{ date('d-M-Y', strtotime($patient->date_of_birth)) }}</li>
                 <li class="list-group-item border-0">Encounter
                     Type: {{ $encounter->encounterType->title ?? 'N/A' }}</li>
-                <li class="list-group-item border-0">Encounter Date: {{ formatDate($encounter->date) }}</li>
+                <li class="list-group-item border-0">Encounter
+                    Date: {{ date('m-d-Y',strtotime($encounter->encounter_date)) }}</li>
             </ul>
         </div>
         <div class="info">
@@ -133,42 +157,41 @@
 <main>
     <div class="content">
         <div class="clear-both"></div>
-        <div class="Wound-Evaluation" style="margin-bottom: 30px;">
-            <p class="section-title">Progress Note</p>
-            @if ($encounter_notes->isNotEmpty())
-                <p>{{ $encounter_notes[0]->section_text }}</p>
-            @endif
-        </div>
         @if ($wound)
             <div class="Wound-Evaluation" style="margin-bottom: 30px;">
                 <h5>Progress Notes</h5>
                 @foreach ($woundDetails as $data)
                     <div class="Evaluation-table">
                         <table>
+                            <thead>
                             <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
+                                <th>Location</th>
+                                <td>{{ $data->location }}</td>
+                                <th>Width (cm)</th>
+                                <td>{{ $data->width_cm }}</td>
                             </tr>
                             <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
+                                <th>Wound Type</th>
+                                <td>{{ $data->type }}</td>
+                                <th>Length (cm)</th>
+                                <td>{{ $data->length_cm }}</td>
                             </tr>
                             <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
+                                <th>Status</th>
+                                <td>{{ $data->status }}</td>
+                                <th>Depth (cm)</th>
+                                <td>{{ $data->depth_cm }}</td>
                             </tr>
                             <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
+                                <th>Stage</th>
+                                <td>{{ $data->stage }}</td>
+                                <th>Area (cm²)</th>
+                                <td>{{ $data->area_cm2 }}</td>
                             </tr>
                             <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
                             </tr>
-                            <tr>
-                                <th>Header 1</th>
-                                <td><input type="text" class="" value="dsa"></td>
-                            </tr>
+                            <tr></tr>
+                            </thead>
                         </table>
                         <div class="Evaluation-img" style="margin: 40px 0;">
                             @if ($data->images)
@@ -177,6 +200,70 @@
                                 @endforeach
                             @endif
                         </div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Exudate Amount</th>
+                                <td>{{ $data->exudate_amount }}</td>
+                                <th>Undermining</th>
+                                <td>{{ $data->undermining }}</td>
+                                <th>Epithelialization</th>
+                                <td>{{ $data->epithelialization }}</td>
+                            </tr>
+                            <tr>
+                                <th>Exudate Type</th>
+                                <td>{{ $data->exudate_type }}</td>
+                                <th>Tunneling</th>
+                                <td>{{ $data->tunneling }}</td>
+                                <th>Pain Level</th>
+                                <td>0/10</td>
+                            </tr>
+                            <tr>
+                                <th>Granulation Tissue</th>
+                                <td>{{ $data->granulation_tissue }}</td>
+                                <th>Sinus Tract (cm)</th>
+                                <td>{{ $data->sinus_tract_cm }}</td>
+                                <th>Odor</th>
+                                <td>{{ $data->odor }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fibrous Tissue</th>
+                                <td>{{ $data->fibrous_tissue }}</td>
+                                <th>Exposed Structures</th>
+                                <td>{{ $data->exposed_structures }}</td>
+                                <th>Infection</th>
+                                <td>{{ $data->infection }}</td>
+                            </tr>
+                            <tr>
+                                <th>Necrotic Tissue</th>
+                                <td>{{ $data->necrotic_tissue }}</td>
+                                <th>Periwound Color</th>
+                                <td>{{ $data->periwound_color }}</td>
+                                <th>Clinical Signs of Infection</th>
+                                <td>
+                                    @php
+                                        $clinical_signs_of_infection = json_decode(
+                                            $data->clinical_signs_of_infection,
+                                        );
+                                    @endphp
+                                    @if($clinical_signs_of_infection)
+                                        @foreach ($clinical_signs_of_infection as $details_signs)
+                                            {{ $details_signs }}<br>
+                                        @endforeach
+                                    @endif
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Wound Bed</th>
+                                <td>{{ $data->wound_bed }}</td>
+                                <th>Wound Edges</th>
+                                <td>{{ $data->wound_edges }}</td>
+                                <th>Wound Duration</th>
+                                <td>{{ $data->wound_duration }}</td>
+                            </tr>
+                            </thead>
+                        </table>
                     </div>
                 @endforeach
                 <div class="col-6 width-left">
@@ -233,11 +320,27 @@
                 </div>
             </div>
         @endif
-
-        @foreach ($encounter_notes->skip(1) as $section)
+        @foreach ($encounter_notes as $data)
             <div class="Wound-Evaluation" style="margin-bottom: 30px;">
-                <p class="section-title">{{ $section->section_title }}</p>
-                <p>{{ $section->section_text }}</p>
+                @if($data->section_slug == 'assessments')
+                    @php
+                        $assessments = json_decode($data->assessment_note, true);
+                    @endphp
+                    @if(is_array($assessments) && !empty($assessments))
+                        <p class="section-title">Assessment Notes: </p>
+                        @foreach($assessments as $details)
+                            <p><strong>Code:</strong> {{ $details['Code'] ?? 'N/A' }}</p>
+                            <p><strong>Description:</strong> {{ $details['Description'] ?? 'N/A' }}</p>
+                            <p><strong>Assessment Input:</strong> {{ $details['assessment_input'] ?? 'N/A' }}</p>
+                            <hr>
+                        @endforeach
+                    @endif
+                @endif
+
+                @if(!empty($data->section_text))
+                    <p class="section-title">{{ $data->section_title }}: </p>
+                    <p class="section-text">{!! nl2br($data->section_text) !!}</p>
+                @endif
             </div>
         @endforeach
 

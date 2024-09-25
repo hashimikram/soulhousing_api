@@ -36,8 +36,8 @@ class ProblemQuoteController extends Controller
         // Apply search filter if search term is provided
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('code', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
+                $query->where('code', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
             });
         }
         $cptCodes = $query->get();
@@ -61,11 +61,11 @@ class ProblemQuoteController extends Controller
         // Apply search filter if search term is provided
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('code', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('description', 'like', '%'.$searchTerm.'%');
+                $query->where('code', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
             });
         }
-        $cptCodes = $query->get();
+        $cptCodes = $query->limit(10)->get();
 
         // Modify the collection to rename `assessment_notes` to `assessment_input`
         $cptCodes = $cptCodes->map(function ($item) {

@@ -51,14 +51,21 @@ class PhysicalExamDetailController extends Controller
             ], 404);
         }
 
+        // Remove <br> and </br> from the text
         $sectionsText = str_replace(['<br>', '</br>'], '', $data->section_text);
 
-// Split the sections using regex, ensuring to match sections correctly
-        $sectionsArray = preg_split('/(?=[A-Z][a-z]+(?:\/[A-Z][a-z]+)?(?: & [A-Z][a-z]+)?:\s)/s', $sectionsText, -1,
-            PREG_SPLIT_NO_EMPTY);
+        // Split the text into sections using regex
+        $sectionsArray = preg_split(
+            '/(?=[A-Z][a-z]+(?:\/[A-Z][a-z]+)?(?: & [A-Z][a-z]+)?:\s)/s',
+            $sectionsText,
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+
         $formattedSections = [];
 
         foreach ($sectionsArray as $section) {
+            // Extract the title and content using regex
             if (preg_match('/^([A-Z][a-z]+(?:\/[A-Z][a-z]+)?(?: & [A-Z][a-z]+)?):\s*(.*)/s', $section, $matches)) {
                 $sectionTitle = $matches[1];
 
@@ -67,21 +74,27 @@ class PhysicalExamDetailController extends Controller
                     $sectionTitle = 'Mouth and throat';
                 }
 
-                // Convert the section title to camelCase, handling special characters
-                $sectionTitle = lcfirst(str_replace(' ', '',
-                    ucwords(str_replace(['&', '_'], [' and ', ' '], strtolower($sectionTitle)))));
+                // Convert the section title to camelCase
+                $sectionTitle = lcfirst(str_replace(
+                    ' ',
+                    '',
+                    ucwords(str_replace(['&', '_'], [' and ', ' '], strtolower($sectionTitle)))
+                ));
 
+                // Clean up section content
                 $sectionContent = trim(str_replace(['<br>', '</br>'], '', $matches[2]));
+
+                // Add the formatted section title and content to the result
                 $formattedSections[$sectionTitle] = $sectionContent;
             }
         }
-
 
         return response()->json([
             'code' => 'success',
             'data' => $formattedSections
         ], 200);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -120,7 +133,7 @@ class PhysicalExamDetailController extends Controller
 
             if ($key !== 'id') {
 
-                $sectionText .= ucfirst($key).': '.$value.'<br><br>';
+                $sectionText .= ucfirst($key) . ': ' . $value . '<br><br>';
             }
         }
 

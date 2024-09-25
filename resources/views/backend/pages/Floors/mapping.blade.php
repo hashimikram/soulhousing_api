@@ -41,31 +41,68 @@
                                             <div class="col-md-4 mb-4">
                                                 <div class="card shadow-sm">
                                                     <div class="card-header"
-                                                         style="background-color: rgb(223, 89, 89); color: rgb(255, 255, 255);min-height: 45px;">
-                                                        <h3 class="card-title text-white">{{ $bed['bed_title'] }}</h3>
-                                                    </div>
-                                                    <div class="card-body" style="padding: 1rem 1.25rem;">
-                                                        @if ($bed['patient'])
-                                                            <p class="card-text">
-                                                            <div>
-                                                                <strong>{{ $bed['patient']['first_name'] }}
-                                                                    {{ $bed['patient']['last_name'] }}</strong>
-                                                            </div>
-                                                            <div><strong>{{ $bed['patient']['gender'] }},</strong>
-                                                                {{ $bed['patient']['date_of_birth'] }}</div>
-                                                            <div><strong>MRN:</strong> {{ $bed['patient']['mrn_no'] }}
-                                                            </div>
-                                                            </p>
-                                                        @else
-                                                            <div class="input-group mb-3"
-                                                                 style="height: 73px;align-items: center;">
-                                                                <input type="text" class="form-control bed-search"
-                                                                       style="height: 44px;"
-                                                                       data-bed-id="{{ $bed['id'] }}"
-                                                                       placeholder="Search patient..."
-                                                                       aria-label="Search patient"/>
-                                                                <span class="input-group-text"
-                                                                      style="    height: 44px;">
+                                                         @if ($bed['status'] == 'vacant') style="background-color: rgb(114, 192, 93); color: rgb(255, 255, 255);min-height: 46px;"
+                                                         @elseif($bed['status'] == 'occupied')
+                                                             style="background-color: rgb(223, 89, 89); color: rgb(255, 255, 255);min-height: 46px;"
+                                                         @elseif($bed['status'] == 'hospitalized')
+                                                             style="background-color: rgb(138, 21, 116); color: rgb(255, 255, 255);"
+                                                         @elseif($bed['status'] == 'unprepared')
+                                                             background-color: rgb(252, 137, 61); color: rgb(255, 255,
+                                                         255);
+                                                    " @endif>
+                                                    <h3 class="card-title text-white">
+                                                        {{ $bed['bed_title'] }}
+                                                    </h3>
+                                                    @if ($bed['patient'])
+                                                        @if ($bed['status'] == 'vacant')
+                                                        @elseif($bed['status'] == 'occupied')
+                                                            <span style="cursor: pointer" data-bed-id="{{ $bed['id'] }}"
+                                                                  data-patient-id="{{ $bed['patient_id'] }}"
+                                                                  class="card-title discharge_patient_button">
+                                                                <i class="fas fa-pen-nib text-white"></i>
+                                                            </span>
+                                                        @elseif($bed['status'] == 'hospitalized')
+                                                            <span style="cursor: pointer" data-bed-id="{{ $bed['id'] }}"
+                                                                  data-patient-id="{{ $bed['patient_id'] }}"
+                                                                  class="card-title discharge_patient_button">
+                                                                <i class="fas fa-pen-nib text-white"></i>
+                                                            </span>
+                                                            <span style="cursor: pointer" data-bed-id="{{ $bed['id'] }}"
+                                                                  data-patient-id="{{ $bed['patient_id'] }}"
+                                                                  class="card-title discharge_patient_button">
+                                                                <i class="fas fa-pen-nib text-white"></i>
+                                                            </span>
+                                                        @elseif($bed['status'] == 'unprepared')
+                                                            <span style="cursor: pointer" data-bed-id="{{ $bed['id'] }}"
+                                                                  data-patient-id="{{ $bed['patient_id'] }}"
+                                                                  class="card-title discharge_patient_button">
+                                                                <i class="fas fa-pen-nib text-white"></i>
+                                                            </span>
+                                                        @endif>
+
+                                                    @endif
+                                                </div>
+
+                                                <div class="card-body" style="padding: 1rem 1.25rem;">
+                                                    @if ($bed['patient'])
+                                                        <p class="card-text">
+                                                        <div>
+                                                            <strong>{{ $bed['patient']['first_name'] }}
+                                                                {{ $bed['patient']['last_name'] }}</strong>
+                                                        </div>
+                                                        <div><strong>{{ $bed['patient']['gender'] }},</strong>
+                                                            {{ $bed['patient']['date_of_birth'] }}</div>
+                                                        <div><strong>MRN:</strong> {{ $bed['patient']['mrn_no'] }}
+                                                        </div>
+                                                        </p>
+                                                    @else
+                                                        <div class="input-group mb-3"
+                                                             style="height: 73px;align-items: center;">
+                                                            <input type="text" class="form-control bed-search"
+                                                                   style="height: 44px;" data-bed-id="{{ $bed['id'] }}"
+                                                                   placeholder="Search patient..."
+                                                                   aria-label="Search patient"/>
+                                                            <span class="input-group-text" style="    height: 44px;">
                                                                     <span class="svg-icon svg-icon-1">
                                                                         <svg width="24" height="24"
                                                                              viewBox="0 0 24 24" fill="none"
@@ -81,27 +118,29 @@
                                                                         </svg>
                                                                     </span>
                                                                 </span>
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <div class="dropdown-menu w-100"
-                                                                     aria-labelledby="dropdownMenuButton"></div>
-                                                            </div>
-                                                        @endif
-                                                    </div>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <div class="dropdown-menu w-100"
+                                                                 aria-labelledby="dropdownMenuButton"></div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
-                                        @endforeach
                                     </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                    @endforeach
                 </div>
-                <!--end::Accordion-->
+                @endforeach
             </div>
+            <!--end::Accordion-->
         </div>
     </div>
+    </div>
     @include('backend.pages.partials.transfer_patient_bed_modal')
+    @include('backend.pages.partials.discharge_patient_blade')
+
 @endsection
 
 
@@ -179,7 +218,8 @@
                     },
                     success: function (response) {
                         if (response.code) {
-                            toastr.success(response.message || "Patient assigned to bed successfully.");
+                            toastr.success(response.message ||
+                                "Patient assigned to bed successfully.");
                             location.reload();
                         } else if (response.status === '1') {
                             $('#oldBedId').val(response.old_bed_id);
@@ -187,7 +227,8 @@
                             $('#patientId').val(patientId);
                             $('#transfer_patient_bed_modal').modal('show');
                         } else {
-                            toastr.error(response.message || "An error occurred while assigning the patient.");
+                            toastr.error(response.message ||
+                                "An error occurred while assigning the patient.");
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -197,7 +238,9 @@
             });
 
             $('#confirmTransfer').click(function () {
-                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...').attr('disabled', true);
+                $(this).html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...'
+                ).attr('disabled', true);
                 const oldBedId = $('#oldBedId').val();
                 const newBedId = $('#newBedId').val();
                 const patientId = $('#patientId').val();
@@ -212,10 +255,12 @@
                     },
                     success: function (response) {
                         if (response.code) {
-                            toastr.success(response.message || "Patient transferred successfully.");
+                            toastr.success(response.message ||
+                                "Patient transferred successfully.");
                             location.reload();
                         } else {
-                            toastr.error(response.message || "An error occurred while transferring the patient.");
+                            toastr.error(response.message ||
+                                "An error occurred while transferring the patient.");
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -230,6 +275,17 @@
                     $('.dropdown-menu').hide();
                 }
             });
+
+            $('.discharge_patient_button').click(function (e) {
+                e.preventDefault();
+                var bed_id = $(this).data('bed-id');
+                var patient_id = $(this).data('patient-id');
+                console.log("Bed ID: " + bed_id + ", Patient ID: " + patient_id); // Debugging line
+                $('#bed_id').val(bed_id);
+                $('#patient_id').val(patient_id);
+                $('#discharge_patient_modal').modal('show');
+            });
+
         });
     </script>
 @endsection

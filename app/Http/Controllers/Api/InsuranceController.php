@@ -15,7 +15,7 @@ class InsuranceController extends BaseController
      */
     public function index($patient_id)
     {
-        $insurance = Insurance::where('patient_id', $patient_id)->orderBy('created_at', 'DESC')->get();
+        $insurance = Insurance::join('states', 'states.id', '=', 'insurances.state')->where('insurances.patient_id', $patient_id)->select('insurances.*', 'states.name')->orderBy('created_at', 'DESC')->get();
         $base = new BaseController();
         if (count($insurance) > 0) {
             foreach ($insurance as $data) {
@@ -50,6 +50,7 @@ class InsuranceController extends BaseController
         DB::beginTransaction();
         try {
             $validatedData['provider_id'] = $user->id;
+            $validatedData['facility_id'] = current_facility(auth()->user()->id);
             $insurance = Insurance::create($validatedData);
             DB::commit();
             return response()->json([

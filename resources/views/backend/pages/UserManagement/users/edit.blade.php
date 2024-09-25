@@ -1,16 +1,15 @@
+@php use App\Models\ListOption; @endphp
+@php use App\Models\Facility; @endphp
 @extends('backend.layout.master')
-@section('breadcrumb_title','Edit User')
-@section('breadcrumb_li_1','Home')
-@section('breadcrumb_li_2','User Management - Edit User')
+@section('breadcrumb_title', 'Edit User')
+@section('breadcrumb_li_1', 'Home')
+@section('breadcrumb_li_2', 'User Management - Edit User')
 @section('breadcrumb_href', route('dashboard'))
 @section('user_management_li', 'here show')
 @section('users_a', 'active')
-@section('page_title','Edit User')
+@section('page_title', 'Edit User')
 @section('content')
-    <div
-        id="kt_app_content_container"
-        class="app-container"
-    >
+    <div id="kt_app_content_container" class="app-container">
         <!--begin::Card-->
         <div class="card">
 
@@ -23,18 +22,16 @@
                     @csrf
                     @method('PUT')
 
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
 
                     <!--begin::Scroll-->
                     <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll"
                          data-kt-scroll="true"
-                         data-kt-scroll-activate="{default: false, lg: true}"
-                         data-kt-scroll-max-height="auto"
+                         data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
                          data-kt-scroll-dependencies="#kt_modal_add_user_header"
-                         data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
-                         data-kt-scroll-offset="300px">
+                         data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
 
                         <!--begin::Input group-->
                         <div class="fv-row mb-7">
@@ -62,13 +59,13 @@
                                 <span
                                     class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                                     data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                    <i class="bi bi-x fs-2"></i>
-                </span>
+                                    <i class="bi bi-x fs-2"></i>
+                                </span>
                                 <span
                                     class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
                                     data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                    <i class="bi bi-x fs-2"></i>
-                </span>
+                                    <i class="bi bi-x fs-2"></i>
+                                </span>
                             </div>
                             <div class="form-text">
                                 Allowed file types: png, jpg, jpeg.
@@ -86,8 +83,9 @@
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Title</label>
-                                    <input type="text" name="title" class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="Mr, Mrs" required
+                                    <input type="text" name="title"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Mr, Mrs"
+                                           required
                                            value="{{ old('title', $user->userDetail->title) }}"/>
                                     @error('title')
                                     <div class="fv-plugins-message-container invalid-feedback">
@@ -100,8 +98,8 @@
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">First Name</label>
                                     <input type="text" name="first_name"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="John" required
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="John"
+                                           required
                                            value="{{ old('first_name', $user->name) }}"/>
                                     @error('first_name')
                                     <div class="fv-plugins-message-container invalid-feedback">
@@ -119,8 +117,7 @@
                                 <div class="fv-row mb-7">
                                     <label class="fw-semibold fs-6 mb-2">Middle Name</label>
                                     <input type="text" name="middle_name"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="Elwa"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Elwa"
                                            value="{{ old('middle_name', $user->userDetail->middle_name) }}"/>
                                     @error('middle_name')
                                     <div class="fv-plugins-message-container invalid-feedback">
@@ -133,8 +130,7 @@
                                 <div class="fv-row mb-7">
                                     <label class="fw-semibold fs-6 mb-2">Last Name</label>
                                     <input type="text" name="last_name"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="Doe"
+                                           class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Doe"
                                            value="{{ old('last_name', $user->userDetail->last_name) }}"/>
                                     @error('last_name')
                                     <div class="fv-plugins-message-container invalid-feedback">
@@ -171,16 +167,16 @@
                                     <label class="required fw-semibold fs-6 mb-2">Gender</label>
                                     <select class="form-control form-control-solid mb-3 mb-lg-0" name="gender" required>
                                         <option>Select Gender</option>
-                                        <option
-                                            value="Male" {{ old('gender', $user->userDetail->gender) == 'Male' ? 'selected' : '' }}>
+                                        <option value="Male"
+                                            {{ old('gender', $user->userDetail->gender) == 'Male' ? 'selected' : '' }}>
                                             Male
                                         </option>
-                                        <option
-                                            value="Female" {{ old('gender', $user->userDetail->gender) == 'Female' ? 'selected' : '' }}>
+                                        <option value="Female"
+                                            {{ old('gender', $user->userDetail->gender) == 'Female' ? 'selected' : '' }}>
                                             Female
                                         </option>
-                                        <option
-                                            value="Other" {{ old('gender', $user->userDetail->gender) == 'Other' ? 'selected' : '' }}>
+                                        <option value="Other"
+                                            {{ old('gender', $user->userDetail->gender) == 'Other' ? 'selected' : '' }}>
                                             Other
                                         </option>
                                     </select>
@@ -199,7 +195,8 @@
                                            value="{{ old('date_of_birth', $user->userDetail->date_of_birth) }}"/>
                                     @error('date_of_birth')
                                     <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="date_of_birth" data-validator="notEmpty">{{ $message }}</div>
+                                        <div data-field="date_of_birth" data-validator="notEmpty">{{ $message }}
+                                        </div>
                                     </div>
                                     @enderror
                                 </div>
@@ -224,13 +221,29 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
-                                    <label class="fw-semibold fs-6 mb-2">City</label>
-                                    <input type="text" name="city" placeholder="California"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           value="{{ old('city', $user->userDetail->city) }}"/>
-                                    @error('city')
+
+                                    <label class="required fw-semibold fs-6 mb-2">User Type</label>
+
+                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="user_type"
+                                            required>
+                                        <option>Select User Type</option>
+                                        <option value="provider" @if ($user->user_type == 'provider') selected @endif>
+                                            Provider
+                                        </option>
+                                        <option value="nurse" @if ($user->user_type == 'nurse') selected @endif>
+                                            Nurse
+                                        </option>
+                                        <option value="maintenance"
+                                                @if ($user->user_type == 'maintenance') selected @endif>
+                                            Maintenance
+                                        </option>
+                                        <option value="operation" @if ($user->user_type == 'operation') selected @endif>
+                                            Operation
+                                        </option>
+                                    </select>
+                                    @error('user_type')
                                     <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="state" data-validator="notEmpty">{{ $message }}</div>
+                                        <div data-field="email" data-validator="notEmpty">{{ $message }}</div>
                                     </div>
                                     @enderror
                                 </div>
@@ -242,19 +255,60 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="fv-row mb-7">
-                                    <label class="fw-semibold fs-6 mb-2">Phone</label>
-                                    <input type="text" name="home_phone"
-                                           class="form-control form-control-solid mb-3 mb-lg-0"
-                                           placeholder="123-456-7890"
-                                           value="{{ old('home_phone', $user->userDetail->home_phone) }}"/>
-                                    @error('home_phone')
+                                    <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">Speciality</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control form-control-solid mb-3 mb-lg-0" name="speciality_id"
+                                            required>
+                                        <option>Select Speciality</option>
+                                        @foreach (ListOption::where('list_id', 'Specialty')->get() as $speciality_details)
+                                            <option value="{{ $speciality_details->id }}"
+                                                    @if ($user->userDetail->speciality_id == $speciality_details->id) selected @endif>
+                                                {{ $speciality_details->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('speciality_id')
                                     <div class="fv-plugins-message-container invalid-feedback">
-                                        <div data-field="phone" data-validator="notEmpty">{{ $message }}</div>
+                                        <div data-field="speciality_id" data-validator="notEmpty">{{ $message }}
+                                        </div>
                                     </div>
                                     @enderror
+                                    <!--end::Input-->
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="fv-row mb-7">
+                                    <!--begin::Label-->
+                                    <label class="required fw-semibold fs-6 mb-2">Facilities</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select
+                                        class="form-control form-control-solid mb-3 mb-lg-0 js-example-basic-multiple"
+                                        multiple="multiple" name="facilities[]" required>
+                                        <option value="">Select Facilities</option>
+                                        @php
+                                            $selectedFacilities = json_decode($user->userDetail->facilities, true) ?? [];
+                                        @endphp
+                                        @foreach (Facility::all() as $data)
+                                            <option value="{{ $data->id }}"
+                                                    @if(in_array($data->id, $selectedFacilities)) selected @endif>
+                                                {{ $data->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('facilities')
+                                    <div class="fv-plugins-message-container invalid-feedback">
+                                        <div data-field="facilities" data-validator="notEmpty">{{ $message }}</div>
+                                    </div>
+                                    @enderror
+                                    <!--end::Input-->
                                 </div>
                             </div>
                         </div>
+
                         <!--end::Input group-->
 
                         <!--begin::Actions-->
@@ -277,4 +331,11 @@
     </div>
 
 @endsection
-
+@section('custom_js')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.js-example-basic-multiple').select2();
+        });
+    </script>
+@endsection

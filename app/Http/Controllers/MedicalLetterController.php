@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMedicalLetterRequest;
 use App\Http\Requests\UpdateMedicalLetterRequest;
 use App\Models\MedicalLetter;
+use App\Models\WebsiteSetting;
 use Illuminate\Support\Facades\Log;
 
 class MedicalLetterController extends Controller
@@ -18,8 +19,13 @@ class MedicalLetterController extends Controller
         $providerFullName = auth()->user()->name;
         if (count($MedicalLetter) > 0) {
             foreach ($MedicalLetter as $MedicalLetters) {
-                $MedicalLetters->file_path = env('APP_URL').'public/uploads/'.$MedicalLetters->file_name;
-                $MedicalLetters->provider_full_name = $providerFullName;
+                $MedicalLetters->file_path = env('APP_URL') . 'public/uploads/' . $MedicalLetters->file_name;
+                $settings = WebsiteSetting::whereIn('key', ['platform_name', 'platform_address', 'platform_contact'])->pluck('value', 'key');
+                $MedicalLetters->soul_housing_address = $settings['platform_address'] ?? '';
+                $MedicalLetters->soul_housing_phone = $settings['platform_contact'] ?? '';
+                $MedicalLetters->website = $settings['platform_name'] ?? '';
+                $MedicalLetters->provider_full_name = auth()->user()->details->title . ' ' . auth()->user()->name . ' ' . auth()->user()->details->last_name;
+                $MedicalLetters->provider_npi = auth()->user()->details->npi;
             }
             return response()->json([
                 'status' => true,
@@ -69,9 +75,9 @@ class MedicalLetterController extends Controller
                 }
                 $mimeType = strtolower($type[1]);
                 $extension = strtolower($type[2]);
-                $fileName = uniqid().'.'.$extension;
-                Log::info('File Mime: '.$mimeType);
-                Log::info('File Extension: '.$extension);
+                $fileName = uniqid() . '.' . $extension;
+                Log::info('File Mime: ' . $mimeType);
+                Log::info('File Extension: ' . $extension);
 
                 // Ensure the 'public/uploads' directory exists
                 $directory = public_path('uploads');
@@ -80,10 +86,10 @@ class MedicalLetterController extends Controller
                 }
 
                 // Save the file to the public/uploads directory
-                $filePath = $directory.'/'.$fileName;
+                $filePath = $directory . '/' . $fileName;
                 file_put_contents($filePath, $fileData);
 
-                $publicPath = asset('uploads/'.$fileName);
+                $publicPath = asset('uploads/' . $fileName);
             } else {
                 return response()->json(['error' => 'Invalid media data'], 400);
             }

@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('backend.auth.login');
 });
 
+Route::get('/import', function () {
+    return view('backend.import');
+});
+
 Route::get('/check-page', function () {
     return view('PDF.status_change');
 });

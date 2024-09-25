@@ -1,59 +1,63 @@
-<div class="table-responsive">
-    <table class="table align-middle table-row-dashed fs-6 gy-5 myTable patient_table" id="">
-        <thead>
-        <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-            <th class="min-w-125px">Full Name</th>
-            <th class="min-w-125px">Facility - Provider</th>
-            <th class="min-w-125px">Floor</th>
-            <th class="min-w-125px">Room</th>
-            <th class="min-w-125px">Bed</th>
-            <th class="min-w-125px">Age</th>
-            <th class="min-w-125px">Gender</th>
-            <th class="min-w-125px">Marital Status</th>
-            <th class="min-w-125px">Contact No</th>
-            <th class="text-end min-w-100px">Actions</th>
-        </tr>
-        </thead>
-        <tbody class="text-gray-600 fw-semibold">
-        @foreach ($patients as $data)
-            <tr>
-                <td class="d-flex align-items-center">
-                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                        <a href="#">
-                            <div class="symbol-label">
-                                <img src="{{ image_url($data->profile_pic) }}" alt="{{ $data->first_name }}"
-                                     class="w-100"/>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="#" class="text-gray-800 text-hover-primary mb-1">
-                            {{ $data->first_name }} {{ $data->middle_name }} {{ $data->last_name }}
-                        </a>
-                        <span>{{ $data->email }}</span>
-                    </div>
-                </td>
-                <td>
-                    {{ $data->facility->name ?? 'N/A' }}
-                    {!! $data->provider
-                        ? ' - ' . $data->provider->name
-                        : '<span class="badge badge-light-danger fw-semibold me-1">Unassigned</span>' !!}
-                </td>
-                <td>{{ $data->room->floor->floor_name ?? 'N/A' }}</td>
-                <td>{{ $data->room->room_name ?? 'N/A' }}</td>
-                <td>{{ $data->bed->bed_title ?? 'N/A' }}</td>
-                <td>
-                    {{ date('m/d/Y', strtotime($data->date_of_birth)) }}
-                    <div class="badge badge-success fw-bold">
-                        ({{ \Carbon\Carbon::parse($data->date_of_birth)->age }})
-                    </div>
-                </td>
-                <td>{{ $data->gender }}</td>
-                <td>{{ $data->marital_status }}</td>
-                <td>{{ $data->phone_no }}</td>
-                <td class="text-end">
-                    <a href="{{ route('patient.edit', $data->id) }}"
-                       class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+@php use Carbon\Carbon; @endphp
+
+<div id="table-container-1">
+    <div id="loader-1" class="loader" style="display:none;">Loading...</div>
+    <div class="table-responsive">
+        <table class="table align-middle table-row-dashed fs-6 gy-5 myTable patient_table" id="">
+            <thead>
+            <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                <th class="min-w-125px">Full Name</th>
+                <th class="min-w-125px">Facility - Provider</th>
+                <th class="min-w-125px">Floor</th>
+                <th class="min-w-125px">Room</th>
+                <th class="min-w-125px">Bed</th>
+                <th class="min-w-125px">Age</th>
+                <th class="min-w-125px">Gender</th>
+                <th class="min-w-125px">Marital Status</th>
+                <th class="min-w-125px">Contact No</th>
+                <th class="text-end min-w-100px">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-600 fw-semibold">
+            @foreach ($patients as $data)
+                <tr>
+                    <td class="d-flex align-items-center">
+                        <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                            <a href="#">
+                                <div class="symbol-label">
+                                    <img src="{{ image_url($data->profile_pic) }}" alt="{{ $data->first_name }}"
+                                         class="w-100"/>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <a href="#" class="text-gray-800 text-hover-primary mb-1">
+                                {{ $data->first_name }} {{ $data->middle_name }} {{ $data->last_name }}
+                            </a>
+                            <span>{{ $data->email }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        {{ $data->facility->name ?? 'N/A' }}
+                        {!! $data->provider
+                            ? ' - ' . $data->provider->name
+                            : '<span class="badge badge-light-danger fw-semibold me-1">Unassigned</span>' !!}
+                    </td>
+                    <td>{{ $data->room->floor->floor_name ?? 'N/A' }}</td>
+                    <td>{{ $data->room->room_name ?? 'N/A' }}</td>
+                    <td>{{ $data->bed->bed_title ?? 'N/A' }}</td>
+                    <td>
+                        {{ date('m/d/Y', strtotime($data->date_of_birth)) }}
+                        <div class="badge badge-success fw-bold">
+                            ({{ Carbon::parse($data->date_of_birth)->age }})
+                        </div>
+                    </td>
+                    <td>{{ $data->gender }}</td>
+                    <td>{{ $data->marital_status }}</td>
+                    <td>{{ $data->phone_no }}</td>
+                    <td class="text-end">
+                        <a href="{{ route('patient.edit', $data->id) }}"
+                           class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                         <span class="svg-icon svg-icon-3">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -65,9 +69,9 @@
                                     fill="currentColor"></path>
                             </svg>
                         </span>
-                    </a>
-                    <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm delete-button"
-                       data-id="{{ $data->id }}">
+                        </a>
+                        <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm delete-button"
+                           data-id="{{ $data->id }}">
                         <span class="svg-icon svg-icon-3">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -82,12 +86,14 @@
                                       fill="currentColor"></path>
                             </svg>
                         </span>
-                    </a>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 

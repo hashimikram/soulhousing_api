@@ -9,6 +9,49 @@ class patient extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'provider_id',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'social_security_no',
+        'medical_no',
+        'age',
+        'gender',
+        'date_of_birth',
+        'referral_source_1',
+        'organization',
+        'financial_class',
+        'fin_class_name',
+        'doctor_name',
+        'account_no',
+        'admit_date',
+        'disch_date',
+        'pre_admit_date',
+        'nursing_station',
+        'email',
+        'other_contact_name',
+        'other_contact_address',
+        'other_contact_country',
+        'other_contact_city',
+        'other_contact_state',
+        'other_contact_phone_no',
+        'other_contact_cell',
+        'relationship',
+        'medical_dependency',
+        'city',
+        'state',
+        'language',
+        'phone_no',
+        'zip_code',
+        'country',
+        'address',
+        'facility_id',
+        'profile_pic',
+        'mrn_no',
+        'other_email'
+    ];
+
     public function medications()
     {
         return $this->hasMany(medication::class)->where('status', 'active');
@@ -80,5 +123,10 @@ class patient extends Model
     public function provider()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scheduling()
+    {
+        return $this->hasMany(scheduling::class, 'patient_id');
     }
 }

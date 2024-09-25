@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use Carbon\Carbon; @endphp
+    <!DOCTYPE html>
 <html>
 
 <head>
@@ -72,12 +73,13 @@
                 <li class="list-group-item border-0">Patient
                     Name: {{ $patient->first_name }} {{ $patient->last_name }}</li>
                 <li class="list-group-item border-0">Patient
-                    Age: {{ \Carbon\Carbon::parse($patient->date_of_birth)->age }}</li>
+                    Age: {{ Carbon::parse($patient->date_of_birth)->age }}</li>
                 <li class="list-group-item border-0">Date of
                     Birth: {{ date('d-M-Y', strtotime($patient->date_of_birth)) }}</li>
                 <li class="list-group-item border-0">Encounter
                     Type: {{ $encounter->encounterType->title ?? 'N/A' }}</li>
-                <li class="list-group-item border-0">Encounter Date: {{ formatDate($encounter->date) }}</li>
+                <li class="list-group-item border-0">Encounter
+                    Date: {{ date('m-d-Y',strtotime($encounter->encounter_date)) }}</li>
             </ul>
         </div>
         <div class="info">
@@ -209,8 +211,25 @@
             @endphp
 
             <div style="margin-bottom: 20px;">
-                <p class="section-title">{{ $data->section_title }}: </p>
-                <p class="section-text">{!! nl2br($section_text) !!}</p>
+                @if($data->section_slug == 'assessments')
+                    @php
+                        $assessments = json_decode($data->assessment_note, true);
+                    @endphp
+                    @if(is_array($assessments) && !empty($assessments))
+                        <p class="section-title">Assessment Notes: </p>
+                        @foreach($assessments as $details)
+                            <p><strong>Code:</strong> {{ $details['Code'] ?? 'N/A' }}</p>
+                            <p><strong>Description:</strong> {{ $details['Description'] ?? 'N/A' }}</p>
+                            <p><strong>Assessment Input:</strong> {{ $details['assessment_input'] ?? 'N/A' }}</p>
+                            <hr>
+                        @endforeach
+                    @endif
+                @endif
+
+                @if(!empty($data->section_text))
+                    <p class="section-title">{{ $data->section_title }}: </p>
+                    <p class="section-text">{!! nl2br($section_text) !!}</p>
+                @endif
             </div>
         @endforeach
     </div>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EncounterNoteSection extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'provider_id',
         'patient_id',
@@ -17,4 +18,10 @@ class EncounterNoteSection extends Model
         'section_text',
         'sorting_order',
     ];
+
+    public function encounter()
+    {
+        return $this->belongsTo(PatientEncounter::class, 'encounter_id');
+    }
+
 }

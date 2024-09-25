@@ -98,6 +98,16 @@ class User extends Authenticatable
         return $this->hasMany(AdmissionDischarge::class, 'provider_id');
     }
 
+    public function scheduling()
+    {
+        return $this->hasMany(scheduling::class, 'provider_id');
+    }
+
+    public function scheduling_member()
+    {
+        return $this->hasMany(scheduling::class, 'member_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

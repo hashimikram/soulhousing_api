@@ -12,11 +12,13 @@ use App\Http\Controllers\Api\FloorController;
 use App\Http\Controllers\Api\InsuranceController;
 use App\Http\Controllers\Api\MedicationController;
 use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\Api\NotepadController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\PatientEncounterController;
 use App\Http\Controllers\Api\PinController;
 use App\Http\Controllers\Api\ProblemController;
 use App\Http\Controllers\Api\ReviewOfSystemController;
+use App\Http\Controllers\Api\SchedulingController;
 use App\Http\Controllers\Api\VitalController;
 use App\Http\Controllers\AssessmentNoteController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\CptCodeController;
 use App\Http\Controllers\DischargedPatientsController;
 use App\Http\Controllers\DischargeFormController;
 use App\Http\Controllers\EncounterTemplateController;
+use App\Http\Controllers\Encountertest;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\LikeController;
@@ -91,6 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Floor and Room CRUD
     Route::post('/add-floor-rooms', [FloorController::class, 'store']);
+    Route::post('/edit_floor', [FloorController::class, 'update']);
     Route::post('/update-room', [FloorController::class, 'update_room']);
     Route::get('/delete-room/{room_id}', [RoomController::class, 'delete_room']);
     Route::post('/update-beds', [FloorController::class, 'update_bed']);
@@ -102,12 +106,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rooms-beds/{floor_id}', [FloorController::class, 'bedsAndrooms']);
     Route::get('/map-rooms-beds/{floor_id}', [FloorController::class, 'mapBedRooms']);
     Route::get('/get-vacant-beds/{status}', [FloorController::class, 'all_floors_by_status']);
+    Route::get('/get-unprepared-beds/{status}', [FloorController::class, 'get_unprepared_beds']);
     Route::post('/add-new-room', [RoomController::class, 'store']);
     Route::post('/add-new-bed', [BedController::class, 'store']);
     Route::post('/update-room', [RoomController::class, 'update']);
     Route::post('/update-beds', [BedController::class, 'update']);
     Route::post('/discharge-patient-bed', [BedController::class, 'discharge_patient_bed']);
-
+    Route::post('/unprepared-to-vacant', [BedController::class, 'markAsVacant']);
+    Route::post('/hospitalized-patient-bed', [BedController::class, 'markAsHospitalized']);
+    Route::post('/reassign-patient-bed', [BedController::class, 'markAsReassign']);
     // PIN CRUD
     Route::post('/set-pin', [PinController::class, 'store']);
 
@@ -118,9 +125,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/delete-medication/{medication}', [MedicationController::class, ' destroy']);
     Route::post('/change-status-medication', [MedicationController::class, 'change_status']);
     // Encounter CRUD
-    Route::post('/add-patient-encounter', [\App\Http\Controllers\Encountertest::class, 'store']);
-    Route::get('/get-patient-encounter/{encounter_id}', [\App\Http\Controllers\Encountertest::class, 'get_encounter']);
-    Route::get('/get-pdf/{encounter_id}', [\App\Http\Controllers\Encountertest::class, 'get_pdf']);
+    Route::post('/add-patient-encounter', [PatientEncounterController::class, 'store']);
+    Route::get('/get-patient-encounter/{encounter_id}', [Encountertest::class, 'get_encounter']);
+    Route::get('/get-pdf/{encounter_id}', [Encountertest::class, 'get_pdf']);
 
     Route::post('/add-patient-encounter-notes', [PatientEncounterController::class, 'encounter_notes_store']);
     Route::get('patient-encounter/{patient_id}', [PatientEncounterController::class, 'show']);
@@ -128,18 +135,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('delete-patient-encounter/{id}', [PatientEncounterController::class, 'destroy']);
     Route::post('/update-patient-encounter', [PatientEncounterController::class, 'update']);
     Route::post('/update-patient-encounter-notes', [EncounterNoteSectionController::class, 'update']);
-    Route::get('patient-encounter-information/{patient_id}',
-        [PatientEncounterController::class, 'patient_encounter_information']);
+    Route::get(
+        'patient-encounter-information/{patient_id}',
+        [PatientEncounterController::class, 'patient_encounter_information']
+    );
     Route::post('/encounter-status-update', [PatientEncounterController::class, 'status_update']);
     Route::get('/get-details-review/{section_id}/{patient_id}', [ReviewOfSystemDetailController::class, 'show']);
-    Route::get('/get-details-mental/{section_id}/{patient_id}',
-        [PatientEncounterController::class, 'mental_section_show']);
+    Route::get(
+        '/get-details-mental/{section_id}/{patient_id}',
+        [PatientEncounterController::class, 'mental_section_show']
+    );
     Route::get('/get-details-physical/{section_id}/{patient_id}', [PhysicalExamDetailController::class, 'show']);
     Route::post('/update-details-review', [ReviewOfSystemDetailController::class, 'update']);
     Route::post('/update-details-physical', [PhysicalExamDetailController::class, 'update']);
     Route::post('/update-details-psychiatric', [PatientEncounterController::class, 'psychiatric_update']);
-    Route::get('/check-encounter-type/{patient_id}/{specialty_id}',
-        [PatientEncounterController::class, 'check_patient_encounter']);
+    Route::get(
+        '/check-encounter-type/{patient_id}/{specialty_id}',
+        [PatientEncounterController::class, 'check_patient_encounter']
+    );
+    Route::get('/encounter-report', [PatientEncounterController::class, 'pastPatientEncounters']);
+
     Route::post('/assessment-notes', [AssessmentNoteController::class, 'store']);
     Route::get('/delete-assessment-note/{id}/{value_id}', [AssessmentNoteController::class, 'destroy']);
 
@@ -218,11 +233,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-admission-discharge', [AdmissionDischargeController::class, 'update']);
     Route::get('/discharge-patient/{id}', [AdmissionDischargeController::class, 'discharge_patient']);
     Route::get('/get-discharged-patients/{patient_id}', [AdmissionDischargeController::class, 'discharged_patients']);
-
     Route::post('/discharge-patient', [DischargedPatientsController::class, 'store']);
+    Route::get('/admission-vacant-beds', [AdmissionDischargeController::class, 'get_vacant_beds']);
+    Route::post('/close-admission', [AdmissionDischargeController::class, 'close_admission']);
+    Route::get('/discharge-pdf/{admission_id}', [AdmissionDischargeController::class, 'get_pdf']);
 
 
-//    WoundController
+    //    WoundController
     Route::post('/store-wound', [WoundController::class, 'store']);
     Route::post('/operation-store-tweet', [OperationController::class, 'store']);
     Route::get('/operation-get-tweets', [OperationController::class, 'index']);
@@ -236,12 +253,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/operation-likes', [OperationLikeController::class, 'getLikes']);
     Route::get('/search-code/{search_text}', [ProblemQuoteController::class, 'search_problem']);
 
+    //    SchedulingController
+    Route::get('/get-scheduling', [SchedulingController::class, 'index']);
+    Route::post('/store-scheduling', [SchedulingController::class, 'store']);
+    Route::get('/get-maintenance-operation-team', [SchedulingController::class, 'getMaintenanceAndOperationsTeam']);
+    Route::get('/todo-list', [SchedulingController::class, 'toDoList']);
+
+    // NotePadRoutes
+    Route::get('/get-notepad/{patient_id}', [NotepadController::class, 'index']);
+    Route::post('/store-notepad', [NotepadController::class, 'store']);
+    Route::post('/update-notepad', [NotepadController::class, 'update']);
+
     Route::get('/all-providers', [PatientController::class, 'all_providers']);
     Route::get('/get-latest-vitals/{patient_id}', [VitalController::class, 'get_latest_vital']);
     Route::get('/all-facilities', [FacilityController::class, 'all_facilities']);
     Route::get('/login-user-facility', [FacilityController::class, 'LoginUserFacility']);
     Route::post('/update-login-facility', [FacilityController::class, 'updateLoginUserFacility']);
-    Route::get('/discharge-form', [DischargeFormController::class, 'index']);
+    Route::get('/discharge-form/{patient_id}', [DischargeFormController::class, 'index']);
     Route::get('/roles-permissions', [AclController::class, 'index']);
-
+    Route::post('/blacklist-patient', [PatientController::class, 'blacklist_patient']);
+    Route::get('/updated-patient-details/{patient_id}', [PatientController::class, 'getUpdatedPatientDetails']);
 });

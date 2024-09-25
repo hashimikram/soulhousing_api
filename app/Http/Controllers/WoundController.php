@@ -24,8 +24,13 @@ class WoundController extends Controller
     {
         $data = $request->all();
         $data['provider_id'] = auth()->user()->id;
-        $data['other_factor'] = $request->other_factor;
-        $data['patient_education'] = $request->patient_education;
+        $data = array_filter($data);
+        // Explicitly remove keys that are null or empty
+//        foreach ($data as $key => $value) {
+//            if (is_null($value) || $value === '') {
+//                unset($data[$key]);
+//            }
+//        }
 
         // Check if a wound record already exists for the given encounter_id
         $existingWound = Wound::where('encounter_id', $request->encounter_id)->first();
@@ -45,22 +50,29 @@ class WoundController extends Controller
             foreach ($request->input('wounds') as $woundDetailData) {
                 $woundDetailData['wound_id'] = $wound->id;
 
+                // Explicitly remove keys that are null or empty in wound details
+                foreach ($woundDetailData as $key => $value) {
+                    if (is_null($value) || $value === '') {
+                        unset($woundDetailData[$key]);
+                    }
+                }
+
+                // Handle image saving and encoding
                 if (isset($woundDetailData['images']) && is_array($woundDetailData['images'])) {
                     $images = [];
                     foreach ($woundDetailData['images'] as $image) {
                         $images[] = $this->saveImage($image);
                     }
-                    $woundDetailData['images'] = json_encode($images);
+                    $woundDetailData['images'] = json_encode($images); // Convert image URLs array to JSON string
                 }
 
                 $woundDetailData['provider_id'] = auth()->user()->id;
                 $woundDetailData['patient_id'] = $request->patient_id;
                 $woundDetailData['encounter_id'] = $request->encounter_id;
-                $woundDetailData['clinical_signs_of_infection'] = $woundDetailData['clinical_signs_of_infection'];
+
                 // Check if the wound detail already exists for the given wound_id and encounter_id
                 $existingWoundDetail = WoundDetails::where('wound_id', $wound->id)
                     ->where('encounter_id', $request->encounter_id)
-                    ->where('location', $woundDetailData['location'])
                     ->first();
 
                 if ($existingWoundDetail) {
@@ -73,6 +85,7 @@ class WoundController extends Controller
                 }
             }
         }
+
 
         return response()->json([
             'success' => true,
@@ -109,7 +122,7 @@ class WoundController extends Controller
             }
             $mimeType = strtolower($type[1]);
             $extension = strtolower($type[2]);
-            $filename = uniqid().'.'.$extension;
+            $filename = uniqid() . '.' . $extension;
 
             // Ensure the 'public/uploads' directory exists
             $directory = public_path('uploads');
@@ -118,10 +131,10 @@ class WoundController extends Controller
             }
 
             // Save the file to the public/uploads directory
-            $filePath = $directory.'/'.$filename;
+            $filePath = $directory . '/' . $filename;
             file_put_contents($filePath, $base64Image);
 
-            return asset('uploads/'.$filename);
+            return asset('uploads/' . $filename);
         } else {
             return "placeholder.jpg";
         }

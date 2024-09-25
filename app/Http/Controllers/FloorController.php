@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Models\floor;
 use App\Models\room;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -15,68 +16,88 @@ class FloorController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
-        $data = []; // Initialize the data array
-        if (auth()->user()->user_type == 'super_admin') {
-            $floors = Floor::join('facilities', 'facilities.id', '=', 'floors.facility_id')->select('floors.*',
-                'facilities.name')->get();
-        } else {
-            $floors = Floor::join('facilities', 'facilities.id', '=', 'floors.facility_id')->select('floors.*',
-                'facilities.name')->where('floors.provider_id', auth()->user()->id)->get();
-        }
+        // Initialize the data array
+        $data = [];
+        $floors = Floor::with(['rooms.beds', 'facility'])->get();
+        try {
+            // Eager load rooms and beds with floors to reduce the number of queries
+            $floors = Floor::with(['rooms.beds', 'facility'])->get();
+            Log::info('Successfully fetched floors and related data.', ['floor_count' => $floors->count()]);
 
-        foreach ($floors as $floor) {
-            $totalBedsCount = 0;
-            $occupiedBedsCount = 0;
-            $pendingBedsCount = 0;
-            $vacantBedsCount = 0;
-            $totalRoomsCount = $floor->rooms->count();
-            $roomDetails = [];
+            foreach ($floors as $floor) {
+                // Initialize counters
+                $totalBedsCount = 0;
+                $occupiedBedsCount = 0;
+                $pendingBedsCount = 0;
+                $vacantBedsCount = 0;
+                $totalRoomsCount = $floor->rooms->count();
+                $roomDetails = [];
 
-            foreach ($floor->rooms as $room) {
-                $roomBedDetails = [
-                    'room_name' => $room->room_name,
-                    'total_beds' => $room->beds->count(),
-                    'occupied_beds' => 0,
-                    'pending_beds' => 0,
-                    'vacant_beds' => 0,
-                ];
+                foreach ($floor->rooms as $room) {
+                    // Initialize room-specific bed details
+                    $roomBedDetails = [
+                        'room_name' => $room->room_name,
+                        'total_beds' => $room->beds->count(),
+                        'occupied_beds' => 0,
+                        'pending_beds' => 0,
+                        'vacant_beds' => 0,
+                    ];
 
-                foreach ($room->beds as $bed) {
-                    if ($bed->status == 'occupied') {
-                        $occupiedBedsCount++;
-                        $roomBedDetails['occupied_beds']++;
-                    } elseif ($bed->status == 'pending') {
-                        $pendingBedsCount++;
-                        $roomBedDetails['pending_beds']++;
-                    } elseif ($bed->status == 'vacant') {
-                        $vacantBedsCount++;
-                        $roomBedDetails['vacant_beds']++;
+                    foreach ($room->beds as $bed) {
+                        switch ($bed->status) {
+                            case 'occupied':
+                                $occupiedBedsCount++;
+                                $roomBedDetails['occupied_beds']++;
+                                break;
+                            case 'pending':
+                                $pendingBedsCount++;
+                                $roomBedDetails['pending_beds']++;
+                                break;
+                            case 'vacant':
+                                $vacantBedsCount++;
+                                $roomBedDetails['vacant_beds']++;
+                                break;
+                        }
                     }
+
+                    $totalBedsCount += $room->beds->count();
+                    $roomDetails[] = $roomBedDetails;
                 }
 
-                $totalBedsCount += $room->beds->count();
-                $roomDetails[] = $roomBedDetails;
+                // Add floor data to the $data array
+                $data[] = [
+                    'id' => $floor->id,
+                    'facility_id' => $floor->facility_id,
+                    'provider_id' => $floor->provider_id,
+                    'floor_name' => $floor->floor_name,
+                    'created_at' => $floor->created_at,
+                    'updated_at' => $floor->updated_at,
+                    'total_rooms_count' => $totalRoomsCount,
+                    'total_beds_count' => $totalBedsCount,
+                    'occupied_beds_count' => $occupiedBedsCount + $pendingBedsCount,
+                    'vacant_beds_count' => $vacantBedsCount,
+                    'room_details' => $roomDetails,
+                    'facility_name' => $floor->facility->name,
+                ];
             }
 
-            // Add floor data directly to the $data array
-            $data[] = [
-                'id' => $floor->id,
-                'facility_id' => $floor->facility_id,
-                'provider_id' => $floor->provider_id,
-                'floor_name' => $floor->floor_name,
-                'created_at' => $floor->created_at,
-                'updated_at' => $floor->updated_at,
-                'total_rooms_count' => $totalRoomsCount,
-                'total_beds_count' => $totalBedsCount,
-                'occupied_beds_count' => $occupiedBedsCount + $pendingBedsCount,
-                'vacant_beds_count' => $vacantBedsCount,
-                'room_details' => $roomDetails, // Add room details
-                'facility_name' => $floor->name,
-            ];
+            Log::info('Data prepared for view.', ['total_floors' => count($data)]);
+
+        } catch (Exception $e) {
+            // Log any errors encountered during execution
+            Log::error('Error fetching or processing floor data.', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            // Optionally, you can return an error view or response
+            return redirect()->back()->with('error', 'Failed to load floor data.');
         }
 
+        // Return the view with the prepared data
         return view('backend.pages.Floors.index', ['data' => $data]);
     }
 
@@ -289,7 +310,7 @@ class FloorController extends Controller
             return redirect()->route('floors.index')->with('error', 'Floor not found');
         }
 
-        return view('backend.pages.Floors.mapping', compact('response',));
+        return view('backend.pages.Floors.mapping', compact('response'));
     }
 
     public function assign_bed(Request $request)
@@ -323,7 +344,7 @@ class FloorController extends Controller
                         'message' => 'Patient added',
                     ], 200);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'code' => false,
                     'message' => $e->getMessage(),
@@ -364,7 +385,7 @@ class FloorController extends Controller
                     'code' => true,
                     'message' => 'Patient transferred successfully',
                 ], 200);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'code' => false,
                     'message' => $e->getMessage(),

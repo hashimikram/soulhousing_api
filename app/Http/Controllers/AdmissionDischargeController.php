@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Http\Requests\StoreAdmissionDischargeRequest;
 use App\Http\Requests\UpdateAdmissionDischargeRequest;
 use App\Models\AdmissionDischarge;
+use App\Models\bed;
+use App\Models\DischargedPatients;
+use App\Models\floor;
+use App\Models\patient;
+use App\Models\room;
+use App\Models\WebsiteSetting;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class AdmissionDischargeController extends Controller
 {
@@ -19,17 +30,21 @@ class AdmissionDischargeController extends Controller
             'admission_discharges.*')->where('admission_discharges.patient_id',
             $patient_id)->where('admission_discharges.status', '1')->get();
         foreach ($data as $result) {
-            $result->patient_name = $result->patient->first_name.' '.$result->patient->last_name;
+            $result->patient_name = $result->patient->first_name . ' ' . $result->patient->last_name;
             $result->patient_date_of_birth = $result->patient->date_of_birth;
             $result->patient_medical_id = $result->patient->medical_no;
 
-            $result->staff_name = $result->staff->name.' '.$result->staff->details->last_name;
+            $result->staff_name = $result->staff->name . ' ' . $result->staff->details->last_name;
             $result->position = $result->staff->user_type;
-
-            $result->soul_housing_address = 'UK';
-            $result->soul_housing_phone = '+09837656728';
-            $result->website = 'https://care-soulhousing.anchorstech.net/';
+            $settings = WebsiteSetting::whereIn('key', ['platform_name', 'platform_address', 'platform_contact'])->pluck('value', 'key');
+            $result->soul_housing_address = $settings['platform_address'] ?? '';
+            $result->soul_housing_phone = $settings['platform_contact'] ?? '';
+            $result->website = $settings['platform_name'] ?? '';
             $result->registered_type = true;
+
+            $result->bed_name = bed::where('id', $result->bed_id)->first()->bed_title ?? '';
+            $result->room_name = room::where('id', $result->room_id)->first()->room_name ?? '';
+            $result->floor_name = floor::where('id', $result->floor_id)->first()->floor_name ?? '';
         }
         return response()->json([
             'success' => true,
@@ -39,13 +54,15 @@ class AdmissionDischargeController extends Controller
 
     public function discharged_patients($patient_id)
     {
-        $data = AdmissionDischarge::join('facilities', 'facilities.id', '=',
+        $data = AdmissionDischarge::leftjoin('facilities', 'facilities.id', '=',
             'admission_discharges.admission_location')->select('facilities.address as location',
             'admission_discharges.*')->where('admission_discharges.patient_id',
             $patient_id)->where('admission_discharges.status', '0')->get();
         foreach ($data as $result) {
-
             $result->registered_type = false;
+            $result->bed_name = bed::where('id', $result->bed_id)->first()->bed_title ?? '';
+            $result->room_name = room::where('id', $result->room_id)->first()->room_name ?? '';
+            $result->floor_name = floor::where('id', $result->floor_id)->first()->floor_name ?? '';
         }
         return response()->json([
             'success' => true,
@@ -96,13 +113,19 @@ class AdmissionDischargeController extends Controller
             $store_admission->new_admission = $value_new_admission;
             $store_admission->pan_patient = $value_pan_patient;
             $store_admission->patient_account_number = $request->patient_account_number;
+            $store_admission->facility_id = current_facility(auth()->user()->id);
+            if ($request->bed_id) {
+                $store_admission->bed_id = $request->bed_id;
+                $store_admission->room_id = room::where('id', bed::where('id', $request->bed_id)->first()->room_id)->first()->id;
+                $store_admission->floor_id = floor::where('id', room::where('id', bed::where('id', $request->bed_id)->first()->room_id)->first()->floor_id)->first()->id;
+            }
             $store_admission->save();
             DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Data Added'
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
@@ -164,7 +187,7 @@ class AdmissionDischargeController extends Controller
                 ], 404);
             }
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
@@ -184,14 +207,14 @@ class AdmissionDischargeController extends Controller
 
         try {
             $record = AdmissionDischarge::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Vital not found'], 404);
         }
 
         // 4. Attempt to delete the note
         try {
             $record->delete();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
@@ -203,15 +226,115 @@ class AdmissionDischargeController extends Controller
     {
         try {
             $record = AdmissionDischarge::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Vital not found'], 404);
         }
         try {
             $record->status = '0';
             $record->save();
-        } catch (\Exception $e) {
+            $bed = bed::where('id', $record->bed_id)->first();
+            if ($bed) {
+                $bed->status = 'unprepared';
+                $bed->patient_id = null;
+                $bed->occupied_from = null;
+                $bed->booked_till = null;
+                $bed->save();
+            }
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
         return response()->json(['message' => 'patients Discharged Successfully'], 200);
+    }
+
+    public function get_vacant_beds()
+    {
+        try {
+            $floors = floor::where('facility_id', current_facility(auth()->user()->id))->get();
+            $response = []; // Initialize the response array here
+            $status = 'vacant';
+            $base = new BaseController();
+            foreach ($floors as $details) {
+                $rooms = Room::where('floor_id', $details->id)->with([
+                    'beds' => function ($query) use ($status) {
+                        $query->where('status', $status)->select('beds.id', 'beds.status', 'beds.bed_title',
+                            'beds.room_id', 'beds.patient_id', 'beds.occupied_from')
+                            ->with(['patient:id,first_name,last_name,gender,date_of_birth,mrn_no']);
+                    }
+                ])->get();
+
+                foreach ($rooms as $room) {
+                    $floor = floor::where('id', $room->floor_id)->first();
+                    foreach ($room->beds as $bed) {
+                        if ($bed->status == 'vacant') {
+                            $bedData = [
+                                'id' => $bed->id,
+                                'status' => $bed->status,
+                                'bed_title' => $bed->bed_title,
+                                'room_id' => $bed->room_id,
+                                'patient_id' => $bed->patient_id,
+                                'occupied_from' => $bed->occupied_from,
+                                'floor_name' => $floor->floor_name,
+                                'room_name' => $room->room_name,
+                                'created_at' => $room->created_at,
+                                'updated_at' => $room->updated_at,
+                            ];
+
+                            $response[] = $bedData;
+                        }
+                    }
+                }
+            }
+
+            return $base->sendResponse($response, 'Beds with status "' . $status . '" retrieved successfully');
+        } catch (Exception $e) {
+            return $base->sendError('Error', $e->getMessage());
+        }
+    }
+
+    public function close_admission(Request $request)
+    {
+        $request->validate([
+            'bed_id' => 'required|exists:beds,id',
+        ]);
+        $bed = bed::where(['id' => $request->bed_id])->first();
+        if (isset($bed)) {
+            $bed->patient_id = null;
+            $bed->status = 'vacant';
+            $bed->occupied_from = null;
+            $bed->booked_till = null;
+            $bed->save();
+            return response()->json([
+                'code' => 'true',
+                'message' => 'Bed Closed Successfully',
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 'false',
+                'message' => 'Bed Not Found',
+            ], 404);
+        }
+    }
+
+    public function get_pdf($admission_id)
+    {
+        try {
+            $patient_admission = AdmissionDischarge::with(['staff', 'facility'])->where('id', $admission_id)->first();
+            $discharged_patient = DischargedPatients::where('admission_id', $patient_admission->id)->first();
+            $patient = patient::where('id', $patient_admission->patient_id)->first();
+            $pdf = PDF::loadView('PDF.discharge_pdf', compact('patient_admission', 'discharged_patient', 'patient'));
+//        return $pdf->stream('discharge_patient.pdf');
+            $pdfContent = $pdf->output();
+            $base64file = base64_encode($pdfContent);
+            $mimeType = 'application/pdf';
+            return response()->json([
+                'file' => $base64file,
+                'mime_type' => $mimeType
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 }

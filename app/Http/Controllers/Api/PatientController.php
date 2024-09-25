@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseController as BaseController;
 use App\Models\AdmissionDischarge;
 use App\Models\Allergy;
+use App\Models\bed;
 use App\Models\Contact;
 use App\Models\medication;
 use App\Models\patient;
@@ -16,10 +17,13 @@ use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\State;
 use App\Models\User;
+use App\Models\WebsiteSetting;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class PatientController extends BaseController
 {
@@ -29,9 +33,9 @@ class PatientController extends BaseController
 
     public function index()
     {
-
         Log::info(current_facility(auth()->user()->id));
         try {
+            // Query to fetch patients with the admissions table joined
             $patients = Patient::with([
                 'problems',
                 'admission',
@@ -41,21 +45,30 @@ class PatientController extends BaseController
                 'room.floor',
                 'role.role.permissions'
             ])
-                ->where('facility_id', current_facility(auth()->user()->id))
-                ->orderBy('created_at', 'DESC')
+                ->where('patients.facility_id', current_facility(auth()->user()->id))
+                ->where('patients.status', '!=', '0')
+                ->join('admission_discharges', 'patients.id', '=', 'admission_discharges.patient_id')
+                ->orderBy('admission_discharges.admission_date', 'DESC')
+                ->select('patients.*')
                 ->get();
+
 
             foreach ($patients as $patient) {
                 $this->processPatientData($patient);
+                $settings = WebsiteSetting::whereIn('key', ['platform_name', 'platform_address', 'platform_contact'])->pluck('value', 'key');
+                $patient->soul_housing_address = $settings['platform_address'] ?? '';
+                $patient->soul_housing_phone = $settings['platform_contact'] ?? '';
+                $patient->website = $settings['platform_name'] ?? '';
+                $patient->provider_full_name = auth()->user()->details->title . ' ' . auth()->user()->name . ' ' . auth()->user()->details->last_name;
+                $patient->provider_npi = auth()->user()->details->npi;
             }
 
             return response()->json([
                 'success' => true,
                 'data' => $patients
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred in Patient Index: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
@@ -66,15 +79,18 @@ class PatientController extends BaseController
         }
     }
 
+
     private function processPatientData($patient)
     {
         try {
             $patient->patient_full_name = $this->formatPatientFullName($patient);
+            $patient->patient_bed_status = $this->bed_check($patient);
+
             $patient->age = Carbon::parse($patient->date_of_birth)->age;
-            $patient->provider_full_name = auth()->user()->name;
+
             $patient->profile_pic = image_url($patient->profile_pic);
 
-            $admission = $patient->admission;
+            $admission = AdmissionDischarge::where('patient_id', $patient->id)->first();
 
             $patient->admission_date = $admission ? $admission->admission_date : '';
             $patient->room_no = $admission ? $admission->room_no : '';
@@ -97,9 +113,8 @@ class PatientController extends BaseController
                     ];
                 })
             ] : null;
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred while processing patient data: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while processing patient data: ' . $e->getMessage(), [
                 'patient_id' => $patient->id,
                 'exception' => $e
             ]);
@@ -124,15 +139,25 @@ class PatientController extends BaseController
             }
 
             return implode(', ', $parts);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred while formatting patient full name: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while formatting patient full name: ' . $e->getMessage(), [
                 'patient_id' => $patient->id,
                 'exception' => $e
             ]);
 
             return 'Unknown';
         }
+    }
+
+    public function bed_check($patient)
+    {
+        $bed = bed::where(['patient_id' => $patient->id, 'status' => 'hospitalized'])->first();
+        if ($bed) {
+            $status = 'hospitalized';
+        } else {
+            $status = NULL;
+        }
+        return $status;
     }
 
     private function calculateAdmissionDateResult($admission)
@@ -172,9 +197,8 @@ class PatientController extends BaseController
             }
 
             return $formattedResult;
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred while calculating admission date result: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while calculating admission date result: ' . $e->getMessage(), [
                 'admission' => $admission,
                 'exception' => $e
             ]);
@@ -199,22 +223,21 @@ class PatientController extends BaseController
                     $formatted = $medication->title;
 
                     if (!empty($medication->dose) && !empty($medication->unit)) {
-                        $formatted .= ' - '.$medication->dose.' '.$medication->unit;
+                        $formatted .= ' - ' . $medication->dose . ' ' . $medication->unit;
                     }
 
                     if (!empty($medication->quantity)) {
-                        $formatted .= ', '.$medication->quantity;
+                        $formatted .= ', ' . $medication->quantity;
                     }
 
                     if (!empty($medication->frequency)) {
-                        $formatted .= ' ('.$medication->frequency.')';
+                        $formatted .= ' (' . $medication->frequency . ')';
                     }
 
                     return $formatted;
                 });
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred while formatting medications: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while formatting medications: ' . $e->getMessage(), [
                 'patient_id' => $patientId,
                 'exception' => $e
             ]);
@@ -238,6 +261,7 @@ class PatientController extends BaseController
             ])
                 ->where('provider_id', auth()->user()->id)
                 ->where('facility_id', current_facility(auth()->user()->id))
+                ->where('status', '!=', '0')
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
@@ -249,9 +273,8 @@ class PatientController extends BaseController
                 'success' => true,
                 'data' => $patients
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred in Patient Index: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
@@ -276,6 +299,7 @@ class PatientController extends BaseController
                 'role.role.permissions'
             ])
                 ->where('facility_id', current_facility(auth()->user()->id))
+                ->where('status', '!=', '0')
                 ->where('provider_id', null)
                 ->orderBy('created_at', 'DESC')
                 ->get();
@@ -288,9 +312,8 @@ class PatientController extends BaseController
                 'success' => true,
                 'data' => $patients
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred in Patient Index: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
@@ -318,6 +341,7 @@ class PatientController extends BaseController
                     'role.role.permissions'
                 ])
                 ->where('facility_id', current_facility(auth()->user()->id))
+                ->where('status', '!=', '0')
                 ->orderBy('created_at', 'DESC')
                 ->get();
 
@@ -330,9 +354,8 @@ class PatientController extends BaseController
                 'success' => true,
                 'data' => $patients
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred in Patient Index: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred in Patient Index: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
@@ -357,9 +380,8 @@ class PatientController extends BaseController
                 'success' => true,
                 'data' => $patients
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred in Patient Search: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred in Patient Search: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
@@ -388,20 +410,20 @@ class PatientController extends BaseController
                     'insurances.group_name'
                 )
                 ->where(function ($query) use ($search_text) {
-                    $query->where('patients.first_name', 'LIKE', '%'.$search_text.'%')
-                        ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
-                        ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
+                    $query->where('patients.first_name', 'LIKE', '%' . $search_text . '%')
+                        ->orWhere('patients.last_name', 'LIKE', '%' . $search_text . '%')
+                        ->orWhere('patients.mrn_no', 'LIKE', '%' . $search_text . '%');
                 })
                 ->where('patients.facility_id', current_facility(auth()->user()->id))
                 ->orderBy('patients.created_at', 'DESC')
                 ->groupBy('patients.id')
                 ->get();
-        } catch (\Exception $e) {
-            Log::error('An error occurred while fetching patients: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while fetching patients: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
-            throw new \RuntimeException('Failed to retrieve patient details.');
+            throw new RuntimeException('Failed to retrieve patient details.');
         }
     }
 
@@ -409,9 +431,9 @@ class PatientController extends BaseController
     {
         $search_text = $request->get('query');
         $patients = patient::where(function ($query) use ($search_text) {
-            $query->where('patients.first_name', 'LIKE', '%'.$search_text.'%')
-                ->orWhere('patients.last_name', 'LIKE', '%'.$search_text.'%')
-                ->orWhere('patients.mrn_no', 'LIKE', '%'.$search_text.'%');
+            $query->where('patients.first_name', 'LIKE', '%' . $search_text . '%')
+                ->orWhere('patients.last_name', 'LIKE', '%' . $search_text . '%')
+                ->orWhere('patients.mrn_no', 'LIKE', '%' . $search_text . '%');
         })->get();
 
         return response()->json($patients);
@@ -447,7 +469,6 @@ class PatientController extends BaseController
     {
 
         $request->validate([
-            'title' => 'nullable|string',
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
             'last_name' => 'required|string',
@@ -456,25 +477,15 @@ class PatientController extends BaseController
             'age' => 'nullable|string',
             'gender' => 'required|string',
             'date_of_birth' => 'required',
-            'race' => 'nullable|string',
-            'ethnicity' => 'nullable|string',
-            'marital_status' => 'nullable|string',
             'referral_source_1' => 'nullable|string',
-            'referral_source_2' => 'nullable|string',
             'financial_class' => 'nullable|string',
             'fin_class_name' => 'nullable|string',
             'doctor_name' => 'nullable|string',
             'auth' => 'nullable|string',
-            'account_no' => 'nullable|string',
             'admit_date' => 'nullable|date',
             'disch_date' => 'nullable|date',
-            'adm_dx' => 'nullable|string',
-            'resid_military' => 'nullable|string',
             'pre_admit_date' => 'nullable|date',
-            'service' => 'nullable|string',
             'nursing_station' => 'nullable|string',
-            'occupation' => 'nullable|string',
-            'employer' => 'nullable|string',
             'email' => 'nullable|string|email|unique:patients,email,id',
             'other_contact_name' => 'nullable|string',
             'other_contact_address' => 'nullable|string',
@@ -505,7 +516,6 @@ class PatientController extends BaseController
             try {
                 $patient = new patient();
                 $patient->provider_id = auth()->user()->id;
-                $patient->title = $request->title;
                 $patient->first_name = $request->first_name;
                 $patient->middle_name = $request->middle_name;
                 $patient->last_name = $request->last_name;
@@ -517,24 +527,21 @@ class PatientController extends BaseController
                 $cleanedDateString = preg_replace('/\s*\(.*?\)/', '', $formattedDate);
                 $date = date('Y-m-d', strtotime($cleanedDateString));
                 $patient->date_of_birth = $date;
-                $patient->race = $request->race;
-                $patient->ethnicity = $request->ethnicity;
-                $patient->marital_status = $request->marital_status;
                 $patient->referral_source_1 = $request->referral_source_1;
-                $patient->referral_source_2 = $request->referral_source_2;
+                $patient->organization = $request->referral_organization;
+                $patient->referral_company_name = $request->referral_company_name;
+                $patient->referral_contact_name = $request->referral_contact_name;
+                $patient->referral_contact_email = $request->referral_contact_email;
+                $patient->referral_contact_no = $request->referral_contact_no;
                 $patient->financial_class = $request->financial_class;
                 $patient->fin_class_name = $request->fin_class_name;
                 $patient->doctor_name = $request->doctor_name;
-                $patient->account_no = $request->account_no;
                 $patient->admit_date = $request->admit_date;
                 $patient->disch_date = $request->disch_date;
-                $patient->adm_dx = $request->adm_dx;
                 $patient->pre_admit_date = $request->pre_admit_date;
-                $patient->service = $request->service;
                 $patient->nursing_station = $request->nursing_station;
-                $patient->occupation = $request->occupation;
-                $patient->employer = $request->employer;
                 $patient->email = $request->email;
+                $patient->other_email = $request->other_email;
                 $patient->other_contact_name = $request->other_contact_name;
                 $patient->other_contact_address = $request->other_contact_address;
                 $patient->other_contact_country = $request->other_contact_country;
@@ -553,6 +560,7 @@ class PatientController extends BaseController
                 $patient->country = $request->country;
                 $patient->auth = $request->auth;
                 $patient->npp = $request->npi;
+                $patient->switch = $request->switch;
                 $patient->facility_id = current_facility(auth()->user()->id) ?? null;
                 // Check if media is provided
                 if ($request->input('profile_pic')) {
@@ -564,16 +572,16 @@ class PatientController extends BaseController
                         $fileData = base64_decode($fileData);
                         $mimeType = strtolower($type[1]);
                         $extension = strtolower($type[2]);
-                        $filename = uniqid().'.'.$extension;
+                        $filename = uniqid() . '.' . $extension;
                         // Ensure the 'public/uploads' directory exists
                         $directory = public_path('uploads');
                         if (!file_exists($directory)) {
                             mkdir($directory, 0777, true);
                         }
                         // Save the file to the public/uploads directory
-                        $filePath = $directory.'/'.$filename;
+                        $filePath = $directory . '/' . $filename;
                         file_put_contents($filePath, $fileData);
-                        $publicPath = asset('uploads/'.$filename);
+                        $publicPath = asset('uploads/' . $filename);
                         Log::info($filename);
                         $patient->profile_pic = $filename;
                     } else {
@@ -588,12 +596,12 @@ class PatientController extends BaseController
 
                 $patient->save();
                 $recentAdd = patient::find($patient->id);
-                $countPatient = 'sk-'.str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+                $countPatient = 'sk-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
                 $recentAdd->mrn_no = $countPatient;
                 $recentAdd->save();
                 $data['patient_id'] = $patient->id;
                 return $base->sendResponse($data, 'patients Added Successfully');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage()
@@ -663,7 +671,6 @@ class PatientController extends BaseController
         try {
             $patient = patient::find($request->id);
             if ($patient != null) {
-                $patient->title = $request->title;
                 $patient->first_name = $request->first_name;
                 $patient->middle_name = $request->middle_name;
                 $patient->last_name = $request->last_name;
@@ -675,24 +682,20 @@ class PatientController extends BaseController
                 $cleanedDateString = preg_replace('/\s*\(.*?\)/', '', $formattedDate);
                 $date = date('Y-m-d', strtotime($cleanedDateString));
                 $patient->date_of_birth = $date;
-                $patient->race = $request->race;
-                $patient->ethnicity = $request->ethnicity;
-                $patient->marital_status = $request->marital_status;
                 $patient->referral_source_1 = $request->referral_source_1;
-                $patient->referral_source_2 = $request->referral_source_2;
+                $patient->organization = $request->referral_organization;
+                $patient->referral_company_name = $request->referral_company_name;
+                $patient->referral_contact_name = $request->referral_contact_name;
+                $patient->referral_contact_email = $request->referral_contact_email;
+                $patient->referral_contact_no = $request->referral_contact_no;
                 $patient->financial_class = $request->financial_class;
                 $patient->fin_class_name = $request->fin_class_name;
                 $patient->doctor_name = $request->doctor_name;
-                $patient->account_no = $request->account_no;
                 $patient->admit_date = $request->admit_date;
                 $patient->disch_date = $request->disch_date;
-                $patient->adm_dx = $request->adm_dx;
                 $patient->pre_admit_date = $request->pre_admit_date;
-                $patient->service = $request->service;
-                $patient->nursing_station = $request->nursing_station;
-                $patient->occupation = $request->occupation;
-                $patient->employer = $request->employer;
                 $patient->email = $request->email;
+                $patient->other_email = $request->other_email;
                 $patient->other_contact_name = $request->other_contact_name;
                 $patient->other_contact_address = $request->other_contact_address;
                 $patient->other_contact_country = $request->other_contact_country;
@@ -711,6 +714,7 @@ class PatientController extends BaseController
                 $patient->phone_no = $request->phone_no;
                 $patient->zip_code = $request->zip_code;
                 $patient->country = $request->country;
+                $patient->switch = $request->switch;
                 $oldFilePath = null;
                 // Check if media is provided
                 if ($request->input('profile_pic')) {
@@ -722,16 +726,16 @@ class PatientController extends BaseController
                         $fileData = base64_decode($fileData);
                         $mimeType = strtolower($type[1]);
                         $extension = strtolower($type[2]);
-                        $filename = uniqid().'.'.$extension;
+                        $filename = uniqid() . '.' . $extension;
                         // Ensure the 'public/uploads' directory exists
                         $directory = public_path('uploads');
                         if (!file_exists($directory)) {
                             mkdir($directory, 0777, true);
                         }
                         // Save the file to the public/uploads directory
-                        $filePath = $directory.'/'.$filename;
+                        $filePath = $directory . '/' . $filename;
                         file_put_contents($filePath, $fileData);
-                        $publicPath = asset('uploads/'.$filename);
+                        $publicPath = asset('uploads/' . $filename);
                         Log::info($filename);
                         $patient->profile_pic = $filename;
                     } else {
@@ -745,7 +749,7 @@ class PatientController extends BaseController
             } else {
                 return $base->sendError('No patients Found');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $base->sendError($e->getMessage());
         }
     }
@@ -766,7 +770,7 @@ class PatientController extends BaseController
         if (!$patient) {
             return response()->json(['message' => 'patients not found'], 404);
         }
-        $patient->patient_full_name = $patient->first_name.' '.$patient->last_name;
+        $patient->patient_full_name = $patient->first_name . ' ' . $patient->last_name;
 
         $allergies = Allergy::with('allergy_type:id,list_id,title')
             ->where('patient_id', $id)
@@ -787,15 +791,22 @@ class PatientController extends BaseController
                 return $problem;
             });
 
-        $admission_patient = AdmissionDischarge::join('facilities', 'facilities.id', '=',
-            'admission_discharges.admission_location')->select('facilities.name as location',
-            'admission_discharges.*')->where('admission_discharges.patient_id',
-            $id)->where('admission_discharges.status', '1')
+        $admission_patient = AdmissionDischarge::join(
+            'facilities',
+            'facilities.id',
+            '=',
+            'admission_discharges.admission_location'
+        )->select(
+            'facilities.name as location',
+            'admission_discharges.*'
+        )->where(
+            'admission_discharges.patient_id',
+            $id
+        )->where('admission_discharges.status', '1')
             ->first();
         if ($admission_patient) {
             $admission_patient->admission_date = $admission_patient->admission_date;
         } else {
-
         }
 
 
@@ -815,7 +826,7 @@ class PatientController extends BaseController
             $currentDate = Carbon::now();
             // Calculate the difference in days between the current date and the admission date
             $daysDifference = $admissionDate->diffInDays($currentDate);
-            Log::info('Days Difference: '.$daysDifference);
+            Log::info('Days Difference: ' . $daysDifference);
 
             // Check if the days difference is greater than 90
             if ($daysDifference > 90) {
@@ -839,17 +850,26 @@ class PatientController extends BaseController
             // Assign the result to the admission_date_result property
             $admission_patient->admission_date_result = $formattedResult;
         }
-        $encounter = PatientEncounter::leftjoin('list_options as encounter_type', 'encounter_type.id', '=',
-            'patient_encounters.encounter_type')
+        $encounter = PatientEncounter::leftjoin(
+            'list_options as encounter_type',
+            'encounter_type.id',
+            '=',
+            'patient_encounters.encounter_type'
+        )
             ->leftjoin('list_options as specialty', 'specialty.id', '=', 'patient_encounters.specialty')
             ->leftjoin('users as provider', 'provider.id', '=', 'patient_encounters.provider_id_patient')
             ->leftjoin('patients', 'patients.id', '=', 'patient_encounters.patient_id')
             ->leftjoin('facilities', 'facilities.id', '=', 'patient_encounters.location')
-            ->select('patient_encounters.*', 'facilities.name as location',
-                'encounter_type.title as encounter_type_title', 'specialty.title as specialty_title',
-                'provider.name as provider_name', 'patients.mrn_no',
+            ->select(
+                'patient_encounters.*',
+                'facilities.name as location',
+                'encounter_type.title as encounter_type_title',
+                'specialty.title as specialty_title',
+                'provider.name as provider_name',
+                'patients.mrn_no',
                 DB::raw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_full_name"),
-                'patients.date_of_birth', 'patients.gender',
+                'patients.date_of_birth',
+                'patients.gender',
                 'patient_encounters.pdf_make'
             )
             ->where('patient_encounters.patient_id', $id)
@@ -861,15 +881,15 @@ class PatientController extends BaseController
             $formatted_data = $medication_data->title;
 
             if (!empty($medication_data->dose) && !empty($medication_data->unit)) {
-                $medication_data->dose = ' - '.$medication_data->dose.' '.$medication_data->unit;
+                $medication_data->dose = ' - ' . $medication_data->dose . ' ' . $medication_data->unit;
             }
 
             if (!empty($medication_data->quantity)) {
-                $medication_data->quantity = ', '.$medication_data->quantity;
+                $medication_data->quantity = ', ' . $medication_data->quantity;
             }
 
             if (!empty($medication_data->frequency)) {
-                $medication_data->frequency = ' ('.$medication_data->frequency.')';
+                $medication_data->frequency = ' (' . $medication_data->frequency . ')';
             }
         }
         $data = [
@@ -900,6 +920,51 @@ class PatientController extends BaseController
         ], 200);
     }
 
+    public function blacklist_patient(Request $request)
+    {
+        $request->validate([
+            'patient_id' => 'required|exists:patients,id'
+        ]);
+        try {
+            $patient = patient::findOrFail($request->patient_id);
+            if ($patient) {
+                $patient->status = '0';
+                $patient->save();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Patient Blacklist Successfully',
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Patient Not Found',
+                ], 202);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 202);
+        }
+    }
+
+    public function getUpdatedPatientDetails($patient_id)
+    {
+        try {
+            $patient = patient::findOrFail($patient_id);
+            $this->processPatientData($patient);
+            return response()->json([
+                'status' => true,
+                'patient' => $patient,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     private function getRoleAndPermissions($patientId)
     {
         try {
@@ -920,9 +985,8 @@ class PatientController extends BaseController
                     ];
                 })
             ];
-
-        } catch (\Exception $e) {
-            Log::error('An error occurred while getting role and permissions: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while getting role and permissions: ' . $e->getMessage(), [
                 'patient_id' => $patientId,
                 'exception' => $e
             ]);
@@ -951,12 +1015,12 @@ class PatientController extends BaseController
                 ->orderBy('patients.created_at', 'DESC')
                 ->groupBy('patients.id')
                 ->get();
-        } catch (\Exception $e) {
-            Log::error('An error occurred while fetching patients: '.$e->getMessage(), [
+        } catch (Exception $e) {
+            Log::error('An error occurred while fetching patients: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
 
-            throw new \RuntimeException('Failed to retrieve patient details.');
+            throw new RuntimeException('Failed to retrieve patient details.');
         }
     }
 }

@@ -17,11 +17,17 @@ class PatientEncounter extends Model
         'reason',
         'location',
         'specialty',
+        'encounter_date',
     ];
 
     public function provider()
     {
         return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function encounter_notes()
+    {
+        return $this->hasMany(EncounterNoteSection::class, 'encounter_id');
     }
 
     public function facility()
@@ -36,7 +42,7 @@ class PatientEncounter extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patient_id');
+        return $this->belongsTo(patient::class, 'patient_id');
     }
 
     public function signedBy()

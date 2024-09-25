@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWarningRequest;
 use App\Http\Requests\UpdateWarningRequest;
 use App\Models\Warning;
+use App\Models\WebsiteSetting;
 use Illuminate\Support\Facades\Log;
 
 class WarningController extends Controller
@@ -18,8 +19,13 @@ class WarningController extends Controller
         $providerFullName = auth()->user()->name;
         if (count($warnings) > 0) {
             foreach ($warnings as $warning) {
-                $warning->file_path = env('APP_URL').'public/uploads/'.$warning->file_name;
-                $warning->provider_full_name = $providerFullName;
+                $warning->file_path = env('APP_URL') . 'public/uploads/' . $warning->file_name;
+                $settings = WebsiteSetting::whereIn('key', ['platform_name', 'platform_address', 'platform_contact'])->pluck('value', 'key');
+                $warning->soul_housing_address = $settings['platform_address'] ?? '';
+                $warning->soul_housing_phone = $settings['platform_contact'] ?? '';
+                $warning->website = $settings['platform_name'] ?? '';
+                $warning->provider_full_name = auth()->user()->details->title . ' ' . auth()->user()->name . ' ' . auth()->user()->details->last_name;
+                $warning->provider_npi = auth()->user()->details->npi;
             }
             return response()->json([
                 'status' => true,
@@ -68,9 +74,9 @@ class WarningController extends Controller
 
                 $mimeType = strtolower($type[1]);
                 $extension = strtolower($type[2]);
-                $fileName = uniqid().'.'.$extension;
-                Log::info('File Mime: '.$mimeType);
-                Log::info('File Extension: '.$extension);
+                $fileName = uniqid() . '.' . $extension;
+                Log::info('File Mime: ' . $mimeType);
+                Log::info('File Extension: ' . $extension);
 
                 // Ensure the 'public/uploads' directory exists
                 $directory = public_path('uploads');
@@ -79,10 +85,10 @@ class WarningController extends Controller
                 }
 
                 // Save the file to the public/uploads directory
-                $filePath = $directory.'/'.$fileName;
+                $filePath = $directory . '/' . $fileName;
                 file_put_contents($filePath, $fileData);
 
-                $publicPath = asset('uploads/'.$fileName);
+                $publicPath = asset('uploads/' . $fileName);
             } else {
                 return response()->json(['error' => 'Invalid media data'], 400);
             }

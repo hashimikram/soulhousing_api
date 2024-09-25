@@ -23,4 +23,9 @@ class floor extends Model
     {
         return $this->hasManyThrough(bed::class, room::class);
     }
+
+    public function facility()
+    {
+        return $this->belongsTo(Facility::class);
+    }
 }

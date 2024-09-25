@@ -44,33 +44,55 @@ class ReviewOfSystemDetailController extends Controller
             ->first();
 
         if (!$data) {
-            // Return error response if no data found
             return response()->json([
                 'code' => 'error',
                 'message' => 'No data found'
             ], 404);
         }
 
-        $sectionsText = str_replace(['<br>', '</br>'], '', $data->section_text);
-        // Split the sections using regex, ensuring to match sections correctly
-        $sectionsArray = preg_split('/(?=[A-Z][a-z]+(?:\/[A-Z][a-z]+)?:(?=\s))/s', $sectionsText, -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        return $this->parseSectionText($data->section_text);
+    }
+
+    public function parseSectionText($sectionText)
+    {
+        // Replace <br></br> tags with newlines
+        $cleanText = str_replace(['<br></br>', '<br>', '<br />'], "\n", $sectionText);
+
+        // Split the text into sections
+        $sections = explode("\n", trim($cleanText));
+
         $formattedSections = [];
 
-        foreach ($sectionsArray as $section) {
-            if (preg_match('/^([A-Z][a-z]+(?:\/[A-Z][a-z]+)?):\s*(.*)/s', $section, $matches)) {
-                // Convert the section title to camelCase
-                $sectionTitle = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($matches[1])))));
-                $sectionContent = trim(str_replace(['<br>', '</br>'], '', $matches[2]));
-                $formattedSections[$sectionTitle] = $sectionContent;
+        foreach ($sections as $section) {
+            // Split each section into title and text
+            $parts = explode(':', $section, 2);
+
+            if (count($parts) == 2) {
+                $title = trim($parts[0]);
+                $text = trim($parts[1]);
+
+                // Replace escaped slashes with single slashes
+                $title = str_replace('\/', '/', $title);
+
+                // Convert title to slug format
+                $slug = strtolower(str_replace(['/', ' '], '-', $title));
+
+                $formattedSections[] = [
+                    'title' => $title,
+                    'slug' => $title,
+                    'text' => $text
+                ];
             }
         }
 
+        // Return JSON with unescaped slashes
         return response()->json([
             'code' => 'success',
             'data' => $formattedSections
-        ], 200);
+        ], 200, [], JSON_UNESCAPED_SLASHES);
     }
+
+
 
 
     /**
@@ -110,7 +132,7 @@ class ReviewOfSystemDetailController extends Controller
         // Iterate over each section and format it
         foreach ($payload as $key => $value) {
             if ($key !== 'id') {
-                $sectionText .= ucfirst($key).': '.$value.'<br><br>';
+                $sectionText .= ucfirst($key) . ': ' . $value . '<br><br>';
             }
         }
 

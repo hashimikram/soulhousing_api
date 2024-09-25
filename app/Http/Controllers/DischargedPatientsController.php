@@ -6,6 +6,7 @@ use App\Http\Requests\StoreDischargedPatientsRequest;
 use App\Http\Requests\UpdateDischargedPatientsRequest;
 use App\Models\AdmissionDischarge;
 use App\Models\DischargedPatients;
+use PDF;
 
 class DischargedPatientsController extends Controller
 {
@@ -43,6 +44,16 @@ class DischargedPatientsController extends Controller
         if ($admission) {
             $admission->status = '0';
             $admission->save();
+//            $patient = $admission->patient;
+//            $user = $admission->staff;
+//            $dischargeForm = $dischargedPatient->toArray();
+//            $data = [
+//                'admission' => $admission,
+//                'patient' => $patient,
+//                'user' => $user,
+//                'dischargeForm' => $dischargeForm,
+//            ];
+//            $pdf = PDF::loadView('PDF.patient_discharge_pdf', $data);
         }
 
 
